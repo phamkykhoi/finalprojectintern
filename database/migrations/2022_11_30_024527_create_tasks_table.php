@@ -19,13 +19,13 @@ return new class extends Migration
             $table->string('descriptions');
             $table->string('task_group_id');
             $table->tinyInteger('type');
-            $table->timestamps('completed_at')->nullable();
-            $table->timestamps('start_date')->nullable();
-            $table->timestamps('end_date')->nullable();
+            $table->timestamp('completed_at')->nullable();
+            $table->timestamp('start_date')->nullable();
+            $table->timestamp('end_date')->nullable();
             $table->boolean('is_important')->default(false);
             $table->boolean('is_quickly')->default(false);
             $table->boolean('status_completed')->default(false);
-            $table->number('rating');
+            $table->tinyInteger('rating');
             $table->timestamps();
         });
     }
