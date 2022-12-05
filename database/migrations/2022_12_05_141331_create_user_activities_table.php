@@ -13,10 +13,11 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('supporter_tasks', function (Blueprint $table) {
+        Schema::create('user_activities', function (Blueprint $table) {
             $table->id();
             $table->string('user_id');
-            $table->string('task_id');
+            $table->string('activity_id');
+            $table->tinyInteger('role_activity');
             $table->timestamps();
         });
     }
@@ -28,6 +29,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('supporter_tasks');
+        Schema::dropIfExists('user_activities');
     }
 };

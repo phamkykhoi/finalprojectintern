@@ -13,10 +13,11 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('attach_tasks', function (Blueprint $table) {
+        Schema::create('user_departens', function (Blueprint $table) {
             $table->id();
             $table->string('user_id');
-            $table->string('attach_file_id');
+            $table->string('departen_id');
+            $table->tinyInteger('role_departen');
             $table->timestamps();
         });
     }
@@ -28,6 +29,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('attach_tasks');
+        Schema::dropIfExists('user_departens');
     }
 };

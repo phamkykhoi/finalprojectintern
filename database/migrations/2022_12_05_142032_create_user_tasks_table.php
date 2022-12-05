@@ -13,10 +13,11 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('observator_tasks', function (Blueprint $table) {
+        Schema::create('user_tasks', function (Blueprint $table) {
             $table->id();
             $table->string('user_id');
             $table->string('task_id');
+            $table->tinyInteger('role_task');
             $table->timestamps();
         });
     }
@@ -28,6 +29,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('observator_tasks');
+        Schema::dropIfExists('user_tasks');
     }
 };

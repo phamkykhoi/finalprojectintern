@@ -17,6 +17,7 @@ return new class extends Migration
             $table->id();
             $table->string('description');
             $table->string('user_id');
+            $table->string('task_id');
             $table->timestamps();
         });
     }

@@ -13,10 +13,11 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('follower_tasks', function (Blueprint $table) {
+        Schema::create('ratings', function (Blueprint $table) {
             $table->id();
             $table->string('user_id');
             $table->string('task_id');
+            $table->tinyInteger('level');
             $table->timestamps();
         });
     }
@@ -28,6 +29,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('follower_tasks');
+        Schema::dropIfExists('ratings');
     }
 };
