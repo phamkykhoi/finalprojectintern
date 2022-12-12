@@ -13,12 +13,8 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('discussions', function (Blueprint $table) {
-            $table->id();
-            $table->text('description');
-            $table->string('user_id');
-            $table->string('task_id');
-            $table->timestamps();
+        Schema::table('tasks', function (Blueprint $table) {
+            $table->dropColumn('rating');
         });
     }
 
@@ -29,6 +25,8 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('discussions');
+        Schema::table('tasks', function (Blueprint $table) {
+            $table->tinyInteger('rating');
+        });
     }
 };

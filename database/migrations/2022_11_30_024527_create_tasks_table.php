@@ -24,7 +24,7 @@ return new class extends Migration
             $table->timestamp('end_date')->nullable();
             $table->boolean('is_important')->default(false);
             $table->boolean('is_quickly')->default(false);
-            $table->boolean('status_completed')->default(false);
+            $table->boolean('status')->nullable();
             $table->tinyInteger('rating');
             $table->timestamps();
         });

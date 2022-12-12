@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class User_departen extends Model
+class TaskGroup extends Model
 {
     use HasFactory;
 }
