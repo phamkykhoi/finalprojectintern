@@ -15,8 +15,8 @@ return new class extends Migration
     {
         Schema::create('user_activities', function (Blueprint $table) {
             $table->id();
-            $table->string('user_id');
-            $table->string('activity_id');
+            $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('activity_id');
             $table->tinyInteger('role_activity');
             $table->timestamps();
         });

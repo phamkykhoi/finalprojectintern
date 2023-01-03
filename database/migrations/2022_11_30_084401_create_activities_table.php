@@ -16,9 +16,9 @@ return new class extends Migration
         Schema::create('activities', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('descriptions');
-            $table->string('departen_id');
-            $table->tinyInteger('type');
+            $table->string('description');
+            $table->unsignedBigInteger('department_id');
+            $table->tinyInteger('type')->nullable();
             $table->timestamps();
         });
     }

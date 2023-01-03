@@ -16,8 +16,8 @@ return new class extends Migration
         Schema::create('discussions', function (Blueprint $table) {
             $table->id();
             $table->text('description');
-            $table->string('user_id');
-            $table->string('task_id');
+            $table->unsignedInteger('user_id');
+            $table->unsignedInteger('task_id');
             $table->timestamps();
         });
     }

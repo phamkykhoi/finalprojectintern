@@ -3,6 +3,9 @@
 namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+
+use App\Models\Activity;
+use App\Models\TaskGroup;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -15,17 +18,11 @@ class DatabaseSeeder extends Seeder
     public function run()
     {
         $this->call([
+            UserSeeder::class,
+            DepartmentSeeder::class,
             ActivitySeeder::class,
-            AttachmentSeeder::class,
-            DepartenSeeder::class,
-            DiscussionSeeder::class,
-            RatingSeeder::class,
             TaskGroupSeeder::class,
             TaskSeeder::class,
-            UserActivitySeeder::class,
-            UserDepartenSeeder::class,
-            UserSeeder::class,
-            UserTaskSeeder::class,
-    ]);
+        ]);
     }
 }

@@ -15,9 +15,9 @@ return new class extends Migration
     {
         Schema::create('user_departens', function (Blueprint $table) {
             $table->id();
-            $table->string('user_id');
-            $table->string('departen_id');
-            $table->tinyInteger('role_departen');
+            $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('departen_id');
+            $table->tinyInteger('role');
             $table->timestamps();
         });
     }

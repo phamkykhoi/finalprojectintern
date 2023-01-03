@@ -16,8 +16,8 @@ return new class extends Migration
         Schema::create('task_groups', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('descriptions');
-            $table->string('activity_id');
+            $table->string('description');
+            $table->unsignedBigInteger('activity_id');
             $table->tinyInteger('type');
             $table->timestamps();
         });

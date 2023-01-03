@@ -8,4 +8,16 @@ use Illuminate\Database\Eloquent\Model;
 class TaskGroup extends Model
 {
     use HasFactory;
+
+    protected $fillable = [
+        'name',
+        'description',
+        'type',
+        'activity_id',
+    ];
+
+    public function tasks()
+    {
+        return $this->hasMany(Task::class);
+    }
 }

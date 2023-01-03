@@ -15,8 +15,8 @@ return new class extends Migration
     {
         Schema::create('ratings', function (Blueprint $table) {
             $table->id();
-            $table->string('user_id');
-            $table->string('task_id');
+            $table->unsignedInteger('user_id');
+            $table->unsignedInteger('task_id');
             $table->tinyInteger('level');
             $table->timestamps();
         });
