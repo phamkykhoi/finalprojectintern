@@ -8,7 +8,7 @@ use App\Repositories\DepartmentRepository;
 use App\Repositories\TaskGroupRepository;
 use App\Http\Requests\Activity\StoreActivityRequest;
 
-class ActivityControler extends Controller
+class ActivityController extends Controller
 {
     protected $departmentRepo;
 

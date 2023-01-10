@@ -26,7 +26,7 @@ const props = defineProps({
 const form = useForm({
     name: '',
     description: '',
-    department_id: 2,
+    department_id: 1,
 });
 
 const emit = defineEmits(['closeModal', 'unClose'])

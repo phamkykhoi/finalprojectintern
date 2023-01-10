@@ -2,11 +2,13 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\ActivityControler;
+use App\Http\Controllers\ActivityController;
+use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\UserController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -23,6 +25,7 @@ Route::middleware(['auth', 'verified'])->group(function() {
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
     Route::resource('activity', ActivityControler::class);
     Route::resource('user', UserController::class);
+    Route::resource('department', DepartmentController::class);
 });
 
 Route::middleware('auth')->group(function () {
@@ -31,4 +34,4 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-require __DIR__.'/auth.php';
+require __DIR__.'/auth.php'; 
