@@ -30,11 +30,11 @@ class DepartmentController extends Controller
         return Inertia::render('Departen/Show', [
             // 'departments' => $this->departmentRepo->getAll(),
             'departments' => $departmentPaginate->items(),
-            // 'meta' => [
-            //     'total' => $departmentPaginate->total(),
-            //     'perPage' => $departmentPaginate->perPage(),
-            //     'currentPage' => $departmentPaginate->currentPage(),
-            // ]
+            'meta' => [
+                'total' => $departmentPaginate->total(),
+                'perPage' => $departmentPaginate->perPage(),
+                'currentPage' => $departmentPaginate->currentPage(),
+            ]
         ]);
     }
 
@@ -58,9 +58,7 @@ class DepartmentController extends Controller
      */
     public function store(CreateDepartmentRequest $request)
     {
-        $inputs = $request->all();
-
-        $this->departmentRepo->save($inputs);
+        $this->departmentRepo->save($request->all());
         return redirect()->route('department.index');
     }
 

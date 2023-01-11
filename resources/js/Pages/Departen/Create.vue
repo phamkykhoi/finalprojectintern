@@ -33,6 +33,7 @@ const saveDepartment = () => {
     form.patch(route('department.update', {department: props.department.id}))
 }
 
+
 </script>
 
 <template>
@@ -43,7 +44,6 @@ const saveDepartment = () => {
                 <header>
                     <h3>{{ pageTitle }}</h3>
                 </header>
-                
                 <form @submit.prevent="saveDepartment()" class="mt-6 space-y-6">
                     <div>
                         <InputLabel for="name" value="Tên Phòng ban" />
@@ -69,7 +69,7 @@ const saveDepartment = () => {
                     </div>
 
                     <div>
-                        <SecondaryButton> Đóng</SecondaryButton>
+                        <SecondaryButton> Đóng </SecondaryButton>
                         <PrimaryButton class="ml-3">Lưu lại</PrimaryButton>
                     </div>
                 </form>

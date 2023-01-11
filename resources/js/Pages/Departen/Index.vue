@@ -1,6 +1,6 @@
 <script setup>
 
-import DepartenForm from '@/Pages/Departen/Form.vue';
+import DepartenUserForm from '@/Pages/Departen/User.vue';
 import SettingIcon from '@/Components/Icons/SettingIcon.vue';
 import PlusIcon from '@/Components/Icons/PlusIcon.vue';
 import Dropdown from '@/Components/Dropdown.vue';
@@ -37,9 +37,21 @@ const editDepartmentForm = (currentDepartment) => {
 const closeFormDepartment = (value) => {
     showFormDepartment.value = value;
 }
+
+const showFormDepartmentUser = ref(false);
+
+const createDepartmentUserForm = (currentDepartment) => {
+    showFormDepartmentUser.value = true;
+    state.department = currentDepartment
+}
+const closeFormDepartmentUser = (value) => {
+    showFormDepartmentUser.value = value;
+}
+
 </script>
 
 <template>
+<div>
     <aside class="flex-shrink-0 hidden w-64 bg-white border-r dark:border-primary-darker dark:bg-darker md:block">
         <div class="flex flex-col h-full">
             <div class="h-16 border-b border-gray-100 hidden space-x-8 sm:flex">
@@ -66,8 +78,7 @@ const closeFormDepartment = (value) => {
                                 </template>
                                 <template #content>
                                     <a @click="createActivityForm(department)" class="block w-full px-4 py-2 text-left text-sm leading-5 text-gray-700 hover:bg-gray-100 transition duration-150 ease-in-out"><i class="bi bi-plus-lg"></i>Tạo hoạt động</a>
-                                    <a @click="editDepartmentForm(department)" class="block w-full px-4 py-2 text-left text-sm leading-5 text-gray-700 hover:bg-gray-100 transition duration-150 ease-in-out"><i class="bi bi-plus-lg"></i>Cập nhật phòng ban</a>
-                                    <a class="block w-full px-4 py-2 text-left text-sm leading-5 text-gray-700 hover:bg-gray-100 transition duration-150 ease-in-out"><i class="bi bi-sign-stop"></i>Đóng phòng ban</a>
+                                    <a @click="createDepartmentUserForm(department)" class="block w-full px-4 py-2 text-left text-sm leading-5 text-gray-700 hover:bg-gray-100 transition duration-150 ease-in-out"><i class="bi bi-plus-lg"></i>Quản lý thành viên</a>
                                 </template>
                             </Dropdown>
                         </span>
@@ -84,7 +95,6 @@ const closeFormDepartment = (value) => {
     </aside>
 
     <ActivityForm :departmentId="state.department" :isShowModal="showFormActivity" v-on:closeModal="closeFormActivity" />
-    <DepartenForm :department="state.department" :isShowModal="showFormDepartment" v-on:closeModal="closeFormDepartment" >
-
-    </DepartenForm>
+    <DepartenUserForm :department="state.department" :isShowModal="showFormDepartmentUser" v-on:closeModal="closeFormDepartmentUser" />
+</div>
 </template>

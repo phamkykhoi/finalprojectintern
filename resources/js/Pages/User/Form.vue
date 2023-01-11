@@ -70,7 +70,7 @@ const saveUser = () => {
                     </div>
 
                     <div>
-                        <SecondaryButton> Đóng</SecondaryButton>
+                        <SecondaryButton > Đóng</SecondaryButton>
                         <PrimaryButton class="ml-3">Lưu lại</PrimaryButton>
                     </div>
                 </form>
