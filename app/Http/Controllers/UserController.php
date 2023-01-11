@@ -76,4 +76,13 @@ class UserController extends Controller
         $this->userRepo->deleteById($id);
         return redirect()->route('user.index');
     }
+
+    public function indexJson()
+    {
+        return response()->json([
+            'users' => $this->userRepo->getAll()
+        ]);
+    }
+    
+    
 }

@@ -69,6 +69,12 @@ import { Link } from '@inertiajs/inertia-vue3';
                             d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                 </Link>
+                <Link :href="route('department.index')" class="flex items-center justify-center w-16 h-16 mt-auto bg-gray-200 hover:bg-gray-300">
+                    <svg class="h-8 w-8 text-blue-500"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round" 
+                        stroke-linejoin="round">  <circle cx="12" cy="12" r="10" />  <line x1="12" y1="8" x2="12" y2="16" />  <line x1="8" y1="12" x2="16" y2="12" />
+                    </svg>
+                </Link>
+
             </div>
         </aside>
         <!-- Component End Sidebar-->

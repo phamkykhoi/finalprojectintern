@@ -9,20 +9,19 @@ import PrimaryButton from '@/Components/PrimaryButton.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
 
 const props = defineProps({
-    user: Object,
+    department: Object,
     pageTitle: String,
 });
 
 const form = useForm({
-    name: props.user ? props.user.name : null,
-    email: props.user ? props.user.email : null,
-    role: props.user ? props.user.role : null,
-    password: null,
+    name: props.department ? props.department.name : null,
+    description: props.department ? props.department.description : null,
+    type: props.department ? props.department.type : null,
 });
 
-const saveUser = () => {
-    if (!props.user) {
-        form.post(route('user.store'), {
+const saveDepartment = () => {
+    if (!props.department) {
+        form.post(route('department.store'), {
             preserveScroll: true,
             onSuccess: () => { },
             onError: () => { },
@@ -31,8 +30,9 @@ const saveUser = () => {
         return;
     }
 
-    form.patch(route('user.update', {user: props.user.id}))
+    form.patch(route('department.update', {department: props.department.id}))
 }
+
 
 </script>
 
@@ -44,10 +44,9 @@ const saveUser = () => {
                 <header>
                     <h3>{{ pageTitle }}</h3>
                 </header>
-                
-                <form @submit.prevent="saveUser()" class="mt-6 space-y-6">
+                <form @submit.prevent="saveDepartment()" class="mt-6 space-y-6">
                     <div>
-                        <InputLabel for="name" value="Tên thành viên" />
+                        <InputLabel for="name" value="Tên Phòng ban" />
                         <TextInput id="name" type="text" class="mt-1 block w-full" v-model="form.name"
                             autofocus />
 
@@ -55,22 +54,22 @@ const saveUser = () => {
                     </div>
 
                     <div>
-                        <InputLabel for="name" value="Email" />
-                        <TextInput id="email" type="text" class="mt-1 block w-full" v-model="form.email"
+                        <InputLabel for="name" value="Mô tả phòng ban" />
+                        <TextInput id="description" type="text" class="mt-1 block w-full" v-model="form.description"
                             autofocus />
 
-                        <InputError class="mt-2" :message="form.errors.email" />
+                        <InputError class="mt-2" :message="form.errors.description" />
                     </div>
 
                     <div>
-                        <InputLabel for="name" value="Mật khẩu" />
-                        <TextInput id="password" type="password" class="mt-1 block w-full" v-model="form.password" />
+                        <InputLabel for="name" value="Type" />
+                        <TextInput id="type" type="number" class="mt-1 block w-full" v-model="form.type" />
 
-                        <InputError class="mt-2" :message="form.errors.password" />
+                        <InputError class="mt-2" :message="form.errors.type" />
                     </div>
 
                     <div>
-                        <SecondaryButton > Đóng</SecondaryButton>
+                        <SecondaryButton> Đóng </SecondaryButton>
                         <PrimaryButton class="ml-3">Lưu lại</PrimaryButton>
                     </div>
                 </form>
