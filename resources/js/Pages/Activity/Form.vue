@@ -81,7 +81,7 @@ const closeModal = () => {
                 <div
                     class="modal-footer flex flex-shrink-0 flex-wrap items-center justify-end p-4 border-t border-gray-200 rounded-b-md">
                     <SecondaryButton @click="closeModal"> Đóng </SecondaryButton>
-                    <PrimaryButton class="ml-3">Lưu lại</PrimaryButton>
+                    <PrimaryButton class="ml-3" @click="saveActivity">Lưu lại</PrimaryButton>
                 </div>
             </form>
         </Modal>

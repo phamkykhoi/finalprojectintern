@@ -10,4 +10,15 @@ class UserRepository extends BaseRepository
     {
         $this->model = $model;
     }
+
+    public function getAll(array $withRelation = null)
+    {
+        $query = $this->model->query();
+
+        if ($withRelation) {
+            $query->with($withRelation);
+        }
+
+        return $query->where('id', '!=', 1)->get();
+    }
 }

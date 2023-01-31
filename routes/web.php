@@ -23,7 +23,7 @@ use Inertia\Inertia;
 
 Route::middleware(['auth', 'verified'])->group(function() {
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
-    Route::resource('activity', ActivityControler::class);
+    Route::resource('activity', ActivityController::class);
     Route::get('user/list', [UserController::class, 'indexJson']);
     Route::resource('user', UserController::class);
     Route::resource('department', DepartmentController::class);

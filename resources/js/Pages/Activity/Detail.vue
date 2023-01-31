@@ -20,23 +20,24 @@ defineProps({
 </script>
 
 <template>
+    <div>
+        <Head title="Activity" />
 
-    <Head title="Activity" />
-
-    <AuthenticatedLayout>
-        <template #departen>
-            <DepartenList :departments="departments" :activityId="activityId" />
-        </template>
-        <!-- Lists container -->
-        <section class="lists-container">
-            <div class="list" :key="index" v-for="(taskGroup, index) in taskGroups">
-                <h3 class="list-title">{{ taskGroup.name }}</h3>
-                <TaskList :tasks="taskGroup.tasks" />
-            </div>
-            <button class="add-list-btn btn">Thêm nhóm công việc</button>
-        </section>
-        <!-- End of lists container -->
-    </AuthenticatedLayout>
+        <AuthenticatedLayout>
+            <template #departen>
+                <DepartenList :departments="departments" :activityId="activityId" />
+            </template>
+            <!-- Lists container -->
+            <section class="lists-container">
+                <div class="list" :key="index" v-for="(taskGroup, index) in taskGroups">
+                    <h3 class="list-title">{{ taskGroup.name }}</h3>
+                    <TaskList :tasks="taskGroup.tasks" />
+                </div>
+                <button class="add-list-btn btn">Thêm nhóm công việc</button>
+            </section>
+            <!-- End of lists container -->
+        </AuthenticatedLayout>
+    </div>
 </template>
 
 <style scoped>
