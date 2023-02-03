@@ -33,10 +33,6 @@ onBeforeMount(async () => {
         users = res.data.users
     })
 });
-
-
-
-
 </script>
 
 <template>
@@ -49,12 +45,19 @@ onBeforeMount(async () => {
                     </h5>
                 </div>
             <form>
-                <div class="grid grid-flow-col m-1">
-                    <div>
+                <div style="display: flex">
+                    <div class="selectbox">
                         <select>
                             <option :key="index" v-for="(user, index) in users">
                                 {{ user.name }}
                             </option>
+                        </select>
+                    </div>
+                    <div class="selectbox"> 
+                        <select>
+                            <option>Role</option>
+                            <option value="1">Root</option>
+                            <option value="2">Member</option>
                         </select>
                     </div>
                     <div>
@@ -64,11 +67,6 @@ onBeforeMount(async () => {
                     </div>
                 </div>
             </form>
-
-
-
-
-
                 <div>
                     <h5 class="text-xl font-medium leading-normal text-gray-800" id="exampleModalScrollableLabel">
                         Danh sách thành viên
@@ -76,9 +74,29 @@ onBeforeMount(async () => {
                 </div>
                 
                 <div>
-                    <TextInput id="name" type="text" class="mt-1 block w-full" placeholder="Danh sách thành viên thuộc department"
-                        autofocus autocomplete="name" />
-                    <!-- <InputError class="mt-2" :message="form.errors.name" /> -->
+                    <el-tabs v-model="activeName" class="demo-tabs" @tab-click="handleClick">
+                        <el-tab-pane label="User" name="first">
+                            <el-table style="width: 100%">
+                                <el-table-column label="ID" width="180" />
+                                <el-table-column label="Name" width="180" />
+                                <el-table-column label="Email" />
+                            </el-table>
+                        </el-tab-pane>
+                        <el-tab-pane label="Config" name="second">
+                             <el-table style="width: 100%">
+                                <el-table-column label="ID" width="180" />
+                                <el-table-column label="Name" width="180" />
+                                <el-table-column label="Email" />
+                            </el-table>
+                        </el-tab-pane>
+                        <el-tab-pane label="Role" name="third">
+                            <el-table style="width: 100%">
+                                <el-table-column label="ID" width="180" />
+                                <el-table-column label="Name" width="180" />
+                                <el-table-column label="Email" />
+                            </el-table>
+                        </el-tab-pane>
+                    </el-tabs>
                 </div>
                 <div
                     class="modal-footer flex flex-shrink-0 flex-wrap items-center justify-end p-4 border-t border-gray-200 rounded-b-md">
@@ -88,3 +106,16 @@ onBeforeMount(async () => {
         </Modal>
     </section>
 </template>
+
+<style>
+    .demo-tabs > .el-tabs__content {
+        padding: 0 20px;
+        color: #6b778c;
+        font-size: 32px;
+        font-weight: 600;
+    }
+
+    .selectbox {
+        margin-right: 20px;
+    }
+</style>
