@@ -7,7 +7,7 @@ import SecondaryButton from '@/Components/SecondaryButton.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import { useForm, usePage, Link } from '@inertiajs/inertia-vue3'
-import { nextTick, ref, defineEmits, watch } from 'vue';
+import {reactive, nextTick, ref, defineEmits, watch } from 'vue';
 
 const confirmingUserDeletion = ref(false);
 const passwordInput = ref(null);
@@ -22,9 +22,10 @@ const props = defineProps({
         default: false,
     }
 })
-
+const ValidateForm = reactive({
+  name: '',
+})
 const form = useForm({
-    name: '',
     description: '',
     department_id: 1,
 });
@@ -66,10 +67,26 @@ const closeModal = () => {
                 </div>
                 <div class="modal-body relative p-4">
                         <div>
-                            <InputLabel for="name" value="Tên công việc (bắt buộc)" />
-                            <TextInput id="name" type="text" class="mt-1 block w-full" v-model="form.name" autofocus
-                                autocomplete="name" />
-                            <InputError class="mt-2" :message="form.errors.name" />
+                            <el-form
+                                ref="formRef"
+                                :model="ValidateForm"
+                                label-width="100px"
+                                class="demo-ruleForm"
+    >
+                                <el-form-item
+                                    label="Tên công việc"
+                                    prop="name"
+                                    :rules="[
+                                        { required: true, message: 'name is required' },
+                                    ]"
+                                    >
+                                    <el-input
+                                        v-model="ValidateForm.name"
+                                        type="text"
+                                        autocomplete="off"
+                                    />
+                                </el-form-item>
+                            </el-form>
                         </div>
 
                         <div>
