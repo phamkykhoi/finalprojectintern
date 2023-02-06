@@ -1,14 +1,14 @@
 <script setup>
 
 import SettingIcon from '@/Components/Icons/SettingIcon.vue';
+import DepartenUserForm from '@/Pages/Departen/User.vue';
+import ActivityForm from '@/Pages/Activity/Create.vue';
 import PlusIcon from '@/Components/Icons/PlusIcon.vue';
-import Dropdown from '@/Components/Dropdown.vue';
-import DropdownLink from '@/Components/DropdownLink.vue';
-import { Link } from '@inertiajs/inertia-vue3';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head } from '@inertiajs/inertia-vue3';
 import DepartenList from '@/Pages/Departen/Index.vue';
 import TaskList from '@/Pages/Task/Index.vue';
+import { reactive, ref } from 'vue';
 
 defineProps({
     departments: Array,
@@ -16,7 +16,39 @@ defineProps({
     activityId: Number,
 });
 
+const showFormActivity = ref(false);
+const state  = reactive({
+    department: null
+})
 
+const createActivityForm = (currentDepartment) => {
+    showFormActivity.value = true;
+    state.department = currentDepartment
+}
+
+const closeFormActivity = (value) => {
+    showFormActivity.value = value;
+}
+const showFormDepartment = ref(false);
+
+const editDepartmentForm = (currentDepartment) => {
+    showFormDepartment.value = true;
+    state.department = currentDepartment
+}
+
+const closeFormDepartment = (value) => {
+    showFormDepartment.value = value;
+}
+
+const showFormDepartmentUser = ref(false);
+
+const createDepartmentUserForm = (currentDepartment) => {
+    showFormDepartmentUser.value = true;
+    state.department = currentDepartment
+}
+const closeFormDepartmentUser = (value) => {
+    showFormDepartmentUser.value = value;
+}
 </script>
 
 <template>
@@ -30,7 +62,12 @@ defineProps({
             <!-- Lists container -->
             <section class="lists-container">
                 <div class="list" :key="index" v-for="(taskGroup, index) in taskGroups">
-                    <h3 class="list-title">{{ taskGroup.name }}</h3>
+                    <div class="list-group-title">
+                        <h3 class="list-title">{{ taskGroup.name }}</h3>
+                        <a @click="createActivityForm(department)" class="btn-add block w-full px-4 py-2 text-left text-sm leading-5 text-gray-700 hover:bg-gray-100 transition duration-150 ease-in-out">
+                            <i>Thêm</i>
+                        </a>
+                    </div>
                     <TaskList :tasks="taskGroup.tasks" />
                 </div>
                 <button class="add-list-btn btn">Thêm nhóm công việc</button>
@@ -38,10 +75,15 @@ defineProps({
             <!-- End of lists container -->
         </AuthenticatedLayout>
     </div>
+    <ActivityForm :departmentId="state.department" :isShowModal="showFormActivity" v-on:closeModal="closeFormActivity" />
 </template>
 
 <style scoped>
 /* Lists */
+.list-group-title{
+    display: flex;
+    align-items: center;
+}
 .lists-container::-webkit-scrollbar {
     height: .4rem;
 }
@@ -117,6 +159,17 @@ defineProps({
 .add-card-btn::after,
 .add-list-btn::after {
     content: '...';
+}
+.btn-add {
+    max-width: 100px;
+    height: fit-content;
+    margin-left: 125px;
+    background-color: #cdd2d4;
+}
+
+.btn-add:hover {
+    background-color: white;
+    cursor: pointer;
 }
 
 @supports (display: grid) {
