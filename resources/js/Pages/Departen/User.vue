@@ -33,6 +33,18 @@ onBeforeMount(async () => {
         users = res.data.users
     })
 });
+
+const roleOptions = [
+  {
+    id: '1',
+    role: 'Root',
+  },
+  {
+    id: '2',
+    role: 'Member',
+  },
+]
+
 </script>
 
 <template>
@@ -46,21 +58,27 @@ onBeforeMount(async () => {
                 </div>
             <form>
                 <div style="display: flex">
-                    <div class="selectbox">
-                        <select>
-                            <option :key="index" v-for="(user, index) in users">
-                                {{ user.name }}
-                            </option>
-                        </select>
-                    </div>
-                    <div class="selectbox"> 
-                        <select>
-                            <option>Role</option>
-                            <option value="1">Root</option>
-                            <option value="2">Member</option>
-                        </select>
-                    </div>
                     <div>
+                        <el-select v-model="user" class="m-2" placeholder="Name" size="large">
+                            <el-option
+                            v-for="user in users"
+                            :key="user.id"
+                            :label="user.name"
+                            :value="user.id"
+                            />
+                        </el-select>
+                    </div>
+                    <div> 
+                        <el-select v-model="role" class="m-2" placeholder="Role" size="large">
+                            <el-option
+                            v-for="role in roleOptions"
+                            :key="role.id"
+                            :label="role.role"
+                            :value="role.id"
+                            />
+                        </el-select>
+                    </div>
+                    <div style="margin: auto;">
                         <button class="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-2 border border-blue-500 hover:border-transparent rounded">
                             Thêm mới
                         </button>
@@ -113,9 +131,5 @@ onBeforeMount(async () => {
         color: #6b778c;
         font-size: 32px;
         font-weight: 600;
-    }
-
-    .selectbox {
-        margin-right: 20px;
     }
 </style>
