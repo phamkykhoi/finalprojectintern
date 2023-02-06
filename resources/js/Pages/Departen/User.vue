@@ -75,21 +75,21 @@ onBeforeMount(async () => {
                 
                 <div>
                     <el-tabs v-model="activeName" class="demo-tabs" @tab-click="handleClick">
-                        <el-tab-pane label="User" name="first">
+                        <el-tab-pane label="Tất cả thành viên" name="first">
                             <el-table style="width: 100%">
                                 <el-table-column label="ID" width="180" />
                                 <el-table-column label="Name" width="180" />
                                 <el-table-column label="Email" />
                             </el-table>
                         </el-tab-pane>
-                        <el-tab-pane label="Config" name="second">
+                        <el-tab-pane label="Trưởng phòng" name="second">
                              <el-table style="width: 100%">
                                 <el-table-column label="ID" width="180" />
                                 <el-table-column label="Name" width="180" />
                                 <el-table-column label="Email" />
                             </el-table>
                         </el-tab-pane>
-                        <el-tab-pane label="Role" name="third">
+                        <el-tab-pane label="Giám sát" name="third">
                             <el-table style="width: 100%">
                                 <el-table-column label="ID" width="180" />
                                 <el-table-column label="Name" width="180" />
