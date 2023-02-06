@@ -9,6 +9,8 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head } from '@inertiajs/inertia-vue3';
 import DepartenList from '@/Pages/Departen/Index.vue';
 import TaskList from '@/Pages/Task/Index.vue';
+import TaskGroupForm from '@/Pages/Task/TaskGroupForm.vue';
+import { reactive, ref } from 'vue';
 
 defineProps({
     departments: Array,
@@ -16,6 +18,20 @@ defineProps({
     activityId: Number,
 });
 
+
+const showFormTaskGroup = ref(false);
+const state  = reactive({
+    activityId:null,
+})
+
+const createTaskGroupForm = (currentActivityId) => {
+    showFormTaskGroup.value = true;
+    state.activityId = currentActivityId;
+}
+
+const closeFormTaskGroup = (value) => {
+    showFormTaskGroup.value = value;
+}
 
 </script>
 
@@ -33,10 +49,11 @@ defineProps({
                     <h3 class="list-title">{{ taskGroup.name }}</h3>
                     <TaskList :tasks="taskGroup.tasks" />
                 </div>
-                <button class="add-list-btn btn">Thêm nhóm công việc</button>
+                <button class="add-list-btn btn" @click="createTaskGroupForm(activityId)">Thêm nhóm công việc</button>
             </section>
             <!-- End of lists container -->
         </AuthenticatedLayout>
+        <TaskGroupForm :activityId="activityId" :isShowModal="showFormTaskGroup" v-on:closeModal="closeFormTaskGroup" />
     </div>
 </template>
 
