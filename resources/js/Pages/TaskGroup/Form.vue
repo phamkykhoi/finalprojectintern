@@ -10,7 +10,7 @@ import { useForm, usePage, Link } from '@inertiajs/inertia-vue3'
 import { nextTick, ref, defineEmits, watch } from 'vue';
 
 const confirmingUserDeletion = ref(false);
-const passwordInput = ref(null);
+const nameInput = ref(null);
 
 const props = defineProps({
     activityId: {
@@ -40,7 +40,7 @@ const saveTask = () => {
     form.post(route(''), {
         preserveScroll: true,
         onSuccess: () => closeModal(),
-        onError: () => passwordInput.value.focus(),
+        onError: () => nameInput.value.focus(),
         onFinish: () => form.reset(),
     })
 };
@@ -67,7 +67,7 @@ const closeModal = () => {
                         <div>
                             <InputLabel for="name" value="Tên nhóm công việc (bắt buộc)" />
                             <TextInput id="name" type="text" class="mt-1 block w-full" v-model="form.name" autofocus
-                                autocomplete="name" />
+                                autocomplete="name" ref="nameInput"/>
                             <InputError class="mt-2" :message="form.errors.name" />
                         </div>
                         <div>
