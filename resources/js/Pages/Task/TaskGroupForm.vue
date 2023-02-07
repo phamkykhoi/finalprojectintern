@@ -71,8 +71,7 @@ const closeModal = () => {
                             <InputError class="mt-2" :message="form.errors.name" />
                         </div>
                         <div>
-                            <InputLabel for="activityId" value="Activity ID:" />
-                            <TextInput id="activityId" type="text" class="mt-1 block w-full" v-model="form.activityId" disabled />
+                            <TextInput id="activityId" type="hidden" class="mt-1 block w-full" v-model="form.activityId" disabled />
                             <InputError class="mt-2" :message="form.errors.activityId" />
                         </div>
                 </div>
@@ -85,3 +84,4 @@ const closeModal = () => {
         </Modal>
     </section>
 </template>
+/
