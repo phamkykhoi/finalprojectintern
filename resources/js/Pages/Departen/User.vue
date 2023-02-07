@@ -26,11 +26,12 @@ const closeModal = () => {
     emit('closeModal', false);
 };
 
-let users = reactive([]);
-const listUser = ref('')
+let listUser = reactive([]);
+const users = ref('')
 onBeforeMount(async () => {
     await axios.get(`/user/list`).then((res) => {
-        users = res.data.users
+        listUser = res.data.users
+        console.log(res)
     })
 });
 
@@ -60,9 +61,9 @@ const roleOptions = [
             <form>
                 <div style="display: flex">
                     <div>
-                        <el-select v-model="listUser" class="m-2" placeholder="Name" size="large">
+                        <el-select v-model="users" class="m-2" placeholder="Name" size="large">
                             <el-option
-                            v-for="user in users"
+                            v-for="user in listUser"
                             :key="user.id"
                             :label="user.name"
                             :value="user.id"
