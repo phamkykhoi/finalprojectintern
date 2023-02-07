@@ -9,7 +9,7 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head } from '@inertiajs/inertia-vue3';
 import DepartenList from '@/Pages/Departen/Index.vue';
 import TaskList from '@/Pages/Task/Index.vue';
-import TaskGroupForm from '@/Pages/Task/TaskGroupForm.vue';
+import TaskGroupForm from '@/Pages/TaskGroup/Form.vue';
 import { reactive, ref } from 'vue';
 
 defineProps({
