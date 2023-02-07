@@ -2,7 +2,7 @@
 
 import SettingIcon from '@/Components/Icons/SettingIcon.vue';
 import DepartenUserForm from '@/Pages/Departen/User.vue';
-import ActivityForm from '@/Pages/Activity/Create.vue';
+import TaskForm from '@/Pages/Task/Form.vue';
 import PlusIcon from '@/Components/Icons/PlusIcon.vue';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head } from '@inertiajs/inertia-vue3';
@@ -16,38 +16,18 @@ defineProps({
     activityId: Number,
 });
 
-const showFormActivity = ref(false);
+const showFormTask = ref(false);
 const state  = reactive({
-    department: null
+    task: null
 })
 
-const createActivityForm = (currentDepartment) => {
-    showFormActivity.value = true;
-    state.department = currentDepartment
+const createTaskForm = (currentTask) => {
+    showFormTask.value = true;
+    state.task = currentTask
 }
 
-const closeFormActivity = (value) => {
-    showFormActivity.value = value;
-}
-const showFormDepartment = ref(false);
-
-const editDepartmentForm = (currentDepartment) => {
-    showFormDepartment.value = true;
-    state.department = currentDepartment
-}
-
-const closeFormDepartment = (value) => {
-    showFormDepartment.value = value;
-}
-
-const showFormDepartmentUser = ref(false);
-
-const createDepartmentUserForm = (currentDepartment) => {
-    showFormDepartmentUser.value = true;
-    state.department = currentDepartment
-}
-const closeFormDepartmentUser = (value) => {
-    showFormDepartmentUser.value = value;
+const closeFormTask = (value) => {
+    showFormTask.value = value;
 }
 </script>
 
@@ -64,7 +44,7 @@ const closeFormDepartmentUser = (value) => {
                 <div class="list" :key="index" v-for="(taskGroup, index) in taskGroups">
                     <div class="list-group-title">
                         <h3 class="list-title">{{ taskGroup.name }}</h3>
-                        <a @click="createActivityForm(department)" class="btn-add block w-full px-4 py-2 text-left text-sm leading-5 text-gray-700 hover:bg-gray-100 transition duration-150 ease-in-out">
+                        <a @click="createTaskForm(task)" class="btn-add block w-full px-4 py-2 text-left text-sm leading-5 text-gray-700 hover:bg-gray-100 transition duration-150 ease-in-out">
                             <i>Thêm</i>
                         </a>
                     </div>
@@ -75,7 +55,7 @@ const closeFormDepartmentUser = (value) => {
             <!-- End of lists container -->
         </AuthenticatedLayout>
     </div>
-    <ActivityForm :departmentId="state.department" :isShowModal="showFormActivity" v-on:closeModal="closeFormActivity" />
+    <TaskForm :taskId="state.task" :isShowModal="showFormTask" v-on:closeModal="closeFormTask" />
 </template>
 
 <style scoped>

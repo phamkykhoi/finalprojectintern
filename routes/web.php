@@ -28,7 +28,6 @@ Route::middleware(['auth', 'verified'])->group(function() {
     Route::resource('user', UserController::class);
     Route::resource('department', DepartmentController::class);
 });
-Route::get('/a', [ProfileController::class, 'a'])->name('profile.a');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
