@@ -27,13 +27,14 @@ const closeModal = () => {
 };
 
 let users = reactive([]);
-
+const user = ref('')
 onBeforeMount(async () => {
     await axios.get(`/user/list`).then((res) => {
         users = res.data.users
     })
 });
 
+const role = ref('')
 const roleOptions = [
   {
     id: '1',
