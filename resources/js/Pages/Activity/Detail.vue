@@ -9,20 +9,12 @@ import { Head } from '@inertiajs/inertia-vue3';
 import DepartenList from '@/Pages/Departen/Index.vue';
 import TaskList from '@/Pages/Task/Index.vue';
 import { reactive, ref } from 'vue';
-import SecondaryButton from '@/Components/SecondaryButton.vue';
-import PrimaryButton from '@/Components/PrimaryButton.vue';
 
 defineProps({
     departments: Array,
     taskGroups: Array,
     activityId: Number,
 });
-
-const ValidateForm = reactive({
-    name: '',
-    description: '',
-    task_id: 1,
-})
 
 const showFormTask = ref(false);
 const state  = reactive({
@@ -40,6 +32,9 @@ const closeFormTask = (value) => {
 </script>
 
 <template>
+    <slot name="taskForm">
+
+    </slot>
     <div>
         <Head title="Activity" />
 
@@ -47,6 +42,7 @@ const closeFormTask = (value) => {
             <template #departen>
                 <DepartenList :departments="departments" :activityId="activityId" />
             </template>
+  
             <!-- Lists container -->
             <section class="lists-container">
                 <div class="list" :key="index" v-for="(taskGroup, index) in taskGroups">
@@ -64,53 +60,6 @@ const closeFormTask = (value) => {
 
         </AuthenticatedLayout>
     </div>
-    <TaskForm v-if="showFormTask" :taskId="state.task" :isShowModal="showFormTask" v-on:closeModal="closeFormTask">
-        <template v-slot:taskForm>
-            <form @submit.prevent="saveTask()" class="space-y-6">
-                <div
-                    class="modal-header flex flex-shrink-0 items-center justify-between p-4 border-b border-gray-200 rounded-t-md">
-                    <h5 class="text-xl font-medium leading-normal text-gray-800" id="exampleModalScrollableLabel">
-                        Tạo công việc
-                    </h5>
-                </div>
-                
-                <div class="modal-body relative p-4">
-                    <div>
-                        <el-form
-                            ref="formRef"
-                            :model="ValidateForm"
-                            label-width="110px"
-                            class="demo-ruleForm"
->
-                            <el-form-item
-                                label="Tên công việc"
-                                prop="name"
-                                :rules="[
-                                    { required: true, message: 'name is required' },
-                                ]"
-                                >
-                                <el-input
-                                    v-model="ValidateForm.name"
-                                    type="text"
-                                    autocomplete="off"
-                                />
-                            </el-form-item>
-                            <el-form-item
-                                label="Mô tả công việc"
-                                prop="description"
-                                >
-                                <el-input
-                                    v-model="ValidateForm.description"
-                                    type="text"
-                                    autocomplete="off"
-                                />
-                            </el-form-item>
-                        </el-form>
-                    </div>
-                </div>
-            </form>
-        </template>
-    </TaskForm>
 </template>
 
 <style scoped>
