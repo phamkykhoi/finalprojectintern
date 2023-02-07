@@ -67,7 +67,7 @@ const closeModal = () => {
                         <div>
                             <InputLabel for="name" value="Tên nhóm công việc (bắt buộc)" />
                             <TextInput id="name" type="text" class="mt-1 block w-full" v-model="form.name" autofocus
-                                autocomplete="name" ref="nameInput"/>
+                                autocomplete="name" ref="nameInput" required/>
                             <InputError class="mt-2" :message="form.errors.name" />
                         </div>
                         <div>
