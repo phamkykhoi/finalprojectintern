@@ -26,16 +26,26 @@ const closeModal = () => {
     emit('closeModal', false);
 };
 
-let users = reactive([]);
-
+let listUser = reactive([]);
+const users = ref('')
 onBeforeMount(async () => {
     await axios.get(`/user/list`).then((res) => {
-        users = res.data.users
+        listUser = res.data.users
+        console.log(res)
     })
 });
 
-
-
+const roles = ref('')
+const roleOptions = [
+  {
+    id: '1',
+    role: 'Root',
+  },
+  {
+    id: '2',
+    role: 'Member',
+  },
+]
 
 </script>
 
@@ -49,26 +59,34 @@ onBeforeMount(async () => {
                     </h5>
                 </div>
             <form>
-                <div class="grid grid-flow-col m-1">
+                <div style="display: flex">
                     <div>
-                        <select>
-                            <option :key="index" v-for="(user, index) in users">
-                                {{ user.name }}
-                            </option>
-                        </select>
+                        <el-select v-model="users" class="m-2" placeholder="Name" size="large">
+                            <el-option
+                            v-for="user in listUser"
+                            :key="user.id"
+                            :label="user.name"
+                            :value="user.id"
+                            />
+                        </el-select>
                     </div>
-                    <div>
+                    <div> 
+                        <el-select v-model="roles" class="m-2" placeholder="Role" size="large">
+                            <el-option
+                            v-for="role in roleOptions"
+                            :key="role.id"
+                            :label="role.role"
+                            :value="role.id"
+                            />
+                        </el-select>
+                    </div>
+                    <div style="margin: auto;">
                         <button class="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-2 border border-blue-500 hover:border-transparent rounded">
                             Thêm mới
                         </button>
                     </div>
                 </div>
             </form>
-
-
-
-
-
                 <div>
                     <h5 class="text-xl font-medium leading-normal text-gray-800" id="exampleModalScrollableLabel">
                         Danh sách thành viên
@@ -76,9 +94,29 @@ onBeforeMount(async () => {
                 </div>
                 
                 <div>
-                    <TextInput id="name" type="text" class="mt-1 block w-full" placeholder="Danh sách thành viên thuộc department"
-                        autofocus autocomplete="name" />
-                    <!-- <InputError class="mt-2" :message="form.errors.name" /> -->
+                    <el-tabs v-model="activeName" class="demo-tabs" @tab-click="handleClick">
+                        <el-tab-pane label="Tất cả thành viên" name="first">
+                            <el-table style="width: 100%">
+                                <el-table-column label="ID" width="180" />
+                                <el-table-column label="Name" width="180" />
+                                <el-table-column label="Email" />
+                            </el-table>
+                        </el-tab-pane>
+                        <el-tab-pane label="Trưởng phòng" name="second">
+                             <el-table style="width: 100%">
+                                <el-table-column label="ID" width="180" />
+                                <el-table-column label="Name" width="180" />
+                                <el-table-column label="Email" />
+                            </el-table>
+                        </el-tab-pane>
+                        <el-tab-pane label="Giám sát" name="third">
+                            <el-table style="width: 100%">
+                                <el-table-column label="ID" width="180" />
+                                <el-table-column label="Name" width="180" />
+                                <el-table-column label="Email" />
+                            </el-table>
+                        </el-tab-pane>
+                    </el-tabs>
                 </div>
                 <div
                     class="modal-footer flex flex-shrink-0 flex-wrap items-center justify-end p-4 border-t border-gray-200 rounded-b-md">
@@ -88,3 +126,12 @@ onBeforeMount(async () => {
         </Modal>
     </section>
 </template>
+
+<style>
+    .demo-tabs > .el-tabs__content {
+        padding: 0 20px;
+        color: #6b778c;
+        font-size: 32px;
+        font-weight: 600;
+    }
+</style>
