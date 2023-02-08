@@ -9,6 +9,8 @@ class UserDeparten extends Model
 {
     use HasFactory;
 
+    protected $table = 'user_departments';
+
     protected $fillable = [
         'user_id',
         'role',
