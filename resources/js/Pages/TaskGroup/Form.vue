@@ -9,7 +9,7 @@ import TextInput from '@/Components/TextInput.vue';
 import { useForm, usePage, Link } from '@inertiajs/inertia-vue3'
 import { nextTick, ref, defineEmits, watch } from 'vue';
 
-const confirmingUserDeletion = ref(false);
+const confirmingTaskGroupDeletion = ref(false);
 const nameInput = ref(null);
 
 const props = defineProps({
@@ -30,13 +30,13 @@ const form = useForm({
 
 const emit = defineEmits(['closeModal', 'unClose'])
 
-confirmingUserDeletion.value = props.isShowModal;
+confirmingTaskGroupDeletion.value = props.isShowModal;
 
-const confirmUserDeletion = () => {
-    confirmingUserDeletion.value = true;
+const confirmTaskGroupDeletion = () => {
+    confirmingTaskGroupDeletion.value = true;
 };
 
-const saveTask = () => {
+const saveTaskGroup = () => {
     form.post(route(''), {
         preserveScroll: true,
         onSuccess: () => closeModal(),
@@ -46,7 +46,7 @@ const saveTask = () => {
 };
 
 const closeModal = () => {
-    confirmingUserDeletion.value = false;
+    confirmingTaskGroupDeletion.value = false;
     emit('closeModal', false);
     form.reset();
 };
@@ -56,7 +56,7 @@ const closeModal = () => {
 <template>
     <section class="space-y-6">
         <Modal :show="isShowModal" @close="closeModal">
-            <form @submit.prevent="saveTask()" class="space-y-6">
+            <form @submit.prevent="saveTaskGroup()" class="space-y-6">
                 <div
                     class="modal-header flex flex-shrink-0 items-center justify-between p-4 border-b border-gray-200 rounded-t-md">
                     <h5 class="text-xl font-medium leading-normal text-gray-800" id="exampleModalScrollableLabel">
@@ -78,7 +78,7 @@ const closeModal = () => {
                 <div
                     class="modal-footer flex flex-shrink-0 flex-wrap items-center justify-end p-4 border-t border-gray-200 rounded-b-md">
                     <SecondaryButton @click="closeModal"> Đóng </SecondaryButton>
-                    <PrimaryButton class="ml-3" @click="saveTask">Lưu lại</PrimaryButton>
+                    <PrimaryButton class="ml-3" @click="saveTaskGroup">Lưu lại</PrimaryButton>
                 </div>
             </form>
         </Modal>
