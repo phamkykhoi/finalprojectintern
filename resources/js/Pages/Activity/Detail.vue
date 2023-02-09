@@ -1,12 +1,9 @@
 <script setup>
 
-import SettingIcon from '@/Components/Icons/SettingIcon.vue';
-import DepartenUserForm from '@/Pages/Departen/User.vue';
-import TaskForm from '@/Pages/Task/Form.vue';
-import PlusIcon from '@/Components/Icons/PlusIcon.vue';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head } from '@inertiajs/inertia-vue3';
 import DepartenList from '@/Pages/Departen/Index.vue';
+import TaskForm from '@/Pages/Task/Form.vue';
 import TaskList from '@/Pages/Task/Index.vue';
 import { reactive, ref } from 'vue';
 
@@ -32,18 +29,14 @@ const closeFormTask = (value) => {
 </script>
 
 <template>
-    <slot name="taskForm">
-
-    </slot>
     <div>
         <Head title="Activity" />
-
+        
         <AuthenticatedLayout>
             <template #departen>
                 <DepartenList :departments="departments" :activityId="activityId" />
             </template>
-  
-            <!-- Lists container -->
+            
             <section class="lists-container">
                 <div class="list" :key="index" v-for="(taskGroup, index) in taskGroups">
                     <div class="list-group-title">
@@ -56,10 +49,10 @@ const closeFormTask = (value) => {
                 </div>
                 <button class="add-list-btn btn">Thêm nhóm công việc</button>
             </section>
-            <!-- End of lists container -->
-
+            
         </AuthenticatedLayout>
     </div>
+    <TaskForm :taskId="state.task" :isShowModal="showFormTask" v-on:closeModal="closeFormTask" />
 </template>
 
 <style scoped>
