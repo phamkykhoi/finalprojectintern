@@ -1,18 +1,14 @@
 <script lang="ts" setup>
-import DangerButton from '@/Components/DangerButton.vue';
-import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import Modal from '@/Components/Modal.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
-import TextInput from '@/Components/TextInput.vue';
-import { useForm, usePage, Link } from '@inertiajs/inertia-vue3'
-import { nextTick, ref, defineEmits, watch, reactive } from 'vue';
+import {ref, defineEmits, reactive } from 'vue';
 import type { FormInstance } from 'element-plus'
 
 const confirmingTaskGroupDeletion = ref(false);
-const nameInput = ref(null);
-
+const ruleFormRef = ref<FormInstance>()
+const emit = defineEmits(['closeModal', 'unClose'])
 const props = defineProps({
     activityId: {
         type: Number,
@@ -24,29 +20,20 @@ const props = defineProps({
     }
 })
 
-const ruleFormRef = ref<FormInstance>()
-
 const taskGroupForm = reactive({
     name: '',
     activityId: props.activityId,
 })
 
-const emit = defineEmits(['closeModal', 'unClose'])
-
 confirmingTaskGroupDeletion.value = props.isShowModal;
-
-const confirmTaskGroupDeletion = () => {
-    confirmingTaskGroupDeletion.value = true;
-};
 
 const saveTaskGroup = (formEl: FormInstance | undefined) => {
     if (!formEl) return
  formEl.validate((valid) => {
     if (valid) {
       console.log('submit!')
-    } else {
-      console.log('error submit!')
-      return false
+      closeModal()
+      formEl.resetFields()
     }
   })
 };
@@ -55,11 +42,6 @@ const closeModal = () => {
     confirmingTaskGroupDeletion.value = false;
     emit('closeModal', false);
 };
-
-const resetForm = (formEl: FormInstance | undefined) => {
-  if (!formEl) return
-  formEl.resetFields()
-}
 
 const rules = reactive({
     name: [{required: true, message: 'Bắt buộc nhập', trigger: 'blur' }],
