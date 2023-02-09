@@ -21,13 +21,11 @@ const props = defineProps({
 
 const form = useForm({
     description: '',
-    task_id: 1,
 });
 
 const ValidateForm = reactive({
     name: '',
     description: '',
-    task_id: 1,
 })
 
 const emit = defineEmits(['closeModal', 'unClose'])
