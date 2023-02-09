@@ -16,7 +16,6 @@ defineProps({
     activityId: Number,
 });
 
-
 </script>
 
 <template>
