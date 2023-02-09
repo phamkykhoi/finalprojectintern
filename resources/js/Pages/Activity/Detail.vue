@@ -21,7 +21,7 @@ defineProps({
 <template>
     <div>
         <Head title="Activity" />
-
+        
         <AuthenticatedLayout>
             <template #departen>
                 <DepartenList :departments="departments" :activityId="activityId" />

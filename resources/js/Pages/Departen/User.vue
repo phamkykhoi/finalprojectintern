@@ -1,51 +1,80 @@
-<script setup>
-
-import DangerButton from '@/Components/DangerButton.vue';
-import InputError from '@/Components/InputError.vue';
-import InputLabel from '@/Components/InputLabel.vue';
+<script lang="ts" setup>
 import Modal from '@/Components/Modal.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
-import PrimaryButton from '@/Components/PrimaryButton.vue';
-import TextInput from '@/Components/TextInput.vue';
 import { useForm, usePage, Link } from '@inertiajs/inertia-vue3';
-import { nextTick, ref, defineEmits, watch, reactive, onMounted, onBeforeMount } from 'vue';
+import { ref, defineEmits, reactive, onMounted, onBeforeMount } from 'vue';
+import type { FormInstance } from 'element-plus'
+import { ElMessage } from 'element-plus'
 
 const props = defineProps({
     department: {
         type: Object,
         pageTitle: String,
-        // default: {name: null},
     },
     isShowModal: {
         type: Boolean,
         default: false,
     },
 });
+
+const roles = ref([
+  {id: 1, role: 'Trưởng phòng'},
+  {id: 2, role: 'Giám sát'},
+  {id: 3, role: 'Thành viên'},
+])
+
 const emit = defineEmits(['closeModal']);
+
 const closeModal = () => {
     emit('closeModal', false);
 };
 
-let listUser = reactive([]);
-const users = ref('')
+const ruleFormRef = ref<FormInstance>()
+const userDepartmentForm = reactive({
+    user_id: '',
+    role_id: '',
+    department_id: props.department.id
+})
+
+const rules = reactive({
+    user_id: [{required: true, message: 'Bắt buộc chọn', trigger: 'blur' }],
+    role_id: [{required: true, message: 'Bắt buộc chọn', trigger: 'blur' }],
+})
+
+const assignUserToDepartment = (formEl: FormInstance | undefined) => {
+    if (!formEl) return
+
+    formEl.validate((valid) => {
+        if (valid) {
+            axios.post('/department/assign-member', userDepartmentForm).then(res => {
+                console.log(res.data.status)
+
+                if (res.data.status) {
+                    ElMessage({
+                        showClose: true,
+                        message: 'Thêm thành viên thành công',
+                        type: 'success',
+                    })
+                }
+            }).catch(err => {
+                ElMessage({
+                    showClose: true,
+                    message: err.response.data.message,
+                    type: 'error',
+                })
+            })
+        }
+    })
+}
+
+const users = ref([])
+
 onBeforeMount(async () => {
     await axios.get(`/user/list`).then((res) => {
-        listUser = res.data.users
-        console.log(res)
+        users.value = res.data.users
     })
 });
 
-const roles = ref('')
-const roleOptions = [
-  {
-    id: '1',
-    role: 'Root',
-  },
-  {
-    id: '2',
-    role: 'Member',
-  },
-]
 
 </script>
 
@@ -55,44 +84,48 @@ const roleOptions = [
             <form class="space-y-6 m-3">
                 <div>
                     <h5 class="text-xl font-medium leading-normal text-gray-800" id="exampleModalScrollableLabel">
-                        Cập nhật thành viên
+                        Cập nhật thành viên ở deparment  {{ props.department.name }}
                     </h5>
                 </div>
-            <form>
-                <div style="display: flex">
-                    <div>
-                        <el-select v-model="users" class="m-2" placeholder="Name" size="large">
-                            <el-option
-                            v-for="user in listUser"
-                            :key="user.id"
-                            :label="user.name"
-                            :value="user.id"
-                            />
-                        </el-select>
+
+                <el-form ref="ruleFormRef" :model="userDepartmentForm" status-icon :rules="rules" class="demo-ruleForm">
+                    <div style="display: flex">
+                        <div>
+                            <el-form-item prop="user_id">
+                                <el-select v-model="userDepartmentForm.user_id" class="m-2" placeholder="Thành viên">
+                                    <el-option
+                                        v-for="user in users"
+                                        :key="user.id"
+                                        :label="user.name"
+                                        :value="user.id"/>
+                                </el-select>
+                            </el-form-item>
+                        </div>
+                        <div>
+                            <el-form-item prop="role_id">
+                                <el-select v-model="userDepartmentForm.role_id" placeholder="Quyền hạn">
+                                    <el-option
+                                        v-for="role in roles"
+                                        :key="role.id"
+                                        :label="role.role"
+                                        :value="role.id" />
+                                    </el-select>
+                            </el-form-item>
+                        </div>
+                        <div style="margin: auto;">
+                            <el-button type="primary" @click="assignUserToDepartment(ruleFormRef)">
+                                Thêm mới
+                            </el-button>
+                        </div>
                     </div>
-                    <div> 
-                        <el-select v-model="roles" class="m-2" placeholder="Role" size="large">
-                            <el-option
-                            v-for="role in roleOptions"
-                            :key="role.id"
-                            :label="role.role"
-                            :value="role.id"
-                            />
-                        </el-select>
-                    </div>
-                    <div style="margin: auto;">
-                        <button class="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-2 border border-blue-500 hover:border-transparent rounded">
-                            Thêm mới
-                        </button>
-                    </div>
-                </div>
-            </form>
+                </el-form>
+
                 <div>
                     <h5 class="text-xl font-medium leading-normal text-gray-800" id="exampleModalScrollableLabel">
                         Danh sách thành viên
                     </h5>
                 </div>
-                
+
                 <div>
                     <el-tabs v-model="activeName" class="demo-tabs" @tab-click="handleClick">
                         <el-tab-pane label="Tất cả thành viên" name="first">
@@ -118,8 +151,7 @@ const roleOptions = [
                         </el-tab-pane>
                     </el-tabs>
                 </div>
-                <div
-                    class="modal-footer flex flex-shrink-0 flex-wrap items-center justify-end p-4 border-t border-gray-200 rounded-b-md">
+                <div class="modal-footer flex flex-shrink-0 flex-wrap items-center justify-end p-4 border-t border-gray-200 rounded-b-md">
                     <SecondaryButton @click="closeModal"> Đóng </SecondaryButton>
                 </div>
             </form>
