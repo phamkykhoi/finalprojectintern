@@ -70,11 +70,11 @@ const rules = {
                         :model="ValidateForm"
                         label-width="110px"
                         class="demo-ruleForm"
+                        :rules="rules"
                     >
                         <el-form-item
                             label="Tên công việc"
                             prop="name"
-                            :rules="rules.name"
                             >
                             <el-input
                                 v-model="ValidateForm.name"

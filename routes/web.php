@@ -27,6 +27,7 @@ Route::middleware(['auth', 'verified'])->group(function() {
     Route::get('user/list', [UserController::class, 'indexJson']);
     Route::resource('user', UserController::class);
     Route::resource('department', DepartmentController::class);
+    Route::post('department/assign-member', [DepartmentController::class, 'assignMember'])->name('department.assign.member');
 });
 
 Route::middleware('auth')->group(function () {
@@ -35,4 +36,4 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-require __DIR__.'/auth.php'; 
+require __DIR__.'/auth.php';
