@@ -7,6 +7,8 @@ use Inertia\Inertia;
 use App\Repositories\DepartmentRepository;
 use App\Http\Requests\Department\CreateDepartmentRequest;
 use App\Http\Requests\Department\UpdateDepartmentRequest;
+use App\Http\Requests\Department\AssignMemberRequest;
+use App\Repositories\UserDepartmentRepository;
 use App\Models\Department;
 
 class DepartmentController extends Controller
@@ -19,16 +21,22 @@ class DepartmentController extends Controller
 
     protected $departmentRepo;
 
-    public function __construct(DepartmentRepository $departmentRepo)
+    protected $userDepartmentRepo;
+
+    public function __construct(
+        DepartmentRepository $departmentRepo,
+        UserDepartmentRepository $userDepartmentRepo
+    )
     {
         $this->departmentRepo = $departmentRepo;
+        $this->userDepartmentRepo = $userDepartmentRepo;
     }
 
     public function index()
     {
         $departmentPaginate = $this->departmentRepo->paginate();
+
         return Inertia::render('Departen/Show', [
-            // 'departments' => $this->departmentRepo->getAll(),
             'departments' => $departmentPaginate->items(),
             'meta' => [
                 'total' => $departmentPaginate->total(),
@@ -70,7 +78,7 @@ class DepartmentController extends Controller
      */
     public function show($id)
     {
-        // 
+        //
     }
 
     /**
@@ -111,5 +119,28 @@ class DepartmentController extends Controller
     {
         $this->departmentRepo->deleteById($id);
         return redirect()->route('department.index');
+    }
+
+    public function assignMember(AssignMemberRequest $request)
+    {
+        try {
+            $this->userDepartmentRepo->save([
+                'user_id' => $request->user_id,
+                'departen_id' => $request->department_id,
+                'role' => $request->role_id,
+            ], [
+                'user_id' => $request->user_id,
+                'departen_id' => $request->department_id,
+            ]);
+
+            return response()->json([
+                'status' => true
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'message' => $e->getMessage(),
+            ]);
+        }
     }
 }
