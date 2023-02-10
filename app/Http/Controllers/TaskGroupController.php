@@ -19,10 +19,6 @@ class TaskGroupController extends Controller
 
     public function store(StoreTaskGroupRequest $request)
     {
-        $taskGroup = $this->taskGroupRepo->save($request->all());
-        return [
-            "status" => 1,
-            "data" => $taskGroup,
-        ];
+        $this->taskGroupRepo->save($request->all());
     }
 }
