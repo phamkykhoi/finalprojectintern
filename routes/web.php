@@ -28,6 +28,9 @@ Route::middleware(['auth', 'verified'])->group(function() {
     Route::resource('user', UserController::class);
     Route::resource('department', DepartmentController::class);
     Route::post('department/assign-member', [DepartmentController::class, 'assignMember'])->name('department.assign.member');
+    Route::get('department/{departmentId}/members', [DepartmentController::class, 'getMembers'])->name('department.members');
+    Route::delete('department/{departmentId}/remove/member/{userId}', [DepartmentController::class, 'removeMember'])->name('department.remove.member');
+
 });
 
 Route::middleware('auth')->group(function () {

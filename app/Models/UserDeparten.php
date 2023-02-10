@@ -14,6 +14,6 @@ class UserDeparten extends Model
     protected $fillable = [
         'user_id',
         'role',
-        'departen_id',
+        'department_id',
     ];
 }
