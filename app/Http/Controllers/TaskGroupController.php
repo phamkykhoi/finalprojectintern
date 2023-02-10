@@ -2,9 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Repositories\TaskGroupRepository;
-use Illuminate\Http\Request;
 use App\Http\Requests\TaskGroup\StoreTaskGroupRequest;
+use App\Repositories\TaskGroupRepository;
 
 class TaskGroupController extends Controller
 {
@@ -12,8 +11,7 @@ class TaskGroupController extends Controller
 
     public function __construct(
         TaskGroupRepository $taskGroupRepo
-    )
-    {
+    ) {
         $this->taskGroupRepo = $taskGroupRepo;
     }
 
