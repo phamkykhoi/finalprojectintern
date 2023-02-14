@@ -19,4 +19,6 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::apiResource('taskgroup', TaskGroupController::class);
+Route::middleware(['auth', 'verified'])->group(function() {
+     Route::apiResource('taskgroup', TaskGroupController::class);
+});
