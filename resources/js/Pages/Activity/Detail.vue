@@ -15,7 +15,10 @@ defineProps({
 
 const showFormTask = ref(false);
 const state  = reactive({
-    task: null
+    task: {
+        name: "",
+        description: ""
+}
 })
 
 const createTaskForm = (currentTask) => {
@@ -41,7 +44,7 @@ const closeFormTask = (value) => {
                 <div class="list" :key="index" v-for="(taskGroup, index) in taskGroups">
                     <div class="list-group-title">
                         <h3 class="list-title">{{ taskGroup.name }}</h3>
-                        <a @click="createTaskForm(task)" class="btn-add block w-full px-4 py-2 text-left text-sm leading-5 text-gray-700 hover:bg-gray-100 transition duration-150 ease-in-out">
+                        <a @click="createTaskForm(taskGroup)" class="btn-add block w-full px-4 py-2 text-left text-sm leading-5 text-gray-700 hover:bg-gray-100 transition duration-150 ease-in-out">
                             <i>Thêm</i>
                         </a>
                     </div>
@@ -49,10 +52,9 @@ const closeFormTask = (value) => {
                 </div>
                 <button class="add-list-btn btn">Thêm nhóm công việc</button>
             </section>
-            
         </AuthenticatedLayout>
     </div>
-    <TaskForm :taskId="state.task" :isShowModal="showFormTask" v-on:closeModal="closeFormTask" />
+    <TaskForm v-if="showFormTask" :task="state.task" :isShowModal="showFormTask" v-on:closeModal="closeFormTask" />
 </template>
 
 <style scoped>
@@ -60,6 +62,9 @@ const closeFormTask = (value) => {
 .list-group-title{
     display: flex;
     align-items: center;
+}
+.list-group-title a{
+    margin-right: 26px;
 }
 .lists-container::-webkit-scrollbar {
     height: .4rem;
@@ -140,7 +145,7 @@ const closeFormTask = (value) => {
 .btn-add {
     max-width: 100px;
     height: fit-content;
-    margin-left: 125px;
+    margin-left: auto;
     background-color: #cdd2d4;
 }
 

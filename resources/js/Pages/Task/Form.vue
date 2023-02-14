@@ -1,10 +1,11 @@
-<script setup>
+<script lang="ts" setup>
 
 import Modal from '@/Components/Modal.vue';
-import SecondaryButton from '@/Components/SecondaryButton.vue';
-import PrimaryButton from '@/Components/PrimaryButton.vue';
 import { useForm, usePage, Link } from '@inertiajs/inertia-vue3'
-import {reactive, nextTick, ref, defineEmits, watch } from 'vue';
+import {reactive, nextTick, ref, defineEmits, watch, onBeforeMount } from 'vue';
+import type { FormInstance } from 'element-plus';
+
+const ruleFormRef = ref<FormInstance>()
 
 const confirmingTaskDeletion = ref(false);
 
@@ -19,27 +20,19 @@ const props = defineProps({
     },
 })
 
-const form = useForm({
-    description: '',
-});
-
-const ValidateForm = reactive({
+const TaskForm = reactive({
     name: '',
     description: '',
+    task_group_id: props.task.id,
 })
 
 const emit = defineEmits(['closeModal', 'unClose'])
 
 confirmingTaskDeletion.value = props.isShowModal;
 
-const confirmTaskDeletion = () => {
-    confirmingTaskDeletion.value = true;
-};
-
 const closeModal = () => {
     confirmingTaskDeletion.value = false;
     emit('closeModal', false);
-    form.reset();
 };
 
 const rules = {
@@ -47,13 +40,12 @@ const rules = {
         { required: true, message: 'name is required' },
     ],
 }
-
 </script>
 
 <template>
         <section class="space-y-6">
         <Modal :show="isShowModal" @close="closeModal">
-            <form @submit.prevent="saveTask()" class="space-y-6">
+            <form class="space-y-6 m-3">
                 <div
                     class="modal-header flex flex-shrink-0 items-center justify-between p-4 border-b border-gray-200 rounded-t-md">
                     <h5 class="text-xl font-medium leading-normal text-gray-800" id="exampleModalScrollableLabel">
@@ -64,8 +56,8 @@ const rules = {
                 <div class="modal-body relative p-4">
                     <div>
                     <el-form
-                        ref="formRef"
-                        :model="ValidateForm"
+                        ref="ruleFormRef"
+                        :model="TaskForm"
                         label-width="110px"
                         class="demo-ruleForm"
                         :rules="rules"
@@ -75,7 +67,7 @@ const rules = {
                             prop="name"
                             >
                             <el-input
-                                v-model="ValidateForm.name"
+                                v-model="TaskForm.name"
                                 type="text"
                                 autocomplete="off"
                             />
@@ -85,7 +77,7 @@ const rules = {
                             prop="description"
                             >
                             <el-input
-                                v-model="ValidateForm.description"
+                                v-model="TaskForm.description"
                                 type="text"
                                 autocomplete="off"
                             />
@@ -93,12 +85,18 @@ const rules = {
                     </el-form>
                     </div>
                 </div>
-            </form>
-            <div
-                class="modal-footer flex flex-shrink-0 flex-wrap items-center justify-end p-4 border-t border-gray-200 rounded-b-md">
-                <SecondaryButton @click="closeModal"> Đóng </SecondaryButton>
-                <PrimaryButton class="ml-3" @click="saveTask">Lưu lại</PrimaryButton>
-            </div>
+                <div
+                    class="modal-footer flex flex-shrink-0 flex-wrap items-center justify-end p-4 border-t border-gray-200 rounded-b-md">
+                        <div>
+                            <el-button type="primary" @click="closeModal">
+                                Đóng 
+                            </el-button>
+                            <el-button type="primary" @click="addTask(ruleFormRef)">
+                                Thêm mới
+                            </el-button>
+                        </div>
+                </div>
+        </form>
         </Modal>
     </section>
 </template>
