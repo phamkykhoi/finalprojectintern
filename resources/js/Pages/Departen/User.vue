@@ -5,6 +5,7 @@ import { useForm, usePage, Link } from '@inertiajs/inertia-vue3';
 import { ref, defineEmits, reactive, onMounted, onBeforeMount } from 'vue';
 import type { FormInstance } from 'element-plus'
 import { ElMessage } from 'element-plus'
+import axios from 'axios'
 
 const props = defineProps({
     department: {
