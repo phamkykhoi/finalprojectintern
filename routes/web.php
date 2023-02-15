@@ -5,9 +5,8 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ActivityController;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\UserController;
-use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
-use Inertia\Inertia;
+use App\Http\Controllers\TaskGroupController;
 
 
 /*
@@ -28,6 +27,7 @@ Route::middleware(['auth', 'verified'])->group(function() {
     Route::resource('user', UserController::class);
     Route::resource('department', DepartmentController::class);
     Route::post('department/assign-member', [DepartmentController::class, 'assignMember'])->name('department.assign.member');
+    Route::resource('taskgroup', TaskGroupController::class);
 });
 
 Route::middleware('auth')->group(function () {
