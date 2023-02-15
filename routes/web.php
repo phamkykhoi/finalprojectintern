@@ -5,6 +5,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ActivityController;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\TaskController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -27,6 +28,7 @@ Route::middleware(['auth', 'verified'])->group(function() {
     Route::get('user/list', [UserController::class, 'indexJson']);
     Route::resource('user', UserController::class);
     Route::resource('department', DepartmentController::class);
+    Route::resource('task', TaskController::class);
     Route::post('department/assign-member', [DepartmentController::class, 'assignMember'])->name('department.assign.member');
 });
 
