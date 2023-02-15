@@ -22,7 +22,7 @@ const props = defineProps({
     },
 })
 
-const TaskForm = reactive({
+const taskForm = reactive({
     name: '',
     description: '',
     task_group_id: props.task.id,
@@ -46,7 +46,7 @@ const addTask = (formEl: FormInstance | undefined) => {
     if (!formEl) return
     formEl.validate((valid) => {
         if (valid) {
-            axios.post('/task', TaskForm).then(res => {
+            axios.post('/task', taskForm).then(res => {
                 console.log(res.data)
                 
                 if (res.data.status) {
@@ -83,7 +83,7 @@ const addTask = (formEl: FormInstance | undefined) => {
                     <div>
                     <el-form
                         ref="ruleFormRef"
-                        :model="TaskForm"
+                        :model="taskForm"
                         label-width="110px"
                         class="demo-ruleForm"
                         :rules="rules"
@@ -93,7 +93,7 @@ const addTask = (formEl: FormInstance | undefined) => {
                             prop="name"
                             >
                             <el-input
-                                v-model="TaskForm.name"
+                                v-model="taskForm.name"
                                 type="text"
                                 autocomplete="off"
                             />
@@ -103,7 +103,7 @@ const addTask = (formEl: FormInstance | undefined) => {
                             prop="description"
                             >
                             <el-input
-                                v-model="TaskForm.description"
+                                v-model="taskForm.description"
                                 type="text"
                                 autocomplete="off"
                             />
