@@ -95,6 +95,7 @@ const addTask = (formEl: FormInstance | undefined) => {
                                 v-model="taskForm.name"
                                 type="text"
                                 autocomplete="off"
+                                clearable
                             />
                         </el-form-item>
                         <el-form-item
@@ -105,6 +106,7 @@ const addTask = (formEl: FormInstance | undefined) => {
                                 v-model="taskForm.description"
                                 type="text"
                                 autocomplete="off"
+                                clearable
                             />
                         </el-form-item>
                     </el-form>

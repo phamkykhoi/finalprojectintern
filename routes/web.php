@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ActivityController;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\UserController;
@@ -22,7 +24,7 @@ use App\Http\Controllers\TaskGroupController;
 
 Route::middleware(['auth', 'verified'])->group(function() {
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
-    Route::get('api/activity/{id}', [TaskController::class, 'showJson']);
+    Route::get('api/activity/{id}', [TaskController::class, 'show']);
     Route::resource('activity', ActivityController::class);
     Route::resource('task', TaskController::class);
     Route::get('user/list', [UserController::class, 'indexJson']);
