@@ -1,20 +1,35 @@
 <script setup>
 
-import SettingIcon from '@/Components/Icons/SettingIcon.vue';
-import PlusIcon from '@/Components/Icons/PlusIcon.vue';
-import Dropdown from '@/Components/Dropdown.vue';
-import DropdownLink from '@/Components/DropdownLink.vue';
-import { Link } from '@inertiajs/inertia-vue3';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head } from '@inertiajs/inertia-vue3';
 import DepartenList from '@/Pages/Departen/Index.vue';
+import TaskForm from '@/Pages/Task/Form.vue';
 import TaskList from '@/Pages/Task/Index.vue';
+import { reactive, ref } from 'vue';
 
 defineProps({
     departments: Array,
     taskGroups: Array,
     activityId: Number,
 });
+
+
+const showFormTask = ref(false);
+const state  = reactive({
+    task: {
+        name: "",
+        description: ""
+}
+})
+
+const createTaskForm = (currentTask) => {
+    showFormTask.value = true;
+    state.task = currentTask
+}
+
+const closeFormTask = (value) => {
+    showFormTask.value = value;
+}
 
 </script>
 
@@ -26,21 +41,33 @@ defineProps({
             <template #departen>
                 <DepartenList :departments="departments" :activityId="activityId" />
             </template>
-            <!-- Lists container -->
+            
             <section class="lists-container">
                 <div class="list" :key="index" v-for="(taskGroup, index) in taskGroups">
-                    <h3 class="list-title">{{ taskGroup.name }}</h3>
+                    <div class="list-group-title">
+                        <h3 class="list-title">{{ taskGroup.name }}</h3>
+                        <a @click="createTaskForm(taskGroup)" class="btn-add block w-full px-4 py-2 text-left text-sm leading-5 text-gray-700 hover:bg-gray-100 transition duration-150 ease-in-out">
+                            <i>Thêm</i>
+                        </a>
+                    </div>
                     <TaskList :tasks="taskGroup.tasks" />
                 </div>
                 <button class="add-list-btn btn">Thêm nhóm công việc</button>
             </section>
-            <!-- End of lists container -->
         </AuthenticatedLayout>
     </div>
+    <TaskForm v-if="showFormTask" :task="state.task" :isShowModal="showFormTask" v-on:closeModal="closeFormTask" />
 </template>
 
 <style scoped>
 /* Lists */
+.list-group-title{
+    display: flex;
+    align-items: center;
+}
+.list-group-title a{
+    margin-right: 26px;
+}
 .lists-container::-webkit-scrollbar {
     height: .4rem;
 }
@@ -116,6 +143,17 @@ defineProps({
 .add-card-btn::after,
 .add-list-btn::after {
     content: '...';
+}
+.btn-add {
+    max-width: 100px;
+    height: fit-content;
+    margin-left: auto;
+    background-color: #cdd2d4;
+}
+
+.btn-add:hover {
+    background-color: white;
+    cursor: pointer;
 }
 
 @supports (display: grid) {
