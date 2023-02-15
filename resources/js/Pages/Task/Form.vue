@@ -26,7 +26,10 @@ const taskForm = reactive({
     name: '',
     description: '',
     task_group_id: props.task.id,
+    start_date: '2021-10-29',
 })
+
+const value = ref('2021-10-29')
 
 const emit = defineEmits(['closeModal', 'unClose'])
 
@@ -69,7 +72,7 @@ const addTask = (formEl: FormInstance | undefined) => {
 
 <template>
         <section class="space-y-6">
-        <Modal :show="isShowModal" @close="closeModal">
+        <Modal :show="isShowModal" @close="closeModal" v-bind:max-width="'3xl'">
             <form class="space-y-6 m-3">
                 <div
                     class="modal-header flex flex-shrink-0 items-center justify-between p-4 border-b border-gray-200 rounded-t-md">
@@ -77,9 +80,9 @@ const addTask = (formEl: FormInstance | undefined) => {
                         Tạo công việc
                     </h5>
                 </div>
-                    
+
                 <div class="modal-body relative p-4">
-                    <div>
+
                     <el-form
                         ref="ruleFormRef"
                         :model="taskForm"
@@ -89,8 +92,7 @@ const addTask = (formEl: FormInstance | undefined) => {
                     >
                         <el-form-item
                             label="Tên công việc"
-                            prop="name"
-                            >
+                            prop="name">
                             <el-input
                                 v-model="taskForm.name"
                                 type="text"
@@ -104,19 +106,81 @@ const addTask = (formEl: FormInstance | undefined) => {
                             >
                             <el-input
                                 v-model="taskForm.description"
-                                type="text"
+                                type="textarea"
+                                :rows="3"
                                 autocomplete="off"
                                 clearable
                             />
                         </el-form-item>
+
+                        <el-form-item label="Tệp đính kèm">
+                            <el-upload
+                                ref="uploadRef"
+                                class="upload-demo"
+                                :auto-upload="false">
+                                <template #trigger>
+                                    <el-button type="primary">Chọn file</el-button>
+                                </template>
+                            </el-upload>
+                        </el-form-item>
+
+                        <el-row :gutter="20">
+                            <el-col :span="12">
+                                <el-select class="m-2" placeholder="Việc mặc định">
+                                    <el-option
+                                        v-for="(item, index) in []"
+                                        :key="index"
+                                        :label="item"
+                                        :value="item"/>
+                                </el-select>
+
+                                <el-select class="m-2" placeholder="Người thực hiện">
+                                    <el-option
+                                        v-for="(item, index) in []"
+                                        :key="index"
+                                        :label="item"
+                                        :value="item" />
+                                </el-select>
+                                <el-checkbox label="Xác định là khẩn cấp" />
+                                <el-checkbox label="Xác định là quan trọng" />
+                                <el-checkbox label="Đánh dấu tập huấn hội nghị" />
+                                <el-checkbox label="Cập nhật vào kế hoạch" />
+                            </el-col>
+
+                            <el-col :span="12">
+                                <el-select style="width: 100%;" class="m-2" placeholder="Người giám sát (tuỳ chọn)">
+                                    <el-option
+                                        v-for="(item, index) in []"
+                                        :key="index"
+                                        :label="item"
+                                        :value="item"/>
+                                </el-select>
+
+                                <el-select style="width: 100%;" class="m-2" placeholder="Người phối hợp thực hiện">
+                                    <el-option
+                                        v-for="(item, index) in []"
+                                        :key="index"
+                                        :label="item"
+                                        :value="item"/>
+                                </el-select>
+
+                                <el-select style="width: 100%;" class="m-2" placeholder="Người theo dõi (mặc định tuỳ chọn)">
+                                    <el-option
+                                        v-for="(item, index) in []"
+                                        :key="index"
+                                        :label="item"
+                                        :value="item"/>
+                                </el-select>
+                            </el-col>
+                        </el-row>
                     </el-form>
-                    </div>
+
                 </div>
                 <div
                     class="modal-footer flex flex-shrink-0 flex-wrap items-center justify-end p-4 border-t border-gray-200 rounded-b-md">
                         <div>
                             <el-button type="primary" @click="closeModal">
-                                Đóng 
+                                Đóng
                             </el-button>
                             <el-button type="primary" @click="addTask(ruleFormRef)">
                                 Thêm mới

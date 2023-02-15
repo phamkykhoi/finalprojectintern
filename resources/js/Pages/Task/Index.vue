@@ -1,23 +1,30 @@
 <script setup>
 
-import SettingIcon from '@/Components/Icons/SettingIcon.vue';
-import PlusIcon from '@/Components/Icons/PlusIcon.vue';
-import Dropdown from '@/Components/Dropdown.vue';
-import { Link } from '@inertiajs/inertia-vue3';
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Head } from '@inertiajs/inertia-vue3';
-import DepartenList from '@/Pages/Departen/Index.vue';
+import TaskDetail from './Detail.vue'
+import {ref, defineEmits, reactive } from 'vue';
 
 defineProps({
     tasks: Array,
 });
 
+const isShowTaskDetail = ref(false);
+
+function taskDetail(taskId) {
+    isShowTaskDetail.value = true;
+}
+
+function closeTaskDetail(value) {
+    isShowTaskDetail.value = value
+}
+
 </script>
 
 <template>
     <ul class="list-items" :key="index" v-for="(task, index) in tasks">
-        <li>{{  task.name }}</li>
+        <li @click="taskDetail(task.id)">{{  task.name }}</li>
     </ul>
+
+    <TaskDetail v-if="isShowTaskDetail" v-on:closeModal="closeTaskDetail" :isShowModal="isShowTaskDetail" />
 </template>
 
 <style scoped>
