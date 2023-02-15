@@ -28,6 +28,7 @@ Route::middleware(['auth', 'verified'])->group(function() {
     Route::resource('user', UserController::class);
     Route::resource('department', DepartmentController::class);
     Route::post('department/assign-member', [DepartmentController::class, 'assignMember'])->name('department.assign.member');
+    Route::resource('taskgroup', TaskGroupController::class);
 });
 
 Route::middleware('auth')->group(function () {
