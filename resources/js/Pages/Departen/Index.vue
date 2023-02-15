@@ -104,8 +104,11 @@ const closeFormDepartmentUser = (value) => {
             </div>
         </aside>
 
-        <ActivityForm :departmentId="state.department" :isShowModal="showFormActivity"
+        <ActivityForm v-if="showFormActivity"
+            :department="state.department"
+            :isShowModal="showFormActivity"
             v-on:closeModal="closeFormActivity" />
+
         <DepartenUserForm v-if="showFormDepartmentUser" :department="state.department"
             :isShowModal="showFormDepartmentUser" v-on:closeModal="closeFormDepartmentUser" />
     </div>
