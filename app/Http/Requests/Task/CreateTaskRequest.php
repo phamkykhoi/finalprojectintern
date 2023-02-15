@@ -16,6 +16,7 @@ class CreateTaskRequest extends FormRequest
         return [
             'name' => ['required'],
             'description' => ['nullable'],
+            'task_group_id' => ['required'],
         ];
     }
 }

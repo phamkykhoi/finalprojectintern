@@ -5,20 +5,20 @@ import { Head } from '@inertiajs/inertia-vue3';
 import DepartenList from '@/Pages/Departen/Index.vue';
 import TaskForm from '@/Pages/Task/Form.vue';
 import TaskList from '@/Pages/Task/Index.vue';
-import { reactive, ref } from 'vue';
+import { reactive, ref, onBeforeMount, watch } from 'vue';
 
-defineProps({
+const props = defineProps({
     departments: Array,
     taskGroups: Array,
     activityId: Number,
 });
 
-
 const showFormTask = ref(false);
 const state  = reactive({
     task: {
         name: "",
-        description: ""
+        description: "",
+        task_group_id: ""
 }
 })
 
@@ -31,6 +31,21 @@ const closeFormTask = (value) => {
     showFormTask.value = value;
 }
 
+const groupsTask = ref([])
+
+onBeforeMount(async () => {
+    getGroupsTask()
+});
+
+async function getGroupsTask() {
+    await axios.get(`/api/activity/${props.activityId}`).then((res) => {
+        groupsTask.value = res.data.taskGroups
+    })
+}
+
+watch(showFormTask, () => {
+    getGroupsTask()
+})
 </script>
 
 <template>
@@ -43,7 +58,7 @@ const closeFormTask = (value) => {
             </template>
             
             <section class="lists-container">
-                <div class="list" :key="index" v-for="(taskGroup, index) in taskGroups">
+                <div class="list" :key="index" v-for="(taskGroup, index) in groupsTask">
                     <div class="list-group-title">
                         <h3 class="list-title">{{ taskGroup.name }}</h3>
                         <a @click="createTaskForm(taskGroup)" class="btn-add block w-full px-4 py-2 text-left text-sm leading-5 text-gray-700 hover:bg-gray-100 transition duration-150 ease-in-out">

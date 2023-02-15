@@ -47,14 +47,13 @@ const addTask = (formEl: FormInstance | undefined) => {
     formEl.validate((valid) => {
         if (valid) {
             axios.post('/task', taskForm).then(res => {
-                console.log(res.data)
-                
                 if (res.data.status) {
                     ElMessage({
                         showClose: true,
                         message: 'Thêm task thành công',
                         type: 'success',
                     })
+                    closeModal()
                 }
             }).catch(err => {
                 ElMessage({

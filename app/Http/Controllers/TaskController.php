@@ -4,25 +4,28 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Repositories\TaskRepository;
+use App\Repositories\TaskGroupRepository;
 use App\Http\Requests\Task\CreateTaskRequest;
 
 class TaskController extends Controller
 {
     protected $taskRepo;
 
-    public function __construct(TaskRepository $taskRepo)
+    protected $taskGroupRepo;
+
+    public function __construct(
+        TaskRepository $taskRepo,
+        TaskGroupRepository $taskGroupRepo
+    ) 
     {
         $this->taskRepo = $taskRepo;
+        $this->taskGroupRepo = $taskGroupRepo;
     }
 
     public function store(CreateTaskRequest $request)
     {
         try {
-            $this->taskRepo->save([
-                'name' => $request->name,
-                'description' => $request->description,
-                'task_group_id' => $request->task_group_id,
-            ]);
+            $this->taskRepo->save($request->only(['name', 'description', 'task_group_id']));
             
             return response()->json([
                 'status' => true
@@ -33,5 +36,12 @@ class TaskController extends Controller
                 'message' => $e->getMessage(),
             ]);
         }
+    }
+
+    public function showJson($id)
+    {
+        return response()->json([
+            'taskGroups' => $this->taskGroupRepo->getByActivityId($id, ['tasks']),
+        ]);
     }
 }

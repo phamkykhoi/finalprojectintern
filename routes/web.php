@@ -24,6 +24,7 @@ use Inertia\Inertia;
 
 Route::middleware(['auth', 'verified'])->group(function() {
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('api/activity/{id}', [TaskController::class, 'showJson']);
     Route::resource('activity', ActivityController::class);
     Route::get('user/list', [UserController::class, 'indexJson']);
     Route::resource('user', UserController::class);
