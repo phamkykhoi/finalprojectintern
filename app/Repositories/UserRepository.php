@@ -21,4 +21,17 @@ class UserRepository extends BaseRepository
 
         return $query->where('id', '!=', 1)->get();
     }
+
+    public function getByDepartmentId($departmentId)
+    {
+        return $this->model->join('user_departments', 'user_departments.user_id', 'users.id')
+            ->select([
+                'users.id',
+                'users.name',
+                'users.email',
+                'user_departments.role'
+            ])
+            ->where('user_departments.department_id', $departmentId)
+            ->get();
+    }
 }

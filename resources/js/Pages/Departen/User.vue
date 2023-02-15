@@ -48,14 +48,15 @@ const assignUserToDepartment = (formEl: FormInstance | undefined) => {
     formEl.validate((valid) => {
         if (valid) {
             axios.post('/department/assign-member', userDepartmentForm).then(res => {
-                console.log(res.data.status)
-
                 if (res.data.status) {
                     ElMessage({
                         showClose: true,
                         message: 'Thêm thành viên thành công',
                         type: 'success',
                     })
+
+                    getMembers()
+
                 }
             }).catch(err => {
                 ElMessage({
@@ -69,12 +70,89 @@ const assignUserToDepartment = (formEl: FormInstance | undefined) => {
 }
 
 const users = ref([])
+const members = ref([])
+const loading = ref(true)
 
 onBeforeMount(async () => {
     await axios.get(`/user/list`).then((res) => {
         users.value = res.data.users
     })
+
+    // Get member by department ID
+    getMembers()
 });
+
+async function getMembers()
+{
+    loading.value = true
+
+    await axios.get(`/department/${props.department.id}/members`).then((res) => {
+        members.value = res.data.users
+        loading.value = false
+    })
+}
+
+async function assignRole(userId, targetRole) {
+    let params = {
+        user_id: userId,
+        role_id: targetRole,
+        department_id: props.department.id,
+    }
+
+    axios.post('/department/assign-member', params).then(res => {
+        if (res.data.status) {
+            ElMessage({
+                showClose: true,
+                message: 'Thêm thành viên thành công',
+                type: 'success',
+            })
+
+            getMembers()
+        }
+    }).catch(err => {
+        ElMessage({
+            showClose: true,
+            message: err.response.data.message,
+            type: 'error',
+        })
+    })
+}
+
+async function removeMember(userId)
+{
+    axios.delete(`department/${props.department.id}/remove/member/${userId}`).then(res => {
+        if (res.data.status) {
+            ElMessage({
+                showClose: true,
+                message: 'Xoá member thành công',
+                type: 'success',
+            })
+
+            getMembers()
+        }
+    }).catch(err => {
+        ElMessage({
+            showClose: true,
+            message: err.response.data.message,
+            type: 'error',
+        })
+    })
+}
+
+function getRoleName(role)
+{
+    if (role == 1) {
+        return 'Trưởng phòng';
+    }
+
+    if (role == 2) {
+        return 'Giám sát';
+    }
+
+    if (role == 3) {
+        return 'Thành viên'
+    }
+}
 
 
 </script>
@@ -127,30 +205,19 @@ onBeforeMount(async () => {
                     </h5>
                 </div>
 
-                <div>
-                    <el-tabs v-model="activeName" class="demo-tabs" @tab-click="handleClick">
-                        <el-tab-pane label="Tất cả thành viên" name="first">
-                            <el-table style="width: 100%">
-                                <el-table-column label="ID" width="180" />
-                                <el-table-column label="Name" width="180" />
-                                <el-table-column label="Email" />
-                            </el-table>
-                        </el-tab-pane>
-                        <el-tab-pane label="Trưởng phòng" name="second">
-                             <el-table style="width: 100%">
-                                <el-table-column label="ID" width="180" />
-                                <el-table-column label="Name" width="180" />
-                                <el-table-column label="Email" />
-                            </el-table>
-                        </el-tab-pane>
-                        <el-tab-pane label="Giám sát" name="third">
-                            <el-table style="width: 100%">
-                                <el-table-column label="ID" width="180" />
-                                <el-table-column label="Name" width="180" />
-                                <el-table-column label="Email" />
-                            </el-table>
-                        </el-tab-pane>
-                    </el-tabs>
+                <div v-loading="loading" >
+                    <ul class="members">
+                        <li class="member-item" :key="index" v-for="(member, index) in members">
+                            {{ member.name }} - {{ member.id }}
+                            <p>{{  getRoleName(member.role) }} - {{ member.role }}</p>
+                            <ul class="member-actions">
+                                <li><a href="#" @click="assignRole(member.id, 3)" v-if="member.role != 3">Chuyển thành thành viên</a></li>
+                                <li><a href="#" @click="assignRole(member.id, 2)" v-if="member.role != 2">Chuyển thành giám sát</a></li>
+                                <li><a href="#" @click="assignRole(member.id, 1)" v-if="member.role != 1">Chuyển thành trưởng phòng</a></li>
+                                <li><a href="#" @click="removeMember(member.id)">Delete</a></li>
+                            </ul>
+                        </li>
+                    </ul>
                 </div>
                 <div class="modal-footer flex flex-shrink-0 flex-wrap items-center justify-end p-4 border-t border-gray-200 rounded-b-md">
                     <SecondaryButton @click="closeModal"> Đóng </SecondaryButton>
@@ -166,5 +233,44 @@ onBeforeMount(async () => {
         color: #6b778c;
         font-size: 32px;
         font-weight: 600;
+    }
+
+    ul.members {
+        display: flex;
+        list-style-type: none;
+        flex-wrap: wrap;
+        justify-content: space-between;
+    }
+
+    ul.members > li {
+        border: 1px dashed #ccc;
+        width: 46%;
+        margin-right: 15px;
+        padding: 8px;
+        margin-bottom: 10px;
+        position: relative;
+    }
+
+    ul.members > li:hover ul.member-actions {
+        display: block;
+    }
+
+    ul.member-actions {
+        position: absolute;
+        width: 250px;
+        list-style-type: none;
+        background: #f1f1f1;
+        border: 1px solid #ccc;
+        top: 0px;
+        left: 90%;
+        display: none;
+    }
+
+    ul.member-actions li {
+        background: #ccc;
+    }
+
+    ul.member-actions li:hover {
+        background: orange;
     }
 </style>

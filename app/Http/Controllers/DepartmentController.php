@@ -9,7 +9,7 @@ use App\Http\Requests\Department\CreateDepartmentRequest;
 use App\Http\Requests\Department\UpdateDepartmentRequest;
 use App\Http\Requests\Department\AssignMemberRequest;
 use App\Repositories\UserDepartmentRepository;
-use App\Models\Department;
+use App\Repositories\UserRepository;
 
 class DepartmentController extends Controller
 {
@@ -23,13 +23,17 @@ class DepartmentController extends Controller
 
     protected $userDepartmentRepo;
 
+    protected $userRepo;
+
     public function __construct(
         DepartmentRepository $departmentRepo,
-        UserDepartmentRepository $userDepartmentRepo
+        UserDepartmentRepository $userDepartmentRepo,
+        UserRepository $userRepo
     )
     {
         $this->departmentRepo = $departmentRepo;
         $this->userDepartmentRepo = $userDepartmentRepo;
+        $this->userRepo = $userRepo;
     }
 
     public function index()
@@ -124,17 +128,44 @@ class DepartmentController extends Controller
     public function assignMember(AssignMemberRequest $request)
     {
         try {
-            $this->userDepartmentRepo->save([
-                'user_id' => $request->user_id,
-                'departen_id' => $request->department_id,
-                'role' => $request->role_id,
-            ], [
-                'user_id' => $request->user_id,
-                'departen_id' => $request->department_id,
-            ]);
+            $this->userDepartmentRepo->assignMember(
+                $request->user_id,
+                $request->department_id,
+                $request->role_id
+            );
 
             return response()->json([
                 'status' => true
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'message' => $e->getMessage(),
+            ]);
+        }
+    }
+
+    public function removeMember($departmentId, $userId)
+    {
+        try {
+            $this->userDepartmentRepo->removeMember($userId, $departmentId);
+
+            return response()->json([
+                'status' => true
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'message' => $e->getMessage(),
+            ]);
+        }
+    }
+
+    public function getMembers($departmentId)
+    {
+        try {
+            return response()->json([
+                'users' => $this->userRepo->getByDepartmentId($departmentId)
             ]);
         } catch (\Exception $e) {
             return response()->json([
