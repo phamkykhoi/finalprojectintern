@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Repositories\TaskRepository;
 use App\Repositories\TaskGroupRepository;
 use App\Http\Requests\Task\CreateTaskRequest;
+use App\Http\Requests\Task\UpdateTaskRequest;
 
 class TaskController extends Controller
 {
@@ -43,5 +44,21 @@ class TaskController extends Controller
         return response()->json([
             'taskGroups' => $this->taskGroupRepo->getByActivityId($id, ['tasks']),
         ]);
+    }
+
+    public function update($id, UpdateTaskRequest $request)
+    {
+        try {
+            $this->taskRepo->save($request->all(), ['id' => $id]);
+            
+            return response()->json([
+                'status' => true,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'message' => $e->getMessage(),
+            ]);
+        }
     }
 }

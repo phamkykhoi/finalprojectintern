@@ -14,6 +14,7 @@ const props = defineProps({
 });
 
 const showFormTask = ref(false);
+
 const state  = reactive({
     task: {
         name: "",
@@ -43,7 +44,7 @@ async function getGroupsTask() {
     })
 }
 
-watch(showFormTask, () => {
+watch(groupsTask, () => {
     getGroupsTask()
 })
 </script>
@@ -65,7 +66,7 @@ watch(showFormTask, () => {
                             <i>Thêm</i>
                         </a>
                     </div>
-                    <TaskList :tasks="taskGroup.tasks" />
+                    <TaskList :tasks="taskGroup.tasks" :task_group_id="taskGroup.id"/>
                 </div>
                 <button class="add-list-btn btn">Thêm nhóm công việc</button>
             </section>

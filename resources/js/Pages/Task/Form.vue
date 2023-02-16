@@ -2,7 +2,7 @@
 
 import Modal from '@/Components/Modal.vue';
 import { useForm, usePage, Link } from '@inertiajs/inertia-vue3'
-import {reactive, nextTick, ref, defineEmits, watch, onBeforeMount } from 'vue';
+import { reactive, ref, defineEmits } from 'vue';
 import type { FormInstance } from 'element-plus';
 import { ElMessage } from 'element-plus';
 import axios from 'axios';
@@ -44,7 +44,11 @@ const rules = {
     name: [
         { required: true, message: 'name is required' },
     ],
+    description: [
+        { required: true, message: 'description is required' },
+    ],
 }
+
 const addTask = (formEl: FormInstance | undefined) => {
     if (!formEl) return
     formEl.validate((valid) => {
