@@ -71,7 +71,10 @@ const closeModal = () => {
                         <el-form-item label="Ngày phải thực hiện:" style="display: block;">
                             <el-input type="text" :rows="1" autocomplete="off" placeholder="Hover: Ngày thực hiện..." />
                         </el-form-item>
-                        <div>Người thực hiện: <el-icon><Avatar /></el-icon></div>
+                        <div>Người thực hiện: <i class="el-icon-plus"></i></div>
+                        <el-button>
+                            <i class="el-icon-plus"></i> Thêm mới   
+                        </el-button>
                         <el-checkbox v-model="checked1" label="Việc khẩn cấp" size="large" />
                         <el-checkbox v-model="checked1" label="Việc Quan trọng" size="large" />
                         <div class="btn-container">
