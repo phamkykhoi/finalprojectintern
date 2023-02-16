@@ -1,11 +1,23 @@
 <script setup>
-
+import ThreeDotIcon from '@/Components/Icons/ThreeDot.vue';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head } from '@inertiajs/inertia-vue3';
 import DepartenList from '@/Pages/Departen/Index.vue';
 import TaskForm from '@/Pages/Task/Form.vue';
 import TaskList from '@/Pages/Task/Index.vue';
-import { reactive, ref, onBeforeMount, watch } from 'vue';
+import { reactive, ref, onBeforeMount, watch, markRaw } from 'vue';
+import TaskGroupForm from '@/Pages/TaskGroup/Form.vue';
+import axios from 'axios';
+import { ElMessage } from 'element-plus';
+import { ElMessageBox } from 'element-plus';
+import {
+  Delete,
+  CopyDocument,
+  Files,
+  Folder,
+  Switch,
+  Rank,
+} from '@element-plus/icons-vue';
 
 const props = defineProps({
     departments: Array,
@@ -14,13 +26,19 @@ const props = defineProps({
 });
 
 const showFormTask = ref(false);
+const showFormTaskGroup = ref(false);
 const state  = reactive({
+    activityId: props.activityId,
     task: {
         name: "",
         description: "",
         task_group_id: ""
 }
 })
+
+const taskGroups = ref([]);
+const loading = ref(true);
+const groupsTask = ref([]);
 
 const createTaskForm = (currentTask) => {
     showFormTask.value = true;
@@ -31,11 +49,17 @@ const closeFormTask = (value) => {
     showFormTask.value = value;
 }
 
-const groupsTask = ref([])
+const createTaskGroupForm = (currentActivityId) => {
+    showFormTaskGroup.value = true;
+    state.activityId = currentActivityId;
+}
+const closeFormTaskGroup = (value) => {
+    showFormTaskGroup.value = value;
+}
 
-onBeforeMount(async () => {
+watch(showFormTask, () => {
     getGroupsTask()
-});
+})
 
 async function getGroupsTask() {
     await axios.get(`/api/activity/${props.activityId}`).then((res) => {
@@ -43,35 +67,182 @@ async function getGroupsTask() {
     })
 }
 
-watch(showFormTask, () => {
-    getGroupsTask()
-})
+//Handle TaskGroup
+function getTaskGroups(id)
+{
+  axios.get(`/taskgroup/list/${id}`).then(res => {
+          taskGroups.value = res.data;
+        }).catch(err => {
+           ElMessage({
+                showClose: true,
+                message: err.response.data.message,
+                type: 'error',
+                })
+            })
+            loading.value=false;
+}
+
+async function editTaskGroup(id){
+    loading.value=true;
+     await axios.patch(`/taskgroup/${id}`,{'name':event.target.innerText}).then(res => {
+        if (res.data.status) {
+                    ElMessage({
+                        showClose: true,
+                        message: 'Sửa tên taskgroup thành công',
+                        type: 'success',
+                    })
+                }
+            }).catch(err => {
+                ElMessage({
+                    showClose: true,
+                    message: err.response.data.message,
+                    type: 'error',
+                })
+            })
+            getTaskGroups(state.activityId);
+}
+
+async function deleteTaskGroup(id)
+{
+    ElMessageBox.confirm(
+    'It will permanently delete this task group . Continue?',
+    'Warning',
+    {
+      type: 'warning',
+      icon: markRaw(Delete),
+      confirmButtonText: 'Confirm',
+      cancelButtonText: 'Cancel',
+    }
+  )
+  .then(() => {
+    loading.value=true;
+    axios.delete(`/taskgroup/${id}`).then(res => {
+        if (res.data.status) {
+              ElMessage({
+                        showClose: true,
+                        message: 'Delete taskgroup successfully',
+                        type: 'success',
+                    })
+        }
+                    getTaskGroups(state.activityId);
+            }).catch(err => {
+                ElMessage({
+                    showClose: true,
+                    message: err.response.data.message,
+                    type: 'error',
+                })
+            })
+    })
+    .catch(() => {
+      ElMessage({
+        type: 'info',
+        message: 'Delete canceled',
+      })
+    })
+}
+
+async function copyTaskGroup(id)
+{
+    loading.value=true;
+    await axios.get(`/taskgroup/copy/${id}`).then(res => {
+        if (res.data.status) {
+             ElMessage({
+                        showClose: true,
+                        message: 'Copy taskgroup successfully',
+                        type: 'success',
+                    })
+                }
+            }).catch(err => {
+                ElMessage({
+                    showClose: true,
+                    message: err.response.data.message,
+                    type: 'error',
+                })
+            })
+            getTaskGroups(state.activityId);
+}
+
+async function moveTaskGroup(id)
+{
+    ElMessageBox.prompt('Please enter where you want to move this taskgroup', {
+    confirmButtonText: 'OK',
+    cancelButtonText: 'Cancel',
+    inputPattern:
+      /\d/,
+    inputErrorMessage: 'Please enter a number',
+    inputType: 'select',
+  })
+    .then(({ value }) => {
+        loading.value=true;
+        axios.get(`/taskgroup/move/${id}/${value}`).then(res => {
+            if (res.data.status) {
+                ElMessage({
+                            showClose: true,
+                            message: 'Move taskgroup successfully',
+                            type: 'success',
+                        })
+                    }
+                    getTaskGroups(state.activityId);
+                }).catch(err => {
+                    ElMessage({
+                        showClose: true,
+                        message: err.response.data.message,
+                        type: 'error',
+                    })
+                })
+        })
+    .catch(() => {
+      ElMessage({
+        type: 'info',
+        message: 'Input canceled',
+      })
+    })
+}
+onBeforeMount(async () => {
+    getTaskGroups(props.activityId);
+});
 </script>
 
 <template>
     <div>
         <Head title="Activity" />
-        
+
         <AuthenticatedLayout>
             <template #departen>
                 <DepartenList :departments="departments" :activityId="activityId" />
             </template>
-            
-            <section class="lists-container">
-                <div class="list" :key="index" v-for="(taskGroup, index) in groupsTask">
+
+            <section class="lists-container" v-loading="loading">
+                <div class="list" :key="index" v-for="(taskGroup, index) in taskGroups" >
                     <div class="list-group-title">
-                        <h3 class="list-title">{{ taskGroup.name }}</h3>
+                        <h3 class="list-title" @focusout="editTaskGroup(taskGroup.id)" contenteditable >{{ taskGroup.name }}</h3>
                         <a @click="createTaskForm(taskGroup)" class="btn-add block w-full px-4 py-2 text-left text-sm leading-5 text-gray-700 hover:bg-gray-100 transition duration-150 ease-in-out">
                             <i>Thêm</i>
                         </a>
                     </div>
+                        <el-dropdown trigger="click" class="mb-5">
+                            <span class="el-dropdown-link ml-auto">
+                                <ThreeDotIcon class="position-absolute float-right mr-7  cursor-pointer"/>
+                            </span>
+                            <template #dropdown>
+                            <el-dropdown-menu>
+                                <el-dropdown-item :icon="CopyDocument" @click="copyTaskGroup(taskGroup.id)">Copy</el-dropdown-item>
+                                <el-dropdown-item :icon="Rank" @click="moveTaskGroup(taskGroup.id)">Move</el-dropdown-item>
+                                <el-dropdown-item :icon="Switch"> Move All Tasks</el-dropdown-item>
+                                <el-dropdown-item :icon="Folder">Archive</el-dropdown-item>
+                                <el-dropdown-item :icon="Files">Archive All Tasks</el-dropdown-item>
+                                <el-dropdown-item :icon="Delete" @click="deleteTaskGroup(taskGroup.id)">Delete</el-dropdown-item>
+                            </el-dropdown-menu>
+                            </template>
+                        </el-dropdown>
                     <TaskList :tasks="taskGroup.tasks" />
                 </div>
-                <button class="add-list-btn btn">Thêm nhóm công việc</button>
+                <button class="add-list-btn btn" @click="createTaskGroupForm(activityId)">Thêm nhóm công việc </button>
             </section>
         </AuthenticatedLayout>
     </div>
     <TaskForm v-if="showFormTask" :task="state.task" :isShowModal="showFormTask" v-on:closeModal="closeFormTask" />
+    <TaskGroupForm :getTaskGroups="getTaskGroups" :activityId="activityId" :isShowModal="showFormTaskGroup" v-on:closeModal="closeFormTaskGroup" />
 </template>
 
 <style scoped>

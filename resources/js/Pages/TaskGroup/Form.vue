@@ -5,7 +5,8 @@ import SecondaryButton from '@/Components/SecondaryButton.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import {ref, defineEmits, reactive } from 'vue';
 import type { FormInstance } from 'element-plus'
-
+import axios from 'axios';
+import { ElMessage } from 'element-plus'
 const confirmingTaskGroupDeletion = ref(false);
 const ruleFormRef = ref<FormInstance>()
 const emit = defineEmits(['closeModal', 'unClose'])
@@ -17,36 +18,46 @@ const props = defineProps({
     isShowModal: {
         type: Boolean,
         default: false,
-    }
+    },
+    getTaskGroups:{
+        type:Function,
+    },
 })
-
 const taskGroupForm = reactive({
     name: '',
-    activityId: props.activityId,
+    activity_id: props.activityId,
 })
-
 confirmingTaskGroupDeletion.value = props.isShowModal;
-
 const saveTaskGroup = (formEl: FormInstance | undefined) => {
     if (!formEl) return
- formEl.validate((valid) => {
+    formEl.validate((valid) => {
     if (valid) {
-      console.log('submit!')
-      closeModal()
-      formEl.resetFields()
-    }
+            axios.post('/taskgroup/', taskGroupForm).then(res => {
+                    ElMessage({
+                        showClose: true,
+                        message: 'Add taskgroup successfully',
+                        type: 'success',
+                    })
+                    closeModal();
+            }).catch(err => {
+                ElMessage({
+                    showClose: true,
+                    message: err.response.data.message,
+                    type: 'error',
+                })
+            })
+            props.getTaskGroups(props.activityId);
+        }
   })
 };
-
 const closeModal = () => {
     confirmingTaskGroupDeletion.value = false;
+    taskGroupForm.name=""
     emit('closeModal', false);
 };
-
 const rules = reactive({
     name: [{required: true, message: 'Bắt buộc nhập', trigger: 'blur' }],
 })
-
 </script>
 
 <template>
@@ -71,7 +82,7 @@ const rules = reactive({
                     </el-form-item>
                     <el-form-item prop="activityId"  >
                       <el-input
-                      v-model="taskGroupForm.activityId"
+                      v-model="taskGroupForm.activity_id"
                       type="hidden"
                       autocomplete="off"
                       />
@@ -82,7 +93,7 @@ const rules = reactive({
                 <div
                     class="modal-footer flex flex-shrink-0 flex-wrap items-center justify-end p-4 border-t border-gray-200 rounded-b-md">
                     <SecondaryButton @click="closeModal"> Đóng </SecondaryButton>
-                    <PrimaryButton class="ml-3" @click="saveTaskGroup(ruleFormRef)">Lưu lại</PrimaryButton>
+                    <PrimaryButton class="ml-3">Lưu lại</PrimaryButton>
                 </div>
             </form>
         </Modal>

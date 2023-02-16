@@ -21,4 +21,28 @@ class TaskGroupRepository extends BaseRepository
 
         return $query->get();
     }
+
+    public function copyTaskGroup($id)
+    {
+        $taskGroup = $this->model->find($id);
+        $newTaskGroup = $taskGroup->replicate();
+        $newTaskGroup->push();
+        $taskGroup->relations = [];
+        $taskGroup->load('tasks');
+        $relations = $taskGroup->getRelations();
+
+        foreach ($relations as $relation) {
+            foreach ($relation as $relationRecord) {
+                $newRelationship = $relationRecord->replicate();
+                $newRelationship->task_group_id = $newTaskGroup->id;
+                $newRelationship->push();
+            }
+        }
+    }
+
+    public function moveTaskGroup($id, $value)
+    {
+        $this->model->find($id)->update(['id'=>$value]);
+
+    }
 }
