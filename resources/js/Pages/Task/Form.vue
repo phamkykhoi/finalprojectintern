@@ -6,6 +6,15 @@ import {reactive, nextTick, ref, defineEmits, watch, onBeforeMount } from 'vue';
 import type { FormInstance } from 'element-plus';
 import { ElMessage } from 'element-plus';
 import axios from 'axios';
+import {
+  Check,
+  Delete,
+  Edit,
+  Message,
+  Search,
+  Star,
+} from '@element-plus/icons-vue'
+
 
 const ruleFormRef = ref<FormInstance>()
 
@@ -79,6 +88,16 @@ const addTask = (formEl: FormInstance | undefined) => {
                     <h5 class="text-xl font-medium leading-normal text-gray-800" id="exampleModalScrollableLabel">
                         Tạo công việc
                     </h5>
+
+                    <el-row class="mb-4">
+                        <el-button :icon="Search" circle />
+                        <el-button type="primary" :icon="Edit" circle />
+                        <el-button type="success" :icon="Check" circle />
+                        <el-button type="info" :icon="Message" circle />
+                        <el-button type="warning" :icon="Star" circle />
+                        <el-button type="danger" :icon="Delete" circle />
+                    </el-row>
+
                 </div>
 
                 <div class="modal-body relative p-4">

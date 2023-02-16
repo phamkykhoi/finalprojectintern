@@ -16,11 +16,12 @@ createInertiaApp({
     title: (title) => `${title} - ${appName}`,
     resolve: (name) => resolvePageComponent(`./Pages/${name}.vue`, import.meta.glob('./Pages/**/*.vue')),
     setup({ el, app, props, plugin }) {
-        return createApp({ render: () => h(app, props) })
+        const appInstance = createApp({ render: () => h(app, props) })
             .use(plugin)
             .use(ElementPlus, { locale: 'en' })
-            .use(ZiggyVue, Ziggy)
-            .mount(el);
+            .use(ZiggyVue, Ziggy);
+
+        return appInstance.mount(el);
     },
 });
 
