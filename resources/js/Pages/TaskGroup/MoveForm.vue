@@ -35,6 +35,7 @@ const moveTaskGroupForm = reactive({
     moveTaskGroupId: props.moveTaskGroupId,
 })
 
+const taskGroupsList=[];
 confirmingMoveTaskGroupDeletion.value = props.isShowModal;
 const moveTaskGroup = (formEl: FormInstance | undefined) => {
     if (!formEl) return
@@ -70,9 +71,6 @@ const closeModal = () => {
 const rules = reactive({
     swapTaskGroupId: [{required: true, message: 'Bắt buộc chọn', trigger: 'blur' }],
 })
-
-var taskGroupsList=[];
-console.log(props.taskGroups);
 
 const loadTaskGroupsList=()=>{
     for(let i=0; i<props.taskGroups.length; i++){

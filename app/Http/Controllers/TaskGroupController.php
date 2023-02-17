@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Http\Requests\TaskGroup\StoreTaskGroupRequest;
 use App\Repositories\TaskGroupRepository;
 use Illuminate\Http\Request;
-use Symfony\Component\HttpFoundation\Response as HttpResponse;
 
 class TaskGroupController extends Controller
 {
@@ -15,22 +14,6 @@ class TaskGroupController extends Controller
         TaskGroupRepository $taskGroupRepo
     ) {
         $this->taskGroupRepo = $taskGroupRepo;
-    }
-
-    protected function success($data = null, $statusCode = 200)
-    {
-        return response()->json([
-            'status' => true,
-            'result' => $data
-        ], $statusCode ?? HttpResponse::HTTP_OK);
-    }
-
-    protected function error($message, $statusCode = 400)
-    {
-        return response()->json([
-            'status' => false,
-            'message' => $message,
-        ], $statusCode ?? HttpResponse::HTTP_INTERNAL_SERVER_ERROR);
     }
 
    public function getTaskGroupList($taskGroupId)
