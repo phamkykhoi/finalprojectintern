@@ -25,7 +25,7 @@ use App\Http\Controllers\TaskGroupController;
 Route::middleware(['auth', 'verified'])->group(function() {
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('api/activity/{id}', [TaskController::class, 'show']);
-    Route::post('api/{id}/update-checkbox', [TaskController::class, 'updateCheckbox']);
+    Route::post('api/{id}/update-checkbox', [TaskController::class, 'update']);
     Route::resource('activity', ActivityController::class);
     Route::resource('task', TaskController::class);
     Route::get('user/list', [UserController::class, 'indexJson']);

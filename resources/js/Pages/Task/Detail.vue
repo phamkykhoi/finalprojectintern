@@ -25,6 +25,8 @@ const taskForm = reactive({
     name: props.task.name,
     description: props.task.description,
     task_group_id: props.task_group_id,
+    is_important: props.task.is_important,
+    is_quickly: props.task.is_quickly
 })
 
 const emit = defineEmits(['closeModal', 'unClose'])
@@ -71,13 +73,10 @@ const saveTask = (formEl: FormInstance | undefined) => {
         }
     })
 }
-const checked = reactive({
-    is_important: props.task.is_important,
-    is_quickly: props.task.is_quickly
-})
+
 
 function handleChange(id) {
-    axios.post(`/api/${id}/update-checkbox`, checked)
+    axios.post(`/api/${id}/update-checkbox`, taskForm)
         .then(res => {
             getGroupsTask();
         })
@@ -146,8 +145,8 @@ function handleChange(id) {
                             <el-button>
                                 <i class="el-icon-plus"></i> Thêm mới   
                             </el-button>
-                            <el-checkbox v-model="checked.is_important" id="is_important" @change="handleChange(task.id)" label="Việc khẩn cấp" size="large" />
-                            <el-checkbox v-model="checked.is_quickly" id="is_quickly" @change="handleChange(task.id)" label="Việc Quan trọng" size="large" />
+                            <el-checkbox v-model="taskForm.is_important" id="is_important" @change="handleChange(task.id)" label="Việc khẩn cấp" size="large" />
+                            <el-checkbox v-model="taskForm.is_quickly" id="is_quickly" @change="handleChange(task.id)" label="Việc Quan trọng" size="large" />
                             <div class="btn-container">
                                 <el-button class="btn-container">Cập nhật vào kế hoạch</el-button>
                                 <el-button class="btn-container">Sao chép việc</el-button>
