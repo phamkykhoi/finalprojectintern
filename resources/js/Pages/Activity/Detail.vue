@@ -8,7 +8,7 @@ import MoveTaskGroupForm from '@/Pages/TaskGroup/MoveForm.vue';
 import { reactive, ref, onBeforeMount, watch, markRaw } from 'vue';
 import TaskGroupForm from '@/Pages/TaskGroup/Form.vue';
 import axios from 'axios';
-import { ElMessage, ElSelect } from 'element-plus';
+import { ElMessage} from 'element-plus';
 import { ElMessageBox } from 'element-plus';
 import {
   Delete,

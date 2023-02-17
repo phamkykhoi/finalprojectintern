@@ -34,9 +34,9 @@ Route::middleware(['auth', 'verified'])->group(function() {
     Route::resource('taskgroup', TaskGroupController::class);
     Route::get('department/{departmentId}/members', [DepartmentController::class, 'getMembers'])->name('department.members');
     Route::delete('department/{departmentId}/remove/member/{userId}', [DepartmentController::class, 'removeMember'])->name('department.remove.member');
-    Route::get('taskgroup/copy/{id}', [TaskGroupController::class,'copyTaskGroup']);
+    Route::get('taskgroup/copy/{id}', [TaskGroupController::class,'copy']);
     Route::get('taskgroup/list/{id}', [TaskGroupController::class,'getTaskGroupList']);
-    Route::post('taskgroup/move', [TaskGroupController::class,'moveTaskGroup']);
+    Route::post('taskgroup/move', [TaskGroupController::class,'move']);
 });
 
 Route::middleware('auth')->group(function () {

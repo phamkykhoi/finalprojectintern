@@ -58,7 +58,7 @@ class TaskGroupController extends Controller
         }
     }
 
-    public function copyTaskGroup($taskGroupId)
+    public function copy($taskGroupId)
     {
         try {
             $this->taskGroupRepo->copyTaskGroup($taskGroupId);
@@ -77,7 +77,7 @@ class TaskGroupController extends Controller
         }
     }
 
-    public function moveTaskGroup(Request $request){
+    public function move(Request $request){
         try{
             $this->taskGroupRepo->moveTaskGroup($request->get('swapTaskGroupId'),$request->get('moveTaskGroupId'));
             return $this->success();
