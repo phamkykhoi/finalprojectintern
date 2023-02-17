@@ -22,12 +22,16 @@ class TaskGroupRepository extends BaseRepository
         return $query->get();
     }
 
+    public function checkRelation($id)
+    {
+        return $this->model->find($id)->tasks()->exists();
+    }
+
     public function copyTaskGroup($id)
     {
         $taskGroup = $this->model->find($id);
         $newTaskGroup = $taskGroup->replicate();
         $newTaskGroup->push();
-        $taskGroup->relations = [];
         $taskGroup->load('tasks');
         $relations = $taskGroup->getRelations();
 
@@ -46,8 +50,6 @@ class TaskGroupRepository extends BaseRepository
         $taskGroup2 = $this->model->find($value);
         $tempAttributes1 = $taskGroup1->getAttributes();
         $tempAttributes2 = $taskGroup2->getAttributes();
-        unset($tempAttributes1['id']);
-        unset($tempAttributes2['id']);
         $taskGroup1->update($tempAttributes2);
         $taskGroup2->update($tempAttributes1);
     }

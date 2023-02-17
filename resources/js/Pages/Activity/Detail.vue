@@ -137,7 +137,6 @@ async function deleteTaskGroup(id)
                         type: 'success',
                     })
         }
-                    getTaskGroups(state.activityId);
             }).catch(err => {
                 ElMessage({
                     showClose: true,
@@ -145,6 +144,7 @@ async function deleteTaskGroup(id)
                     type: 'error',
                 })
             })
+            getTaskGroups(state.activityId);
     })
     .catch(() => {
       ElMessage({

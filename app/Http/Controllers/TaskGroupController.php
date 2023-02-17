@@ -53,18 +53,13 @@ class TaskGroupController extends Controller
 
     public function destroy($id){
         try {
-            $this->taskGroupRepo->deleteById($id);
-            return $this->success();
+                if(!$this->taskGroupRepo->checkRelation($id))
+                {
+                    $this->taskGroupRepo->deleteById($id);
+                    return $this->success();
+                }
+                return $this->error("You cannot delete a taskgroup containing tasks!!");
         } catch (\Exception $e) {
-            return $this->error($e->getMessage(), $e->getCode());
-        }
-    }
-
-    public function move(Request $request){
-        try{
-            $this->taskGroupRepo->moveTaskGroup($request->get('swapTaskGroupId'),$request->get('moveTaskGroupId'));
-            return $this->success();
-        } catch(\Exception $e){
             return $this->error($e->getMessage(), $e->getCode());
         }
     }
