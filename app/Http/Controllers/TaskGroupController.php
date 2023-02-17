@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\TaskGroup\StoreTaskGroupRequest;
 use App\Repositories\TaskGroupRepository;
 use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response as HttpResponse;
 
 class TaskGroupController extends Controller
 {
@@ -16,6 +17,22 @@ class TaskGroupController extends Controller
         $this->taskGroupRepo = $taskGroupRepo;
     }
 
+    protected function success($data = null, $statusCode = 200)
+    {
+        return response()->json([
+            'status' => true,
+            'result' => $data
+        ], $statusCode ?? HttpResponse::HTTP_OK);
+    }
+
+    protected function error($message, $statusCode = 400)
+    {
+        return response()->json([
+            'status' => false,
+            'message' => $message,
+        ], $statusCode ?? HttpResponse::HTTP_INTERNAL_SERVER_ERROR);
+    }
+
    public function getTaskGroupList($taskGroupId)
     {
         return $this->taskGroupRepo->getByActivityId($taskGroupId, ['tasks']);
@@ -25,14 +42,9 @@ class TaskGroupController extends Controller
     {
         try {
             $this->taskGroupRepo->save($request->all());
-            return response()->json([
-                'status' => true
-            ]);
+            return $this->success();
         } catch (\Exception $e) {
-            return response()->json([
-                'status' => false,
-                'message' => $e->getMessage(),
-            ]);
+            return $this->error($e->getMessage(), $e->getCode());
         }
     }
 
@@ -40,14 +52,9 @@ class TaskGroupController extends Controller
     {
         try {
             $this->taskGroupRepo->save(['name'=>$request->name],['id' => $taskGroupId]);
-            return response()->json([
-                'status' => true
-            ]);
+            return $this->success();
         } catch (\Exception $e) {
-            return response()->json([
-                'status' => false,
-                'message' => $e->getMessage(),
-            ]);
+            return $this->error($e->getMessage(), $e->getCode());
         }
     }
 
@@ -55,42 +62,27 @@ class TaskGroupController extends Controller
     {
         try {
             $this->taskGroupRepo->copyTaskGroup($taskGroupId);
-            return response()->json([
-                'status' => true
-            ]);
+            return $this->success();
         } catch (\Exception $e) {
-            return response()->json([
-                'status' => false,
-                'message' => $e->getMessage(),
-            ]);
+            return $this->error($e->getMessage(), $e->getCode());
         }
     }
 
     public function destroy($id){
         try {
             $this->taskGroupRepo->deleteById($id);
-            return response()->json([
-                'status' => true
-            ]);
+            return $this->success();
         } catch (\Exception $e) {
-            return response()->json([
-                'status' => false,
-                'message' => $e->getMessage(),
-            ]);
+            return $this->error($e->getMessage(), $e->getCode());
         }
     }
 
-    public function moveTaskGroup($id,$value){
+    public function moveTaskGroup(Request $request){
         try{
-            $this->taskGroupRepo->moveTaskGroup($id,$value);
-            return response()->json([
-                'status' => true,
-            ]);
+            $this->taskGroupRepo->moveTaskGroup($request->get('swapTaskGroupId'),$request->get('moveTaskGroupId'));
+            return $this->success();
         } catch(\Exception $e){
-            return response()->json([
-                'status' => false,
-                'message' => $e->getMessage(),
-            ]);
+            return $this->error($e->getMessage(), $e->getCode());
         }
     }
 }

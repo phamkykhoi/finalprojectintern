@@ -1,10 +1,10 @@
 <script setup>
-import ThreeDotIcon from '@/Components/Icons/ThreeDot.vue';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head } from '@inertiajs/inertia-vue3';
 import DepartenList from '@/Pages/Departen/Index.vue';
 import TaskForm from '@/Pages/Task/Form.vue';
 import TaskList from '@/Pages/Task/Index.vue';
+import MoveTaskGroupForm from '@/Pages/TaskGroup/MoveForm.vue';
 import { reactive, ref, onBeforeMount, watch, markRaw } from 'vue';
 import TaskGroupForm from '@/Pages/TaskGroup/Form.vue';
 import axios from 'axios';
@@ -17,6 +17,7 @@ import {
   Folder,
   Switch,
   Rank,
+MoreFilled,
 } from '@element-plus/icons-vue';
 
 const props = defineProps({
@@ -27,6 +28,7 @@ const props = defineProps({
 
 const showFormTask = ref(false);
 const showFormTaskGroup = ref(false);
+const showFormMoveTaskGroup=ref(false);
 const state  = reactive({
     activityId: props.activityId,
     task: {
@@ -34,10 +36,10 @@ const state  = reactive({
         description: "",
         task_group_id: ""
     },
-    moveSelect:""
+    moveTaskGroupId:0,
 })
 
-const taskGroups = ref([]);
+const taskGroups = ref(props.taskGroups);
 const loading = ref(true);
 const groupsTask = ref([]);
 
@@ -56,6 +58,16 @@ const createTaskGroupForm = (currentActivityId) => {
 }
 const closeFormTaskGroup = (value) => {
     showFormTaskGroup.value = value;
+}
+
+const createMoveTaskGroupForm = (currentActivityId,moveTaskGroupId) => {
+    showFormMoveTaskGroup.value = true;
+    state.activityId = currentActivityId;
+    state.moveTaskGroupId = moveTaskGroupId;
+}
+
+const closeFormMoveTaskGroup = (value) => {
+    showFormMoveTaskGroup.value = value;
 }
 
 watch(showFormTask, () => {
@@ -163,42 +175,6 @@ async function copyTaskGroup(id)
             getTaskGroups(state.activityId);
 }
 
-async function moveTaskGroup(id)
-{
-    ElMessageBox ({
-    confirmButtonText: 'OK',
-    cancelButtonText: 'Cancel',
-    message:()=>
-    h(ElSelect,{
-        modelValue:moveSelect,
-    })
-  })
-    .then(({ value }) => {
-        loading.value=true;
-        axios.get(`/taskgroup/move/${id}/${value}`).then(res => {
-            if (res.data.status) {
-                ElMessage({
-                            showClose: true,
-                            message: 'Move taskgroup successfully',
-                            type: 'success',
-                        })
-                    }
-                    getTaskGroups(state.activityId);
-                }).catch(err => {
-                    ElMessage({
-                        showClose: true,
-                        message: err.response.data.message,
-                        type: 'error',
-                    })
-                })
-        })
-    .catch(() => {
-      ElMessage({
-        type: 'info',
-        message: 'Input canceled',
-      })
-    })
-}
 onBeforeMount(async () => {
     getTaskGroups(props.activityId);
 });
@@ -221,14 +197,14 @@ onBeforeMount(async () => {
                             <i>Thêm</i>
                         </a>
                     </div>
-                        <el-dropdown trigger="click" class="mb-5">
+                        <el-dropdown trigger="click">
                             <span class="el-dropdown-link ml-auto">
-                                <ThreeDotIcon class="position-absolute float-right mr-7  cursor-pointer"/>
+                                <el-icon class="position-absolute float-right mr-7  cursor-pointer" size="25"><MoreFilled /></el-icon>
                             </span>
                             <template #dropdown>
                             <el-dropdown-menu>
                                 <el-dropdown-item :icon="CopyDocument" @click="copyTaskGroup(taskGroup.id)">Copy</el-dropdown-item>
-                                <el-dropdown-item :icon="Rank" @click="moveTaskGroup(taskGroup.id)">Move</el-dropdown-item>
+                                <el-dropdown-item :icon="Rank" @click="createMoveTaskGroupForm(activityId, taskGroup.id)">Move</el-dropdown-item>
                                 <el-dropdown-item :icon="Switch"> Move All Tasks</el-dropdown-item>
                                 <el-dropdown-item :icon="Folder">Archive</el-dropdown-item>
                                 <el-dropdown-item :icon="Files">Archive All Tasks</el-dropdown-item>
@@ -243,7 +219,8 @@ onBeforeMount(async () => {
         </AuthenticatedLayout>
     </div>
     <TaskForm v-if="showFormTask" :task="state.task" :isShowModal="showFormTask" v-on:closeModal="closeFormTask" />
-    <TaskGroupForm :getTaskGroups="getTaskGroups" :activityId="activityId" :isShowModal="showFormTaskGroup" v-on:closeModal="closeFormTaskGroup" />
+    <TaskGroupForm  v-if="showFormTaskGroup" :getTaskGroups="getTaskGroups" :activityId="activityId" :isShowModal="showFormTaskGroup" v-on:closeModal="closeFormTaskGroup" />
+    <MoveTaskGroupForm v-if="showFormMoveTaskGroup" :getTaskGroups="getTaskGroups" :activityId="activityId" :moveTaskGroupId="state.moveTaskGroupId" :taskGroups="taskGroups" :isShowModal="showFormMoveTaskGroup" v-on:closeModal="closeFormMoveTaskGroup" />
 </template>
 
 <style scoped>
