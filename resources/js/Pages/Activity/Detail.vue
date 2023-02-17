@@ -72,7 +72,7 @@ watch(groupsTask, () => {
             </section>
         </AuthenticatedLayout>
     </div>
-    <TaskForm v-if="showFormTask" :task="state.task" :isShowModal="showFormTask" v-on:closeModal="closeFormTask" />
+    <TaskForm v-if="showFormTask" :task="state.task" :isShowModal="showFormTask" v-on:closeModal="closeFormTask"/>
 </template>
 
 <style scoped>

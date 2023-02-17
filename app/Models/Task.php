@@ -21,4 +21,9 @@ class Task extends Model
         'status',
         'completed_at',
     ];
+
+    public function attachment()
+    {
+        return $this->morphOne(Attachment::class, 'attachable');
+    }
 }

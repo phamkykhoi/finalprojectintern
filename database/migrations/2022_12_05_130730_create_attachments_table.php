@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::create('attachments', function (Blueprint $table) {
             $table->id();
-            $table->string('uuid')->nullable();
+            $table->string('attachable_id')->nullable();
             $table->string('attachable_type')->nullable();
             $table->string('file_path')->default(false);
             $table->string('file_name')->default(false);

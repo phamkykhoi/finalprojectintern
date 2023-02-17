@@ -7,6 +7,7 @@ use App\Repositories\TaskRepository;
 use App\Repositories\TaskGroupRepository;
 use App\Http\Requests\Task\CreateTaskRequest;
 use App\Http\Requests\Task\UpdateTaskRequest;
+use Illuminate\Support\Facades\Storage;
 
 class TaskController extends Controller
 {
@@ -25,8 +26,21 @@ class TaskController extends Controller
 
     public function store(CreateTaskRequest $request)
     {
+        $inputs = $request->all();
+dd($request->all());
+        $inputs['fileList'][0]->store('public/avatars');
         try {
-            $this->taskRepo->save($request->only(['name', 'description', 'task_group_id']));
+            $inputs = $request->all();
+            $task = $this->taskRepo->save($inputs);
+            $task->attachment()->create([
+                'attachable_id' => $task['id'],
+                'file_path' => $inputs['fileList']->store('public/avatars'),
+                'file_name' => 'sdfsdf',
+                'attachable_type' => Task::class,
+                'extension' => 'sdfsdf',
+                'size' => 1,
+                'mime_type' => "fgdfd"
+            ]);
             
             return response()->json([
                 'status' => true

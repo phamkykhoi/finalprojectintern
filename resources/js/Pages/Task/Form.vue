@@ -2,7 +2,7 @@
 
 import Modal from '@/Components/Modal.vue';
 import { useForm, usePage, Link } from '@inertiajs/inertia-vue3'
-import { reactive, ref, defineEmits } from 'vue';
+import { reactive, ref, defineEmits, onBeforeMount } from 'vue';
 import type { FormInstance } from 'element-plus';
 import { ElMessage } from 'element-plus';
 import axios from 'axios';
@@ -27,9 +27,15 @@ const taskForm = reactive({
     description: '',
     task_group_id: props.task.id,
     start_date: '2021-10-29',
+    user_thuc_hien: '',
+    user_giam_sat: '',
+    user_phoi_hop: '',
+    user_theo_doi: '',
+    is_quickly: '',
+    is_important: '',
+    file: null,
+    fileList: [],
 })
-
-const value = ref('2021-10-29')
 
 const emit = defineEmits(['closeModal', 'unClose'])
 
@@ -72,12 +78,20 @@ const addTask = (formEl: FormInstance | undefined) => {
         }
     })
 }
+
+const users = ref([])
+
+onBeforeMount(async () => {
+    await axios.get(`/user/list`).then((res) => {
+        users.value = res.data.users
+    })
+});
 </script>
 
 <template>
         <section class="space-y-6">
         <Modal :show="isShowModal" @close="closeModal" v-bind:max-width="'3xl'">
-            <form class="space-y-6 m-3">
+            <form enctype="multipart/form-data" class="space-y-6 m-3">
                 <div
                     class="modal-header flex flex-shrink-0 items-center justify-between p-4 border-b border-gray-200 rounded-t-md">
                     <h5 class="text-xl font-medium leading-normal text-gray-800" id="exampleModalScrollableLabel">
@@ -93,6 +107,7 @@ const addTask = (formEl: FormInstance | undefined) => {
                         label-width="110px"
                         class="demo-ruleForm"
                         :rules="rules"
+                        enctype="multipart/form-data"
                     >
                         <el-form-item
                             label="Tên công việc"
@@ -119,7 +134,9 @@ const addTask = (formEl: FormInstance | undefined) => {
 
                         <el-form-item label="Tệp đính kèm">
                             <el-upload
-                                ref="uploadRef"
+                                :multiple="true"
+                                name="file"
+                                v-model:file-list="taskForm.fileList"
                                 class="upload-demo"
                                 :auto-upload="false">
                                 <template #trigger>
@@ -138,42 +155,42 @@ const addTask = (formEl: FormInstance | undefined) => {
                                         :value="item"/>
                                 </el-select>
 
-                                <el-select class="m-2" placeholder="Người thực hiện">
+                                <el-select v-model="taskForm.user_thuc_hien" class="m-2" placeholder="Người thực hiện">
                                     <el-option
-                                        v-for="(item, index) in []"
+                                        v-for="(user, index) in users"
                                         :key="index"
-                                        :label="item"
-                                        :value="item" />
+                                        :label="user.name"
+                                        :value="user.name"/>
                                 </el-select>
-                                <el-checkbox label="Xác định là khẩn cấp" />
-                                <el-checkbox label="Xác định là quan trọng" />
+                                <el-checkbox label="Xác định là khẩn cấp"  v-model="taskForm.is_quickly"/>
+                                <el-checkbox label="Xác định là quan trọng"  v-model="taskForm.is_important"/>
                                 <el-checkbox label="Đánh dấu tập huấn hội nghị" />
                                 <el-checkbox label="Cập nhật vào kế hoạch" />
                             </el-col>
 
                             <el-col :span="12">
-                                <el-select style="width: 100%;" class="m-2" placeholder="Người giám sát (tuỳ chọn)">
+                                <el-select v-model="taskForm.user_giam_sat" style="width: 100%;" class="m-2" placeholder="Người giám sát (tuỳ chọn)">
                                     <el-option
-                                        v-for="(item, index) in []"
+                                        v-for="(user, index) in users"
                                         :key="index"
-                                        :label="item"
-                                        :value="item"/>
+                                        :label="user.name"
+                                        :value="user.name"/>
                                 </el-select>
 
-                                <el-select style="width: 100%;" class="m-2" placeholder="Người phối hợp thực hiện">
+                                <el-select v-model="taskForm.user_phoi_hop" style="width: 100%;" class="m-2" placeholder="Người phối hợp thực hiện">
                                     <el-option
-                                        v-for="(item, index) in []"
+                                        v-for="(user, index) in users"
                                         :key="index"
-                                        :label="item"
-                                        :value="item"/>
+                                        :label="user.name"
+                                        :value="user.name"/>
                                 </el-select>
 
-                                <el-select style="width: 100%;" class="m-2" placeholder="Người theo dõi (mặc định tuỳ chọn)">
+                                <el-select v-model="taskForm.user_theo_doi" style="width: 100%;" class="m-2" placeholder="Người theo dõi (mặc định tuỳ chọn)">
                                     <el-option
-                                        v-for="(item, index) in []"
+                                        v-for="(user, index) in users"
                                         :key="index"
-                                        :label="item"
-                                        :value="item"/>
+                                        :label="user.name"
+                                        :value="user.name"/>
                                 </el-select>
                             </el-col>
                         </el-row>
