@@ -25,8 +25,6 @@ const taskForm = reactive({
     name: props.task.name,
     description: props.task.description,
     task_group_id: props.task_group_id,
-    is_quickly: props.task.is_quickly == 0 ? false : true,
-    is_important: props.task.is_important == 0 ? false : true,
 })
 
 const emit = defineEmits(['closeModal', 'unClose'])
@@ -72,6 +70,24 @@ const saveTask = (formEl: FormInstance | undefined) => {
             })
         }
     })
+}
+const checked = reactive({
+    is_important: props.task.is_important,
+    is_quickly: props.task.is_quickly
+})
+
+function handleChange(id) {
+    axios.post(`/api/${id}/update-checkbox`, checked)
+        .then(res => {
+            getGroupsTask();
+        })
+        .catch(err => {
+            ElMessage({
+                showClose: true,
+                message: err.response.data.message,
+                type: 'error',
+            })
+        });
 }
 </script>
 
@@ -122,7 +138,7 @@ const saveTask = (formEl: FormInstance | undefined) => {
                             </el-form-item>
                         </el-col>
                         <el-col :span="5" class="ml-2">
-                            <el-checkbox v-model="checked1" label="Hoàn thành việc" size="large" />
+                            <el-checkbox v-model="checked" label="Hoàn thành việc" size="large" />
                             <el-form-item label="Ngày phải thực hiện:" style="display: block;">
                                 <el-input type="text" :rows="1" autocomplete="off" placeholder="Hover: Ngày thực hiện..." />
                             </el-form-item>
@@ -130,8 +146,8 @@ const saveTask = (formEl: FormInstance | undefined) => {
                             <el-button>
                                 <i class="el-icon-plus"></i> Thêm mới   
                             </el-button>
-                            <el-checkbox v-model="taskForm.is_important" label="Việc khẩn cấp" size="large" />
-                            <el-checkbox v-model="taskForm.is_quickly" label="Việc Quan trọng" size="large" />
+                            <el-checkbox v-model="checked.is_important" id="is_important" @change="handleChange(task.id)" label="Việc khẩn cấp" size="large" />
+                            <el-checkbox v-model="checked.is_quickly" id="is_quickly" @change="handleChange(task.id)" label="Việc Quan trọng" size="large" />
                             <div class="btn-container">
                                 <el-button class="btn-container">Cập nhật vào kế hoạch</el-button>
                                 <el-button class="btn-container">Sao chép việc</el-button>
@@ -147,9 +163,6 @@ const saveTask = (formEl: FormInstance | undefined) => {
                     <div
                     class="modal-footer flex flex-shrink-0 flex-wrap items-center justify-end p-4 border-t border-gray-200 rounded-b-md">
                     <div>
-                        <el-button type="primary" @click="saveTask(ruleFormRef)">
-                            Lưu
-                        </el-button>
                         <el-button type="primary" @click="closeModal">
                             Đóng
                         </el-button>

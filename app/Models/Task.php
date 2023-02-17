@@ -26,4 +26,8 @@ class Task extends Model
     {
         return $this->morphOne(Attachment::class, 'attachable');
     }
+    protected $casts = [
+        'is_important' => 'boolean',
+        'is_quickly' => 'boolean',
+    ];
 }

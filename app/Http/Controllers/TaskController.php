@@ -50,4 +50,14 @@ class TaskController extends Controller
             return $this->error($e->getMessage(), $e->getCode());
         }
     }
+
+    public function updateCheckbox($id, Request $request)
+    {
+        try {
+            $this->taskRepo->save($request->all(), ['id' => $id]);
+            return $this->success();
+        } catch (\Exception $e) {
+            return $this->error($e->getMessage(), $e->getCode());
+        }
+    }
 }
