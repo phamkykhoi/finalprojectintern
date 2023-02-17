@@ -2,10 +2,19 @@
 
 import Modal from '@/Components/Modal.vue';
 import { useForm, usePage, Link } from '@inertiajs/inertia-vue3'
-import { reactive, ref, defineEmits, onBeforeMount } from 'vue';
+import { reactive, nextTick, ref, defineEmits, watch, onBeforeMount } from 'vue';
 import type { FormInstance } from 'element-plus';
 import { ElMessage } from 'element-plus';
 import axios from 'axios';
+import {
+  Check,
+  Delete,
+  Edit,
+  Message,
+  Search,
+  Star,
+} from '@element-plus/icons-vue'
+
 
 const ruleFormRef = ref<FormInstance>()
 
@@ -89,7 +98,7 @@ onBeforeMount(async () => {
 </script>
 
 <template>
-        <section class="space-y-6">
+    <section class="space-y-6">
         <Modal :show="isShowModal" @close="closeModal" v-bind:max-width="'3xl'">
             <form enctype="multipart/form-data" class="space-y-6 m-3">
                 <div
@@ -97,101 +106,48 @@ onBeforeMount(async () => {
                     <h5 class="text-xl font-medium leading-normal text-gray-800" id="exampleModalScrollableLabel">
                         Tạo công việc
                     </h5>
+
+                    <el-row class="mb-4">
+                        <el-button :icon="Search" circle />
+                        <el-button type="primary" :icon="Edit" circle />
+                        <el-button type="success" :icon="Check" circle />
+                        <el-button type="info" :icon="Message" circle />
+                        <el-button type="warning" :icon="Star" circle />
+                        <el-button type="danger" :icon="Delete" circle />
+                    </el-row>
+
                 </div>
 
                 <div class="modal-body relative p-4">
-
-                    <el-form
-                        ref="ruleFormRef"
-                        :model="taskForm"
-                        label-width="110px"
-                        class="demo-ruleForm"
-                        :rules="rules"
-                        enctype="multipart/form-data"
-                    >
-                        <el-form-item
-                            label="Tên công việc"
-                            prop="name">
-                            <el-input
-                                v-model="taskForm.name"
-                                type="text"
-                                autocomplete="off"
-                                clearable
-                            />
+                    <el-form ref="ruleFormRef" :model="taskForm" label-width="110px" class="demo-ruleForm" :rules="rules">
+                        <el-form-item label="Tên công việc" prop="name">
+                            <el-input v-model="taskForm.name" type="text" autocomplete="off" clearable />
                         </el-form-item>
-                        <el-form-item
-                            label="Mô tả công việc"
-                            prop="description"
-                            >
-                            <el-input
-                                v-model="taskForm.description"
-                                type="textarea"
-                                :rows="3"
-                                autocomplete="off"
-                                clearable
-                            />
+                        <el-form-item label="Mô tả công việc" prop="description">
+                            <el-input v-model="taskForm.description" type="textarea" :rows="3" autocomplete="off"
+                                clearable />
                         </el-form-item>
 
                         <el-form-item label="Tệp đính kèm">
-                            <el-upload
-                                :multiple="true"
-                                name="file"
-                                v-model:file-list="taskForm.fileList"
-                                class="upload-demo"
-                                :auto-upload="false">
+                            <el-upload ref="uploadRef" class="upload-demo" :auto-upload="false">
                                 <template #trigger>
                                     <el-button type="primary">Chọn file</el-button>
                                 </template>
                             </el-upload>
                         </el-form-item>
 
-                        <el-row :gutter="20">
+                       <p>Danh sách Users:</p>
+                        <el-input v-model="textarea" :rows="2" type="textarea" placeholder="Please input" />
+                        <el-row>
                             <el-col :span="12">
-                                <el-select class="m-2" placeholder="Việc mặc định">
-                                    <el-option
-                                        v-for="(item, index) in []"
-                                        :key="index"
-                                        :label="item"
-                                        :value="item"/>
-                                </el-select>
-
-                                <el-select v-model="taskForm.user_thuc_hien" class="m-2" placeholder="Người thực hiện">
-                                    <el-option
-                                        v-for="(user, index) in users"
-                                        :key="index"
-                                        :label="user.name"
-                                        :value="user.name"/>
-                                </el-select>
-                                <el-checkbox label="Xác định là khẩn cấp"  v-model="taskForm.is_quickly"/>
-                                <el-checkbox label="Xác định là quan trọng"  v-model="taskForm.is_important"/>
+                                <el-input class="mb-2 mt-2" placeholder="Chọn ngày bắt đầu" />
+                                <el-checkbox label="Xác định là khẩn cấp" />
+                                <el-checkbox label="Xác định là quan trọng" />
                                 <el-checkbox label="Đánh dấu tập huấn hội nghị" />
                                 <el-checkbox label="Cập nhật vào kế hoạch" />
                             </el-col>
-
                             <el-col :span="12">
-                                <el-select v-model="taskForm.user_giam_sat" style="width: 100%;" class="m-2" placeholder="Người giám sát (tuỳ chọn)">
-                                    <el-option
-                                        v-for="(user, index) in users"
-                                        :key="index"
-                                        :label="user.name"
-                                        :value="user.name"/>
-                                </el-select>
-
-                                <el-select v-model="taskForm.user_phoi_hop" style="width: 100%;" class="m-2" placeholder="Người phối hợp thực hiện">
-                                    <el-option
-                                        v-for="(user, index) in users"
-                                        :key="index"
-                                        :label="user.name"
-                                        :value="user.name"/>
-                                </el-select>
-
-                                <el-select v-model="taskForm.user_theo_doi" style="width: 100%;" class="m-2" placeholder="Người theo dõi (mặc định tuỳ chọn)">
-                                    <el-option
-                                        v-for="(user, index) in users"
-                                        :key="index"
-                                        :label="user.name"
-                                        :value="user.name"/>
-                                </el-select>
+                                <el-input class="m-2" placeholder="Chọn ngày kết thúc" />
                             </el-col>
                         </el-row>
                     </el-form>
@@ -199,22 +155,22 @@ onBeforeMount(async () => {
                 </div>
                 <div
                     class="modal-footer flex flex-shrink-0 flex-wrap items-center justify-end p-4 border-t border-gray-200 rounded-b-md">
-                        <div>
-                            <el-button type="primary" @click="closeModal">
-                                Đóng
-                            </el-button>
-                            <el-button type="primary" @click="addTask(ruleFormRef)">
-                                Thêm mới
-                            </el-button>
-                        </div>
+                    <div>
+                        <el-button type="primary" @click="closeModal">
+                            Đóng
+                        </el-button>
+                        <el-button type="primary" @click="addTask(ruleFormRef)">
+                            Thêm mới
+                        </el-button>
+                    </div>
                 </div>
-        </form>
+            </form>
         </Modal>
-    </section>
+</section>
 </template>
 
 <style scoped>
-.el-form-item{
+.el-form-item {
     display: flex;
     flex-direction: column;
 }

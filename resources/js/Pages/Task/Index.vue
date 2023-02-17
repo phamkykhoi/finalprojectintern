@@ -7,7 +7,6 @@ const props = defineProps({
     tasks: Array,
     task_group_id: Number,
 });
-
 const isShowTaskDetail = ref(false);
 
 const state  = reactive({
@@ -15,7 +14,7 @@ const state  = reactive({
         name: "",
         description: "",
     },
-    task_group_id: props.task_group_id
+    task_group_id: props.task_group_id,
 })
 
 function taskDetail(task) {
