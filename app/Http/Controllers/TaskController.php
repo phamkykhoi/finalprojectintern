@@ -28,14 +28,9 @@ class TaskController extends Controller
     {
         try {
             $this->taskRepo->save($request->all());
-            return response()->json([
-                'status' => true
-            ]);
+            return $this->success();
         } catch (\Exception $e) {
-            return response()->json([
-                'status' => false,
-                'message' => $e->getMessage(),
-            ]);
+            return $this->error($e->getMessage(), $e->getCode());
         }
     }
 
@@ -50,15 +45,9 @@ class TaskController extends Controller
     {
         try {
             $this->taskRepo->save($request->all(), ['id' => $id]);
-            
-            return response()->json([
-                'status' => true,
-            ]);
+            return $this->success();
         } catch (\Exception $e) {
-            return response()->json([
-                'status' => false,
-                'message' => $e->getMessage(),
-            ]);
+            return $this->error($e->getMessage(), $e->getCode());
         }
     }
 }
