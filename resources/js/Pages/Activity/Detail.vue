@@ -8,7 +8,7 @@ import TaskList from '@/Pages/Task/Index.vue';
 import { reactive, ref, onBeforeMount, watch, markRaw } from 'vue';
 import TaskGroupForm from '@/Pages/TaskGroup/Form.vue';
 import axios from 'axios';
-import { ElMessage } from 'element-plus';
+import { ElMessage, ElSelect } from 'element-plus';
 import { ElMessageBox } from 'element-plus';
 import {
   Delete,
@@ -33,7 +33,8 @@ const state  = reactive({
         name: "",
         description: "",
         task_group_id: ""
-}
+    },
+    moveSelect:""
 })
 
 const taskGroups = ref([]);
@@ -164,13 +165,13 @@ async function copyTaskGroup(id)
 
 async function moveTaskGroup(id)
 {
-    ElMessageBox.prompt('Please enter where you want to move this taskgroup', {
+    ElMessageBox ({
     confirmButtonText: 'OK',
     cancelButtonText: 'Cancel',
-    inputPattern:
-      /\d/,
-    inputErrorMessage: 'Please enter a number',
-    inputType: 'select',
+    message:()=>
+    h(ElSelect,{
+        modelValue:moveSelect,
+    })
   })
     .then(({ value }) => {
         loading.value=true;

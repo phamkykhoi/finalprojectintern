@@ -42,9 +42,13 @@ class TaskGroupRepository extends BaseRepository
 
     public function moveTaskGroup($id, $value)
     {
-        $swapTaskGroup = $this->model->find($value);
-        $tempTaskGroup = $this->model->find($id);
-        $this->model->find($id)->update([ 'name' => $swapTaskGroup->name, 'description' => $swapTaskGroup->description, 'activity_id' => $swapTaskGroup->activity_id, 'type' => $swapTaskGroup->type]);
-        $swapTaskGroup->update([ 'name' => $tempTaskGroup->name, 'description' => $tempTaskGroup->description, 'activity_id' => $tempTaskGroup->activity_id, 'type' => $tempTaskGroup->type]);
+        $taskGroup1 = $this->model->find($id);
+        $taskGroup2 = $this->model->find($value);
+        $tempAttributes1 = $taskGroup1->getAttributes();
+        $tempAttributes2 = $taskGroup2->getAttributes();
+        unset($tempAttributes1['id']);
+        unset($tempAttributes2['id']);
+        $taskGroup1->update($tempAttributes2);
+        $taskGroup2->update($tempAttributes1);
     }
 }
