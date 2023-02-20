@@ -163,7 +163,7 @@ function getRoleName(role)
             <form class="space-y-6 m-3">
                 <div>
                     <h5 class="text-xl font-medium leading-normal text-gray-800" id="exampleModalScrollableLabel">
-                        Cập nhật thành viên ở deparment  {{ props.department.name }}
+                        Cập nhật thành viên
                     </h5>
                 </div>
 
@@ -171,7 +171,7 @@ function getRoleName(role)
                     <div style="display: flex">
                         <div>
                             <el-form-item prop="user_id">
-                                <el-select v-model="userDepartmentForm.user_id" class="m-2" placeholder="Thành viên">
+                                <el-select v-model="userDepartmentForm.user_id" placeholder="Thành viên">
                                     <el-option
                                         v-for="user in users"
                                         :key="user.id"
@@ -182,7 +182,7 @@ function getRoleName(role)
                         </div>
                         <div>
                             <el-form-item prop="role_id">
-                                <el-select v-model="userDepartmentForm.role_id" placeholder="Quyền hạn">
+                                <el-select v-model="userDepartmentForm.role_id" placeholder="Quyền hạn" class="mr-2 ml-2">
                                     <el-option
                                         v-for="role in roles"
                                         :key="role.id"
@@ -191,7 +191,7 @@ function getRoleName(role)
                                     </el-select>
                             </el-form-item>
                         </div>
-                        <div style="margin: auto;">
+                        <div>
                             <el-button type="primary" @click="assignUserToDepartment(ruleFormRef)">
                                 Thêm mới
                             </el-button>
