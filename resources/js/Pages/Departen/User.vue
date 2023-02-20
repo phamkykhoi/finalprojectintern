@@ -211,13 +211,8 @@ const state = reactive({
                                         :value="role.id" />
                                     </el-select>
                             </el-form-item>
-<<<<<<< HEAD
                         </el-col>
                         <el-col :span="8">
-=======
-                        </div>
-                        <div>
->>>>>>> develop
                             <el-button type="primary" @click="assignUserToDepartment(ruleFormRef)">
                                 Thêm mới
                             </el-button>
