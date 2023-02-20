@@ -1,13 +1,11 @@
 <script lang="ts" setup>
 import Modal from '@/Components/Modal.vue';
-
 import { reactive, ref, defineEmits, inject, computed  } from 'vue';
 import type { FormInstance } from 'element-plus';
 import { ElMessage } from 'element-plus';
 import axios from 'axios';
 import request from '../../utils/request';
 import { ArrowDown, Document, Folder, FolderOpened, List } from '@element-plus/icons-vue';
-import { defineEmits } from 'vue';
 
 const ruleFormRef = ref<FormInstance>()
 
@@ -148,7 +146,8 @@ function changeQuicklyStatus(taskId) {
                                 </el-dropdown>
                                 <el-checkbox v-model="checked1" label="Chọn tất cả" size="large" />
                             </el-row>
-                            <el-input type="textarea" :rows="1" autocomplete="off" placeholder="Các tệp đính kèm"
+                            <el-form-item label="Nhật ký việc:" style="display: block;">
+                                <el-input type="textarea" :rows="1" autocomplete="off" placeholder="Nhật ký task"
                                 style="display: block;" />
                         </div>
                         <el-form-item label="Bình luận:" style="display: block;">
