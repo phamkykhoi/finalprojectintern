@@ -6,6 +6,10 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateTaskRequest extends FormRequest
 {
+    const STATUS_TYPE_QUICKLY = 'quickly';
+
+    const STATUS_TYPE_IMPORTANT = 'important';
+
     public function authorize()
     {
         return true;
@@ -13,9 +17,14 @@ class UpdateTaskRequest extends FormRequest
 
     public function rules()
     {
-        if (! array_key_exists('name', $this->all()) && ! array_key_exists('description', $this->all()) && ! array_key_exists('task_group_id', $this->all())) {
+        if (request()-> change_status_type === static:: STATUS_TYPE_QUICKLY)  {
             return [
                 'is_quickly' => ['boolean'],
+            ];
+        }
+
+        if (request()-> change_status_type === static:: STATUS_TYPE_IMPORTANT)  {
+            return [
                 'is_important' => ['boolean'],
             ];
         }
