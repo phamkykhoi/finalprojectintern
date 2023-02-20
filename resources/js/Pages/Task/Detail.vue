@@ -74,9 +74,11 @@ const saveTask = (formEl: FormInstance | undefined) => {
     })
 }
 
-
 function handleChange(id) {
-    axios.post(`/api/${id}/update-checkbox`, taskForm)
+    axios.post(`/api/${id}/update-checkbox`, {
+    is_important: props.task.is_important,
+    is_quickly: props.task.is_quickly
+})
         .then(res => {
             getGroupsTask();
         })

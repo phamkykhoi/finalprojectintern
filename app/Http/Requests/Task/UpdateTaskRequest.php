@@ -19,4 +19,16 @@ class UpdateTaskRequest extends FormRequest
             'task_group_id' => ['required'],
         ];
     }
+
+    public function passes()
+    {
+        if (! array_key_exists('name', $this->all())) {
+            unset($this->validator->getData()['name']);
+            unset($this->validator->getData()['description']);
+            unset($this->validator->getData()['task_group_id']);
+            return true;
+        }
+
+        return parent::passes();
+    }
 }
