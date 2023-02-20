@@ -62,7 +62,7 @@ watch(showFormTask, () => {
                     <div class="list-group-title">
                         <h3 class="list-title">{{ taskGroup.name }}</h3>
                         <a @click="createTaskForm(taskGroup)" class="btn-add block w-full px-4 py-2 text-left text-sm leading-5 text-gray-700 hover:bg-gray-100 transition duration-150 ease-in-out">
-                            <i>Thêm</i>
+                            <i>Tạo việc mới</i>
                         </a>
                     </div>
                     <TaskList :tasks="taskGroup.tasks" />
@@ -174,7 +174,7 @@ watch(showFormTask, () => {
 @supports (display: grid) {
     .lists-container {
         display: grid;
-        grid-auto-columns: 27rem;
+        grid-auto-columns: 18rem;
         grid-auto-flow: column;
         grid-column-gap: 1rem;
     }
