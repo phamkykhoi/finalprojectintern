@@ -13,6 +13,13 @@ class UpdateTaskRequest extends FormRequest
 
     public function rules()
     {
+        if (! array_key_exists('name', $this->all()) && ! array_key_exists('description', $this->all()) && ! array_key_exists('task_group_id', $this->all())) {
+            return [
+                'is_quickly' => ['boolean'],
+                'is_important' => ['boolean'],
+            ];
+        }
+
         return [
             'name' => ['required'],
             'description' => ['required'],
@@ -20,15 +27,4 @@ class UpdateTaskRequest extends FormRequest
         ];
     }
 
-    public function passes()
-    {
-        if (! array_key_exists('name', $this->all())) {
-            unset($this->validator->getData()['name']);
-            unset($this->validator->getData()['description']);
-            unset($this->validator->getData()['task_group_id']);
-            return true;
-        }
-
-        return parent::passes();
-    }
 }

@@ -4,6 +4,7 @@ import { reactive, ref, defineEmits, inject, computed  } from 'vue';
 import type { FormInstance } from 'element-plus';
 import { ElMessage } from 'element-plus';
 import axios from 'axios';
+import request from '../../utils/request';
 
 const ruleFormRef = ref<FormInstance>()
 
@@ -52,8 +53,8 @@ const saveTask = (formEl: FormInstance | undefined) => {
     if (!formEl) return
     formEl.validate((valid) => {
         if (valid) {
-            axios.put(`/task/${props.task.id}`, taskForm).then(res => {
-                if (res.data.status) {
+            request.put(`/task/${props.task.id}`, taskForm).then(res => {
+                if (res.data.result.status) {
                     ElMessage({
                         showClose: true,
                         message: 'Sửa task thành công',
@@ -63,32 +64,19 @@ const saveTask = (formEl: FormInstance | undefined) => {
                     getGroupsTask();
                    
                 }
-            }).catch(err => {
-                ElMessage({
-                    showClose: true,
-                    message: err.response.data.message,
-                    type: 'error',
-                })
             })
         }
     })
 }
 
 function handleChange(id) {
-    axios.post(`/api/${id}/update-checkbox`, {
-    is_important: props.task.is_important,
-    is_quickly: props.task.is_quickly
+    request.put(`/api/${id}/update-checkbox`, {
+    is_important: taskForm.is_important,
+    is_quickly: taskForm.is_quickly
 })
         .then(res => {
             getGroupsTask();
         })
-        .catch(err => {
-            ElMessage({
-                showClose: true,
-                message: err.response.data.message,
-                type: 'error',
-            })
-        });
 }
 </script>
 

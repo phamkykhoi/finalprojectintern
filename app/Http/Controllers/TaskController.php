@@ -36,7 +36,7 @@ class TaskController extends Controller
 
     public function show($id)
     {
-        return response()->json([
+        return $this->success([
             'taskGroups' => $this->taskGroupRepo->getByActivityId($id, ['tasks']),
         ]);
     }

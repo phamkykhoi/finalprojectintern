@@ -6,6 +6,7 @@ import DepartenList from '@/Pages/Departen/Index.vue';
 import TaskForm from '@/Pages/Task/Form.vue';
 import TaskList from '@/Pages/Task/Index.vue';
 import { reactive, ref, onBeforeMount, provide } from 'vue';
+import request from '../../utils/request';
 
 const props = defineProps({
     departments: Array,
@@ -35,10 +36,11 @@ const closeFormTask = (value) => {
 const taskGroups = ref([])
 
 async function getGroupsTask() {
-    await axios.get(`/api/activity/${props.activityId}`).then((res) => {
-        taskGroups.value = res.data.taskGroups
+    await request.get(`/api/activity/${props.activityId}`).then((res) => {
+        taskGroups.value = res.data.result.taskGroups
     })
 }
+
 provide('getGroupsTask', getGroupsTask)
 
 onBeforeMount(async () => {
