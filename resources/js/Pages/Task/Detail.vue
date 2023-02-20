@@ -21,6 +21,8 @@ const props = defineProps({
         default: false,
     },
     task_group_id: Number,
+    taskGroup: Object,
+    activity: Object,
 })
 
 const taskForm = reactive({
@@ -104,13 +106,14 @@ function changeQuicklyStatus(taskId) {
                                 <el-icon class="el-icon">
                                     <Document />
                                 </el-icon>
-                                <strong> Tên task</strong>
+                                <strong> {{ task.name }}</strong>
                             </h5>
                         </div>
-                        <p style="display: inline-block;"> Activity.name -> TaskGroup.name</p>
+                        <p style="display: inline-block;"> {{ props.activity.name }} -> {{taskGroup.name}}</p>
 
                         <el-form-item label="Mô tả:" style="display: block;">
-                            <el-input type="textarea" :rows="2" autocomplete="off" placeholder="Mô tả công việc" clearable
+                            <el-input v-model="taskForm.description" :value="taskForm.description" 
+                             type="textarea" :rows="2" autocomplete="off" placeholder="Mô tả công việc" clearable
                                 style="display: inline-block;" />
                         </el-form-item>
                         <el-row class="mb-2" style="display: block;">
@@ -149,6 +152,7 @@ function changeQuicklyStatus(taskId) {
                             <el-form-item label="Nhật ký việc:" style="display: block;">
                                 <el-input type="textarea" :rows="1" autocomplete="off" placeholder="Nhật ký task"
                                 style="display: block;" />
+                            </el-form-item>
                         </div>
                         <el-form-item label="Bình luận:" style="display: block;">
                             <el-input type="textarea" :rows="2" autocomplete="off" placeholder="Nhập bình luận" clearable
@@ -184,8 +188,8 @@ function changeQuicklyStatus(taskId) {
                         <el-button>
                             <i class="el-icon-plus"></i> Thêm mới
                         </el-button>
-                        <el-checkbox v-model="checked3" label="Việc khẩn cấp" size="large" />
-                        <el-checkbox v-model="checked4" label="Việc Quan trọng" size="large" />
+                        <el-checkbox v-model="taskForm.is_quickly" id="is_quickly" @change="changeQuicklyStatus(task.id)" label="Việc Khẩn cấp" size="large" />
+                        <el-checkbox v-model="taskForm.is_important" id="is_important" @change="changeImportantStatus(task.id)" label="Việc Quan trọng" size="large" />
                         <div class="btn-container">
                             <el-button class="btn-container">Cập nhật vào kế hoạch</el-button>
 

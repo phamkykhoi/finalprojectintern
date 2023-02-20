@@ -9,10 +9,11 @@ import { reactive, ref, onBeforeMount, provide } from 'vue';
 import request from '../../utils/request';
 
 const props = defineProps({
+    activity: Object,
     departments: Array,
     activityId: Number,
 });
-
+console.log(props.activity.name)
 const showFormTask = ref(false);
 
 const state  = reactive({
@@ -65,7 +66,7 @@ onBeforeMount(async () => {
                             <i>Tạo việc mới</i>
                         </a>
                     </div>
-                    <TaskList :tasks="taskGroup.tasks" :task_group_id="taskGroup.id" :activityId="activityId"/>
+                    <TaskList :activity="props.activity" :tasks="taskGroup.tasks" :taskGroup="taskGroup" :task_group_id="taskGroup.id" :activityId="activityId"/>
                 </div>
                 <button class="add-list-btn btn">Thêm nhóm công việc</button>
             </section>

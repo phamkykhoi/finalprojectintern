@@ -6,6 +6,8 @@ import { ref, reactive } from 'vue';
 const props = defineProps({
     tasks: Array,
     task_group_id: Number,
+    taskGroup: Object,
+    activity: Object
 });
 const isShowTaskDetail = ref(false);
 
@@ -32,7 +34,7 @@ function closeTaskDetail(value) {
         <li @click="taskDetail(task)">{{  task.name }}</li>
     </ul>
 
-    <TaskDetail v-if="isShowTaskDetail" v-on:closeModal="closeTaskDetail" :isShowModal="isShowTaskDetail" :task="state.task" :task_group_id="state.task_group_id"/>
+    <TaskDetail :activity="props.activity" v-if="isShowTaskDetail" v-on:closeModal="closeTaskDetail" :taskGroup="taskGroup" :isShowModal="isShowTaskDetail" :task="state.task" :task_group_id="state.task_group_id"/>
 </template>
 
 <style scoped>
