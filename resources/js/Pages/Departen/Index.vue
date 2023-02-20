@@ -97,12 +97,11 @@ const closeFormDepartmentUser = (value) => {
                             <Link :href="route('activity.show', {activity: activity.id})"
                                 v-bind:class="{'bg-gray-200': activityId == activity.id}"
                                 class="block p-1 transition-colors duration-200 rounded-md dark:text-light dark:hover:text-light hover:text-gray-700">
-                            <!-- {{ activity.name }}  -->
-                            <span class="ml-2">{{ activity.name }}</span> 
-                            <el-icon class="ml-2"><Tools /></el-icon>
-                            <el-icon class="ml-2"><Star /></el-icon>
-                            <el-icon class="ml-2"><ChatSquare /></el-icon>
-                            <el-icon class="ml-2"><SettingIcon /></el-icon>
+                                <!-- {{ activity.name }}  -->
+                                <span class="ml-2">{{ activity.name }}</span> 
+                                <el-icon class="ml-2"><Tools /></el-icon>
+                                <el-icon class="ml-2"><Star /></el-icon>
+                                <el-icon class="ml-2"><ChatSquare /></el-icon>
                             </Link>
                         </div>
                     </div>
