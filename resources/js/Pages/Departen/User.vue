@@ -184,7 +184,7 @@ const state = reactive({
             <form class="space-y-6 m-3">
                 <div>
                     <h5 class="text-xl font-medium leading-normal text-gray-800" id="exampleModalScrollableLabel">
-                        Cập nhật thành viên ở deparment  {{ props.department.name }}
+                        Cập nhật thành viên
                     </h5>
                 </div>
 
@@ -203,7 +203,7 @@ const state = reactive({
                         </el-col>
                         <el-col :span="8">
                             <el-form-item prop="role_id">
-                                <el-select v-model="userDepartmentForm.role_id" placeholder="Quyền hạn">
+                                <el-select v-model="userDepartmentForm.role_id" placeholder="Quyền hạn" class="mr-2 ml-2">
                                     <el-option
                                         v-for="role in roles"
                                         :key="role.id"
@@ -211,8 +211,13 @@ const state = reactive({
                                         :value="role.id" />
                                     </el-select>
                             </el-form-item>
+<<<<<<< HEAD
                         </el-col>
                         <el-col :span="8">
+=======
+                        </div>
+                        <div>
+>>>>>>> develop
                             <el-button type="primary" @click="assignUserToDepartment(ruleFormRef)">
                                 Thêm mới
                             </el-button>

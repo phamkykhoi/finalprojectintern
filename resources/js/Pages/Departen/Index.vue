@@ -3,6 +3,7 @@
 import DepartenUserForm from '@/Pages/Departen/User.vue';
 import SettingIcon from '@/Components/Icons/SettingIcon.vue';
 import PlusIcon from '@/Components/Icons/PlusIcon.vue';
+import { Setting, Tools, Star, ChatSquare } from '@element-plus/icons-vue';
 import Dropdown from '@/Components/Dropdown.vue';
 import DropdownLink from '@/Components/DropdownLink.vue';
 import { Link } from '@inertiajs/inertia-vue3';
@@ -96,7 +97,11 @@ const closeFormDepartmentUser = (value) => {
                             <Link :href="route('activity.show', {activity: activity.id})"
                                 v-bind:class="{'bg-gray-200': activityId == activity.id}"
                                 class="block p-1 transition-colors duration-200 rounded-md dark:text-light dark:hover:text-light hover:text-gray-700">
-                            {{ activity.name }}
+                            <!-- {{ activity.name }}  -->
+                            <span class="ml-2">{{ activity.name }}</span> 
+                            <el-icon class="ml-2"><Tools /></el-icon>
+                            <el-icon class="ml-2"><Star /></el-icon>
+                            <el-icon class="ml-2"><ChatSquare /></el-icon>
                             </Link>
                         </div>
                     </div>
