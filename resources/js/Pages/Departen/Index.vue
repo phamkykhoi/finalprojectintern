@@ -102,6 +102,7 @@ const closeFormDepartmentUser = (value) => {
                             <el-icon class="ml-2"><Tools /></el-icon>
                             <el-icon class="ml-2"><Star /></el-icon>
                             <el-icon class="ml-2"><ChatSquare /></el-icon>
+                            <el-icon class="ml-2"><SettingIcon /></el-icon>
                             </Link>
                         </div>
                     </div>
