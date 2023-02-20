@@ -5,6 +5,7 @@ import { useForm, usePage, Link } from '@inertiajs/inertia-vue3';
 import { ref, defineEmits, reactive, onMounted, onBeforeMount } from 'vue';
 import type { FormInstance } from 'element-plus'
 import { ElMessage } from 'element-plus'
+import {ArrowDown, Delete, Edit} from '@element-plus/icons-vue'
 import axios from 'axios'
 
 const props = defineProps({
@@ -154,7 +155,10 @@ function getRoleName(role)
     }
 }
 
-
+const state = reactive({
+    circleUrl:'https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png',
+    sizeList: ['small', '', 'large'] as const,
+})
 </script>
 
 <template>
@@ -168,10 +172,10 @@ function getRoleName(role)
                 </div>
 
                 <el-form ref="ruleFormRef" :model="userDepartmentForm" status-icon :rules="rules" class="demo-ruleForm">
-                    <div style="display: flex">
-                        <div>
+                    <el-row>
+                        <el-col :span="8">
                             <el-form-item prop="user_id">
-                                <el-select v-model="userDepartmentForm.user_id" class="m-2" placeholder="Thành viên">
+                                <el-select v-model="userDepartmentForm.user_id" placeholder="Thành viên">
                                     <el-option
                                         v-for="user in users"
                                         :key="user.id"
@@ -179,8 +183,8 @@ function getRoleName(role)
                                         :value="user.id"/>
                                 </el-select>
                             </el-form-item>
-                        </div>
-                        <div>
+                        </el-col>
+                        <el-col :span="8">
                             <el-form-item prop="role_id">
                                 <el-select v-model="userDepartmentForm.role_id" placeholder="Quyền hạn">
                                     <el-option
@@ -190,14 +194,14 @@ function getRoleName(role)
                                         :value="role.id" />
                                     </el-select>
                             </el-form-item>
-                        </div>
-                        <div style="margin: auto;">
+                        </el-col>
+                        <el-col :span="8">
                             <el-button type="primary" @click="assignUserToDepartment(ruleFormRef)">
                                 Thêm mới
                             </el-button>
-                        </div>
-                    </div>
-                </el-form>
+                        </el-col>
+                    </el-row>
+                </el-form>  
 
                 <div>
                     <h5 class="text-xl font-medium leading-normal text-gray-800" id="exampleModalScrollableLabel">
@@ -206,18 +210,27 @@ function getRoleName(role)
                 </div>
 
                 <div v-loading="loading" >
-                    <ul class="members">
-                        <li class="member-item" :key="index" v-for="(member, index) in members">
-                            {{ member.name }} - {{ member.id }}
-                            <p>{{  getRoleName(member.role) }} - {{ member.role }}</p>
-                            <ul class="member-actions">
-                                <li><a href="#" @click="assignRole(member.id, 3)" v-if="member.role != 3">Chuyển thành thành viên</a></li>
-                                <li><a href="#" @click="assignRole(member.id, 2)" v-if="member.role != 2">Chuyển thành giám sát</a></li>
-                                <li><a href="#" @click="assignRole(member.id, 1)" v-if="member.role != 1">Chuyển thành trưởng phòng</a></li>
-                                <li><a href="#" @click="removeMember(member.id)">Delete</a></li>
-                            </ul>
-                        </li>
-                    </ul>
+                    <el-row>
+                        <el-col :span="12" :key="index" v-for="(member, index) in members">
+                            <el-card shadow="hover">
+                                <el-avatar :size="40" :src="circleUrl" />
+                                <el-dropdown>
+                                    <span class="el-dropdown-link">
+                                        {{ member.name }} - {{  getRoleName(member.role) }}
+                                        <el-icon class="el-icon--right"><arrow-down /></el-icon>
+                                    </span>
+                                    <template #dropdown>
+                                        <el-dropdown-menu>
+                                            <el-dropdown-item :icon="Edit" @click="assignRole(member.id, 3)" v-if="member.role != 3">Chuyển thành thành viên</el-dropdown-item>
+                                            <el-dropdown-item :icon="Edit" @click="assignRole(member.id, 2)" v-if="member.role != 2">Chuyển thành giám sát</el-dropdown-item>
+                                            <el-dropdown-item :icon="Edit" @click="assignRole(member.id, 1)" v-if="member.role != 1">Chuyển thành trưởng phòng</el-dropdown-item>
+                                            <el-dropdown-item :icon="Delete" @click="removeMember(member.id)">Xóa thành viên</el-dropdown-item>
+                                        </el-dropdown-menu>
+                                    </template>
+                                </el-dropdown>
+                            </el-card>
+                        </el-col>
+                    </el-row>
                 </div>
                 <div class="modal-footer flex flex-shrink-0 flex-wrap items-center justify-end p-4 border-t border-gray-200 rounded-b-md">
                     <SecondaryButton @click="closeModal"> Đóng </SecondaryButton>
@@ -233,6 +246,21 @@ function getRoleName(role)
         color: #6b778c;
         font-size: 32px;
         font-weight: 600;
+    }
+
+    .el-col {
+        padding: 0.25rem;
+    }
+
+    .el-dropdown-link {
+        overflow: hidden;
+        padding-left: 8px;
+        line-height: 40px;
+        width: 240px;
+    }
+
+    .el-card {
+        white-space: nowrap;
     }
 
     ul.members {
@@ -273,4 +301,13 @@ function getRoleName(role)
     ul.member-actions li:hover {
         background: orange;
     }
+
+
+    .block-col-2 .demonstration {
+        display: block;
+        color: var(--el-text-color-secondary);
+        font-size: 14px;
+        margin-bottom: 20px;
+    }
+
 </style>
