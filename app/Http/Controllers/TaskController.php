@@ -5,9 +5,11 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Repositories\TaskRepository;
 use App\Repositories\TaskGroupRepository;
+use App\Repositories\UserTaskRepository;
 use App\Http\Requests\Task\CreateTaskRequest;
 use App\Http\Requests\Task\UpdateTaskRequest;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\DB;
 
 class TaskController extends Controller
 {
@@ -15,19 +17,33 @@ class TaskController extends Controller
 
     protected $taskGroupRepo;
 
+    protected $userTaskRepo;
+
     public function __construct(
         TaskRepository $taskRepo,
-        TaskGroupRepository $taskGroupRepo
+        TaskGroupRepository $taskGroupRepo,
+        UserTaskRepository $userTaskRepo,
     ) 
     {
         $this->taskRepo = $taskRepo;
         $this->taskGroupRepo = $taskGroupRepo;
+        $this->userTaskRepo = $userTaskRepo;
     }
 
     public function store(CreateTaskRequest $request)
     {
         try {
-            $this->taskRepo->save($request->all());
+            DB::transaction(function () use ($request) {
+                $inputs = $request->all();
+                $task = $this->taskRepo->save($inputs);
+                $userTask = [
+                    'user_id' => $inputs['user_id'],
+                    'task_id' => $task['id'],
+                    'role_task' => $inputs['role_id'],
+                ];
+
+                $this->userTaskRepo->save($userTask);
+            });
             return $this->success();
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());

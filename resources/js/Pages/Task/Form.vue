@@ -6,6 +6,7 @@ import { reactive, nextTick, ref, defineEmits, watch, onBeforeMount } from 'vue'
 import type { FormInstance } from 'element-plus';
 import { ElMessage } from 'element-plus';
 import axios from 'axios';
+import request from '../../utils/request';
 import {
   Check,
   Delete,
@@ -44,8 +45,18 @@ const taskForm = reactive({
     is_important: 0,
     file: null,
     fileList: [],
-    list_user: ''
+    user_id: '',
+    role_id: ''
 })
+
+const roles = ref([
+    {id: 1, role: 'Admin'},
+    {id: 2, role: 'Giám sát department'},
+    {id: 3, role: 'Giám sát activity'},
+    {id: 4, role: 'Người phối hợp'},
+    {id: 5, role: 'Người theo dõi'},
+    {id: 6, role: 'Chủ task'},
+])
 
 const uploadRef = ref()
 
@@ -71,7 +82,7 @@ const addTask = (formEl: FormInstance | undefined) => {
     if (!formEl) return
     formEl.validate((valid) => {
         if (valid) {
-            axios.post('/task', taskForm).then(res => {
+            request.post('/task', taskForm).then(res => {
                 if (res.data.status) {
                     ElMessage({
                         showClose: true,
@@ -81,12 +92,6 @@ const addTask = (formEl: FormInstance | undefined) => {
                     closeModal()
                     props.getGroupsTask()
                 }
-            }).catch(err => {
-                ElMessage({
-                    showClose: true,
-                    message: err.response.data.message,
-                    type: 'error',
-                })
             })
         }
     })
@@ -139,16 +144,27 @@ onBeforeMount(async () => {
                                 </template>
                             </el-upload>
                         </el-form-item>
-
-                       <p>Danh sách Users:</p>
-                       <el-select v-model="taskForm.list_user" class="m-2" placeholder="Thành viên">
-                            <el-option
-                                v-for="user in users"
-                                :key="user.id"
-                                :label="user.name"
-                                :value="user.id"/>
-                        </el-select>
-
+                        <div style="display: flex;">
+                            <el-form-item prop="user_id">
+                                <el-select v-model="taskForm.user_id" class="m-2" placeholder="Thành viên">
+                                    <el-option
+                                        v-for="user in users"
+                                        :key="user.id"
+                                        :label="user.name"
+                                        :value="user.id"/>
+                                </el-select>
+                            </el-form-item>
+                        
+                            <el-form-item prop="role_id">
+                                <el-select v-model="taskForm.role_id" placeholder="Quyền hạn">
+                                    <el-option
+                                        v-for="role in roles"
+                                        :key="role.id"
+                                        :label="role.role"
+                                        :value="role.id" />
+                                    </el-select>
+                            </el-form-item>
+                        </div>
                         <el-row>
                             <el-col :span="12">
                                 <el-input v-model="taskForm.start_date" class="mb-2 mt-2" placeholder="Chọn ngày bắt đầu" />
