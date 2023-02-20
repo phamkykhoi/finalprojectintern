@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { MessageBox } from 'element-ui'
+import { ElMessage } from 'element-plus';
 
 const axioService = axios.create({
     baseURL: '',
@@ -22,11 +22,10 @@ axioService.interceptors.response.use(
             return res
         }
 
-        MessageBox.alert(res.data.message || 'Đã có lỗi sảy ra', 'Thông báo', {
-            confirmButtonText: 'Đóng',
-            cancelButtonText: '',
+        ElMessage({
+            showClose: true,
+            message: res.data.message || 'Đã có lỗi sảy ra',
             type: 'error',
-            center: true,
         })
     },
     err => {
@@ -57,11 +56,10 @@ axioService.interceptors.response.use(
         }
 
         if (errorMessage) {
-            MessageBox.alert(errorMessage, 'Thông báo', {
-                confirmButtonText: 'Đóng',
-                cancelButtonText: '',
+            ElMessage({
+                showClose: true,
+                message: errorMessage,
                 type: 'error',
-                center: true,
             })
         }
 
