@@ -7,6 +7,7 @@ import TaskForm from '@/Pages/Task/Form.vue';
 import TaskList from '@/Pages/Task/Index.vue';
 import { reactive, ref, onBeforeMount, provide } from 'vue';
 import request from '../../utils/request';
+import { CirclePlusFilled } from '@element-plus/icons-vue';
 
 const props = defineProps({
     activity: Object,
@@ -62,9 +63,17 @@ onBeforeMount(async () => {
                 <div class="list" :key="index" v-for="(taskGroup, index) in taskGroups">
                     <div class="list-group-title">
                         <h3 class="list-title">{{ taskGroup.name }}</h3>
-                        <a @click="createTaskForm(taskGroup)" class="btn-add block w-full px-4 py-2 text-left text-sm leading-5 text-gray-700 hover:bg-gray-100 transition duration-150 ease-in-out">
-                            <i>Tạo việc mới</i>
-                        </a>
+                        <el-tooltip
+                            class="box-item"
+                            effect="dark"
+                            content="Thêm mới task"
+                            placement="top-start"
+                        >
+                            <el-button  @click="createTaskForm(taskGroup)">
+                                <el-icon><CirclePlusFilled /></el-icon>
+                            </el-button>
+                            
+                        </el-tooltip>
                     </div>
                     <TaskList :activity="props.activity" :tasks="taskGroup.tasks" :taskGroup="taskGroup" :task_group_id="taskGroup.id" :activityId="activityId"/>
                 </div>
