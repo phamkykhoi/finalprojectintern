@@ -122,7 +122,7 @@ async function assignRole(userId, targetRole) {
 async function removeMember(userId)
 {
     ElMessageBox.confirm(
-        'proxy will permanently delete the file. Continue?',
+        'Bạn chắc chắn muốn xóa thành viên này chứ?',
         'Warning',
         {
             confirmButtonText: 'OK',
