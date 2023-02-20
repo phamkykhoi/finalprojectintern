@@ -76,6 +76,12 @@ const rules = {
     description: [
         { required: true, message: 'description is required' },
     ],
+    user_id: [
+        { required: true, message: 'user_id is required' },
+    ],
+    role_id: [
+        { required: true, message: 'role_id is required' },
+    ],
 }
 
 const addTask = (formEl: FormInstance | undefined) => {
@@ -136,7 +142,6 @@ onBeforeMount(async () => {
                             <el-input v-model="taskForm.description" type="textarea" :rows="3" autocomplete="off"
                                 clearable />
                         </el-form-item>
-
                         <el-form-item label="Tệp đính kèm">
                             <el-upload v-model:file-list="taskForm.fileList" class="upload-demo" :auto-upload="false">
                                 <template #trigger>
