@@ -4,7 +4,7 @@ import SecondaryButton from '@/Components/SecondaryButton.vue';
 import { useForm, usePage, Link } from '@inertiajs/inertia-vue3';
 import { ref, defineEmits, reactive, onMounted, onBeforeMount } from 'vue';
 import type { FormInstance } from 'element-plus'
-import { ElMessage } from 'element-plus'
+import { ElMessage, ElMessageBox } from 'element-plus'
 import {ArrowDown, Delete, Edit} from '@element-plus/icons-vue'
 import axios from 'axios'
 
@@ -121,21 +121,38 @@ async function assignRole(userId, targetRole) {
 
 async function removeMember(userId)
 {
-    axios.delete(`department/${props.department.id}/remove/member/${userId}`).then(res => {
-        if (res.data.status) {
+    ElMessageBox.confirm(
+        'proxy will permanently delete the file. Continue?',
+        'Warning',
+        {
+            confirmButtonText: 'OK',
+            cancelButtonText: 'Cancel',
+            type: 'warning',
+        }
+    )
+    .then(() => {
+        axios.delete(`department/${props.department.id}/remove/member/${userId}`).then(res => {
+            if (res.data.status) {
+                ElMessage({
+                    showClose: true,
+                    message: 'Xoá member thành công',
+                    type: 'success',
+                })
+
+                getMembers()
+            }
+        }).catch(err => {
             ElMessage({
                 showClose: true,
-                message: 'Xoá member thành công',
-                type: 'success',
+                message: err.response.data.message,
+                type: 'error',
             })
-
-            getMembers()
-        }
-    }).catch(err => {
+        })
+    })
+    .catch(() => {
         ElMessage({
-            showClose: true,
-            message: err.response.data.message,
-            type: 'error',
+            type: 'info',
+            message: 'Delete canceled',
         })
     })
 }
@@ -216,8 +233,11 @@ const state = reactive({
                                 <el-avatar :size="40" :src="circleUrl" />
                                 <el-dropdown>
                                     <span class="el-dropdown-link">
-                                        {{ member.name }} - {{  getRoleName(member.role) }}
-                                        <el-icon class="el-icon--right"><arrow-down /></el-icon>
+                                        {{ member.name }}
+                                        <el-icon class="el-icon--right"><arrow-down /></el-icon><br>
+                                        <el-tag v-if="member.role === 3">Thành viên</el-tag>
+                                        <el-tag type="success" v-if="member.role === 2">Giám sát</el-tag>
+                                        <el-tag type="warning" v-if="member.role === 1">Trưởng phòng</el-tag>
                                     </span>
                                     <template #dropdown>
                                         <el-dropdown-menu>
@@ -253,9 +273,8 @@ const state = reactive({
     }
 
     .el-dropdown-link {
-        overflow: hidden;
         padding-left: 8px;
-        line-height: 40px;
+        line-height: 25px;
         width: 240px;
     }
 
