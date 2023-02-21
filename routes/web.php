@@ -9,6 +9,7 @@ use App\Http\Controllers\TaskController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TaskGroupController;
+use App\Http\Controllers\AttachmentController;
 
 
 /*
@@ -34,6 +35,7 @@ Route::middleware(['auth', 'verified'])->group(function() {
     Route::resource('taskgroup', TaskGroupController::class);
     Route::get('department/{departmentId}/members', [DepartmentController::class, 'getMembers'])->name('department.members');
     Route::delete('department/{departmentId}/remove/member/{userId}', [DepartmentController::class, 'removeMember'])->name('department.remove.member');
+    Route::post('/upload-file', [AttachmentController::class,'upload']);
 });
 
 Route::middleware('auth')->group(function () {
