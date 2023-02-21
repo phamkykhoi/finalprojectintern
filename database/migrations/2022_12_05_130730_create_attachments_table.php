@@ -22,6 +22,7 @@ return new class extends Migration
             $table->string('extension')->default(false);
             $table->string('mime_type')->default(false);
             $table->Integer('size')->default('0');
+            $table->string('title')->nullable();
             $table->string('deleted_by');
             $table->timestamp('deleted_at');
             $table->timestamps();
