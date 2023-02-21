@@ -38,6 +38,7 @@ export default {
                                     type: "success",
                                 });
                             }
+                            console.log(res.data.result);
                         })
                         .catch((err) => {
                             ElMessage({

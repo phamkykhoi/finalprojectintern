@@ -20,17 +20,19 @@ class AttachmentController extends Controller
     {
         $file = $request->file('file');
         $fileName = time().'.'.$file->extension();
-        $moveFile=$file->move(public_path('images'), $fileName);
+        $publicFile = $file->move(public_path('images'), $fileName);
         $url = url('/images', ['file' => $fileName]);
 
         $this->attachmentRepo->save([
-            'uuid'=>'csaccas',
-            'attachable_type'=>'file',
-            'file_path' => $moveFile->getPath(),
-            'file_name' => $moveFile->getFilename(),
-            'extension' => $moveFile->getExtension(),
-            'mime_type'=>'csanciac',
-            'size' => $moveFile->getSize(),
+            'uuid'=>"1",
+            'attachable_type'=>'task',
+            'file_path' => $publicFile->getPath(),
+            'file_name' => $publicFile->getFilename(),
+            'extension' => $publicFile->getExtension(),
+            'mime_type'=> $publicFile->getMimeType(),
+            'size' => $publicFile->getSize(),
+            'deleted_by'=>null,
+            'deleted_at'=>null,
         ]);
 
         return $this->success($url);

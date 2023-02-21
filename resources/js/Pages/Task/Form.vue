@@ -113,7 +113,7 @@ const addTask = (formEl: FormInstance | undefined) => {
                         </el-form-item>
 
                         <el-form-item label="Tệp đính kèm">
-                          <FileUpload ></FileUpload>
+                          <FileUpload></FileUpload>
                         </el-form-item>
 
                        <p>Danh sách Users:</p>
