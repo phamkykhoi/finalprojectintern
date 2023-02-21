@@ -22,19 +22,20 @@ class AttachmentController extends Controller
     {
         $file = $request->file('file');
         $fileName = $file->hashName();
-        Storage::putFile('public\attachments', $file);
-        $url = url('/storage/attachments', ['file' => $fileName]);
-
+        Storage::disk('local')->putFile('public/attachments', $file);
         $this->attachmentRepo->save([
             'uuid' => Str::uuid()->toString(),
             'file_path' => Storage::path($fileName),
             'file_name' => $fileName,
             'extension' => $file->extension(),
             'mime_type'=> $file->getMimeType(),
-            'size' => $file->getSize()
+            'size' => $file->getSize(),
+            'title' => $file->getClientOriginalName(),
         ]);
 
-        return $this->success($url);
+        return $this->success([
+            'file_url' => url('/storage/attachments', ['file' => $fileName])
+        ]);
     }
 
 }

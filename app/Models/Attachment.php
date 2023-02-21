@@ -17,5 +17,6 @@ class Attachment extends Model
         'extension',
         'mime_type',
         'size',
+        'title',    
     ];
 }

@@ -18,16 +18,16 @@ export default {
     methods: {
         handleChange(file) {
             file.url = URL.createObjectURL(file.raw);
-            this.submitUpload(file.url);
+            this.submitUpload(file.url, file.name);
         },
 
-        submitUpload(fileUrl) {
+        submitUpload(fileUrl, title) {
             let formData = new FormData();
             fetch(fileUrl)
                 .then((res) => res.blob())
                 .then((blob) => {
                     let file = new File([blob], "filename.jpeg");
-                    formData.append("file", file, file.name);
+                    formData.append("file", file, title);
                     axios
                         .post("/upload-file", formData)
                         .then((res) => {
