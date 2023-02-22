@@ -10,13 +10,18 @@ class Attachment extends Model
     use HasFactory;
 
     protected $fillable = [
-        'uuid',
+        'attachable_id',
         'attachable_type',
         'file_path',
         'file_name',
         'extension',
         'mime_type',
         'size',
-        'title',    
+        'title',
     ];
+
+    public function attachable()
+    {
+        return $this->morphTo();
+    }
 }

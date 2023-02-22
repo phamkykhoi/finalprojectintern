@@ -24,7 +24,7 @@ class AttachmentController extends Controller
         $fileName = $file->hashName();
         Storage::disk('local')->putFile('public/attachments', $file);
         $this->attachmentRepo->save([
-            'uuid' => Str::uuid()->toString(),
+            'attachable_id' => Str::uuid()->toString(),
             'file_path' => Storage::path($fileName),
             'file_name' => $fileName,
             'extension' => $file->extension(),
@@ -35,6 +35,13 @@ class AttachmentController extends Controller
 
         return $this->success([
             'file_url' => url('/storage/attachments', ['file' => $fileName])
+        ]);
+    }
+
+    public function getAttachments($id)
+    {
+       return $this->success([
+            'attachment_list' => $this->attachmentRepo->getAttachmentsById($id)
         ]);
     }
 

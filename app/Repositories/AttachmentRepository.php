@@ -10,4 +10,9 @@ class AttachmentRepository extends BaseRepository
     {
         $this->model = $model;
     }
+
+    public function getAttachmentsById($id)
+    {
+        return $this->model->where('attachable_id', $id)->get();
+    }
 }
