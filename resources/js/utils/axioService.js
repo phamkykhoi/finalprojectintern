@@ -21,7 +21,6 @@ axioService.interceptors.response.use(
         if (res.data.status) {
             return res
         }
-
         ElMessage({
             showClose: true,
             message: res.data.message || 'Đã có lỗi sảy ra',

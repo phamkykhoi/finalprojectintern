@@ -1,8 +1,15 @@
 <script lang="ts" setup>
-
 import Modal from '@/Components/Modal.vue';
+import { reactive, ref, defineEmits, inject, computed  } from 'vue';
+import type { FormInstance } from 'element-plus';
+import { ElMessage } from 'element-plus';
+import axios from 'axios';
+import request from '../../utils/request';
 import { ArrowDown, Document, Folder, FolderOpened, List } from '@element-plus/icons-vue';
-import { defineEmits } from 'vue';
+
+const ruleFormRef = ref<FormInstance>()
+
+const confirmingTaskDeletion = ref(false);
 
 const props = defineProps({
     task: {
@@ -13,20 +20,84 @@ const props = defineProps({
         type: Boolean,
         default: false,
     },
+    task_group_id: Number,
+    taskGroup: Object,
+    activity: Object,
 })
 
-const emit = defineEmits(['closeModal'])
+const taskForm = reactive({
+    name: props.task.name,
+    description: props.task.description,
+    task_group_id: props.task_group_id,
+    is_important: props.task.is_important,
+    is_quickly: props.task.is_quickly
+})
+
+const emit = defineEmits(['closeModal', 'unClose'])
+
+confirmingTaskDeletion.value = props.isShowModal;
 
 const closeModal = () => {
+    confirmingTaskDeletion.value = false;
     emit('closeModal', false);
 };
 
+const rules = {
+    name: [
+        { required: true, message: 'name is required' },
+    ],
+    description: [
+        { required: true, message: 'description is required' },
+    ],
+}
+const getGroupsTask = inject('getGroupsTask');
+
+const saveTask = (formEl: FormInstance | undefined) => {
+    if (!formEl) return
+    formEl.validate((valid) => {
+        if (valid) {
+            request.put(`/task/${props.task.id}`, taskForm).then(res => {
+                if (res.data.result.status) {
+                    ElMessage({
+                        showClose: true,
+                        message: 'Sửa task thành công',
+                        type: 'success',
+                    })
+                    closeModal()
+                    getGroupsTask();
+                   
+                }
+            })
+        }
+    })
+}
+
+function changeImportantStatus(taskId) {
+    request.put(`/task/${taskId}`, {
+    is_important: taskForm.is_important,
+    change_status_type: 'important',
+})
+        .then(res => {
+            getGroupsTask();
+        })
+}
+
+function changeQuicklyStatus(taskId) {
+    request.put(`/task/${taskId}`, {
+        is_quickly: taskForm.is_quickly,
+        change_status_type: 'quickly',
+})
+        .then(res => {
+            getGroupsTask();
+        })
+}
 </script>
 
 <template>
     <section class="space-y-6">
         <Modal :show="isShowModal" @close="closeModal" v-bind:max-width="'3xl'">
             <form class="space-y-6 m-3">
+                <el-form enctype="multipart/form-data" ref="ruleFormRef" :model="taskForm" class="demo-ruleForm" :rules="rules">
                 <el-row>
                     <el-col :span="18">
                         <div class="modal-header flex flex-shrink-0 items-center justify-between p-4 rounded-t-md">
@@ -35,13 +106,14 @@ const closeModal = () => {
                                 <el-icon class="el-icon">
                                     <Document />
                                 </el-icon>
-                                <strong> Tên task</strong>
+                                <strong> {{ task.name }}</strong>
                             </h5>
                         </div>
-                        <p style="display: inline-block;"> Activity.name -> TaskGroup.name</p>
+                        <p style="display: inline-block;"> {{ props.activity.name }} -> {{taskGroup.name}}</p>
 
                         <el-form-item label="Mô tả:" style="display: block;">
-                            <el-input type="textarea" :rows="2" autocomplete="off" placeholder="Mô tả công việc" clearable
+                            <el-input v-model="taskForm.description" :value="taskForm.description" 
+                             type="textarea" :rows="2" autocomplete="off" placeholder="Mô tả công việc" clearable
                                 style="display: inline-block;" />
                         </el-form-item>
                         <el-row class="mb-2" style="display: block;">
@@ -77,8 +149,10 @@ const closeModal = () => {
                                 </el-dropdown>
                                 <el-checkbox v-model="checked1" label="Chọn tất cả" size="large" />
                             </el-row>
-                            <el-input type="textarea" :rows="1" autocomplete="off" placeholder="Các tệp đính kèm"
+                            <el-form-item label="Nhật ký việc:" style="display: block;">
+                                <el-input type="textarea" :rows="1" autocomplete="off" placeholder="Nhật ký task"
                                 style="display: block;" />
+                            </el-form-item>
                         </div>
                         <el-form-item label="Bình luận:" style="display: block;">
                             <el-input type="textarea" :rows="2" autocomplete="off" placeholder="Nhập bình luận" clearable
@@ -114,8 +188,8 @@ const closeModal = () => {
                         <el-button>
                             <i class="el-icon-plus"></i> Thêm mới
                         </el-button>
-                        <el-checkbox v-model="checked3" label="Việc khẩn cấp" size="large" />
-                        <el-checkbox v-model="checked4" label="Việc Quan trọng" size="large" />
+                        <el-checkbox v-model="taskForm.is_quickly" id="is_quickly" @change="changeQuicklyStatus(task.id)" label="Việc Khẩn cấp" size="large" />
+                        <el-checkbox v-model="taskForm.is_important" id="is_important" @change="changeImportantStatus(task.id)" label="Việc Quan trọng" size="large" />
                         <div class="btn-container">
                             <el-button class="btn-container">Cập nhật vào kế hoạch</el-button>
 
@@ -141,7 +215,8 @@ const closeModal = () => {
                         </el-button>
                     </div>
                 </div>
-            </form>
+            </el-form>
+        </form>
         </Modal>
     </section>
 </template>

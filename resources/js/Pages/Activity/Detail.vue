@@ -5,16 +5,20 @@ import { Head } from '@inertiajs/inertia-vue3';
 import DepartenList from '@/Pages/Departen/Index.vue';
 import TaskForm from '@/Pages/Task/Form.vue';
 import TaskList from '@/Pages/Task/Index.vue';
-import { reactive, ref, onBeforeMount, watch } from 'vue';
+import { reactive, ref, onBeforeMount, provide } from 'vue';
+import request from '../../utils/request';
+import { CirclePlusFilled } from '@element-plus/icons-vue';
 
 const props = defineProps({
+    activity: Object,
     departments: Array,
-    taskGroups: Array,
     activityId: Number,
 });
-
+console.log(props.activity.name)
 const showFormTask = ref(false);
+
 const state  = reactive({
+    activityId: props.activityId,
     task: {
         name: "",
         description: "",
@@ -31,21 +35,19 @@ const closeFormTask = (value) => {
     showFormTask.value = value;
 }
 
-const groupsTask = ref([])
+const taskGroups = ref([])
+
+async function getGroupsTask() {
+    await request.get(`/api/activity/${props.activityId}`).then((res) => {
+        taskGroups.value = res.data.result.taskGroups
+    })
+}
+
+provide('getGroupsTask', getGroupsTask)
 
 onBeforeMount(async () => {
     getGroupsTask()
 });
-
-async function getGroupsTask() {
-    await axios.get(`/api/activity/${props.activityId}`).then((res) => {
-        groupsTask.value = res.data.taskGroups
-    })
-}
-
-watch(showFormTask, () => {
-    getGroupsTask()
-})
 </script>
 
 <template>
@@ -58,20 +60,28 @@ watch(showFormTask, () => {
             </template>
             
             <section class="lists-container">
-                <div class="list" :key="index" v-for="(taskGroup, index) in groupsTask">
+                <div class="list" :key="index" v-for="(taskGroup, index) in taskGroups">
                     <div class="list-group-title">
                         <h3 class="list-title">{{ taskGroup.name }}</h3>
-                        <a @click="createTaskForm(taskGroup)" class="btn-add block w-full px-4 py-2 text-left text-sm leading-5 text-gray-700 hover:bg-gray-100 transition duration-150 ease-in-out">
-                            <i>Tạo việc mới</i>
-                        </a>
+                        <el-tooltip
+                            class="box-item"
+                            effect="dark"
+                            content="Thêm mới task"
+                            placement="top-start"
+                        >
+                            <el-button  @click="createTaskForm(taskGroup)">
+                                <el-icon><CirclePlusFilled /></el-icon>
+                            </el-button>
+                            
+                        </el-tooltip>
                     </div>
-                    <TaskList :tasks="taskGroup.tasks" />
+                    <TaskList :activity="props.activity" :tasks="taskGroup.tasks" :taskGroup="taskGroup" :task_group_id="taskGroup.id" :activityId="activityId"/>
                 </div>
                 <button class="add-list-btn btn">Thêm nhóm công việc</button>
             </section>
         </AuthenticatedLayout>
     </div>
-    <TaskForm v-if="showFormTask" :task="state.task" :isShowModal="showFormTask" v-on:closeModal="closeFormTask" />
+    <TaskForm :getGroupsTask="getGroupsTask" v-if="showFormTask" :task="state.task" :isShowModal="showFormTask" v-on:closeModal="closeFormTask"/>
 </template>
 
 <style scoped>

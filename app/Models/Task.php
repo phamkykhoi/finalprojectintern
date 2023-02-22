@@ -21,4 +21,13 @@ class Task extends Model
         'status',
         'completed_at',
     ];
+
+    public function attachment()
+    {
+        return $this->morphOne(Attachment::class, 'attachable');
+    }
+    protected $casts = [
+        'is_important' => 'boolean',
+        'is_quickly' => 'boolean',
+    ];
 }
