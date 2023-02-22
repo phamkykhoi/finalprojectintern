@@ -4,7 +4,8 @@ import SecondaryButton from '@/Components/SecondaryButton.vue';
 import { useForm, usePage, Link } from '@inertiajs/inertia-vue3';
 import { ref, defineEmits, reactive, onMounted, onBeforeMount } from 'vue';
 import type { FormInstance } from 'element-plus'
-import { ElMessage } from 'element-plus'
+import { ElMessage, ElMessageBox } from 'element-plus'
+import {ArrowDown, Delete, Edit} from '@element-plus/icons-vue'
 import axios from 'axios'
 
 const props = defineProps({
@@ -120,21 +121,38 @@ async function assignRole(userId, targetRole) {
 
 async function removeMember(userId)
 {
-    axios.delete(`department/${props.department.id}/remove/member/${userId}`).then(res => {
-        if (res.data.status) {
+    ElMessageBox.confirm(
+        'Bạn chắc chắn muốn xóa thành viên này chứ?',
+        'Warning',
+        {
+            confirmButtonText: 'OK',
+            cancelButtonText: 'Cancel',
+            type: 'warning',
+        }
+    )
+    .then(() => {
+        axios.delete(`department/${props.department.id}/remove/member/${userId}`).then(res => {
+            if (res.data.status) {
+                ElMessage({
+                    showClose: true,
+                    message: 'Xoá member thành công',
+                    type: 'success',
+                })
+
+                getMembers()
+            }
+        }).catch(err => {
             ElMessage({
                 showClose: true,
-                message: 'Xoá member thành công',
-                type: 'success',
+                message: err.response.data.message,
+                type: 'error',
             })
-
-            getMembers()
-        }
-    }).catch(err => {
+        })
+    })
+    .catch(() => {
         ElMessage({
-            showClose: true,
-            message: err.response.data.message,
-            type: 'error',
+            type: 'info',
+            message: 'Delete canceled',
         })
     })
 }
@@ -154,7 +172,10 @@ function getRoleName(role)
     }
 }
 
-
+const state = reactive({
+    circleUrl:'https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png',
+    sizeList: ['small', '', 'large'] as const,
+})
 </script>
 
 <template>
@@ -168,8 +189,8 @@ function getRoleName(role)
                 </div>
 
                 <el-form ref="ruleFormRef" :model="userDepartmentForm" status-icon :rules="rules" class="demo-ruleForm">
-                    <div style="display: flex">
-                        <div>
+                    <el-row>
+                        <el-col :span="8">
                             <el-form-item prop="user_id">
                                 <el-select v-model="userDepartmentForm.user_id" placeholder="Thành viên">
                                     <el-option
@@ -179,8 +200,8 @@ function getRoleName(role)
                                         :value="user.id"/>
                                 </el-select>
                             </el-form-item>
-                        </div>
-                        <div>
+                        </el-col>
+                        <el-col :span="8">
                             <el-form-item prop="role_id">
                                 <el-select v-model="userDepartmentForm.role_id" placeholder="Quyền hạn" class="mr-2 ml-2">
                                     <el-option
@@ -190,14 +211,14 @@ function getRoleName(role)
                                         :value="role.id" />
                                     </el-select>
                             </el-form-item>
-                        </div>
-                        <div>
+                        </el-col>
+                        <el-col :span="8">
                             <el-button type="primary" @click="assignUserToDepartment(ruleFormRef)">
                                 Thêm mới
                             </el-button>
-                        </div>
-                    </div>
-                </el-form>
+                        </el-col>
+                    </el-row>
+                </el-form>  
 
                 <div>
                     <h5 class="text-xl font-medium leading-normal text-gray-800" id="exampleModalScrollableLabel">
@@ -206,18 +227,30 @@ function getRoleName(role)
                 </div>
 
                 <div v-loading="loading" >
-                    <ul class="members">
-                        <li class="member-item" :key="index" v-for="(member, index) in members">
-                            {{ member.name }} - {{ member.id }}
-                            <p>{{  getRoleName(member.role) }} - {{ member.role }}</p>
-                            <ul class="member-actions">
-                                <li><a href="#" @click="assignRole(member.id, 3)" v-if="member.role != 3">Chuyển thành thành viên</a></li>
-                                <li><a href="#" @click="assignRole(member.id, 2)" v-if="member.role != 2">Chuyển thành giám sát</a></li>
-                                <li><a href="#" @click="assignRole(member.id, 1)" v-if="member.role != 1">Chuyển thành trưởng phòng</a></li>
-                                <li><a href="#" @click="removeMember(member.id)">Delete</a></li>
-                            </ul>
-                        </li>
-                    </ul>
+                    <el-row>
+                        <el-col :span="12" :key="index" v-for="(member, index) in members">
+                            <el-card shadow="hover">
+                                <el-avatar :size="40" :src="circleUrl" />
+                                <el-dropdown>
+                                    <span class="el-dropdown-link">
+                                        {{ member.name }}
+                                        <el-icon class="el-icon--right"><arrow-down /></el-icon><br>
+                                        <el-tag v-if="member.role === 3">Thành viên</el-tag>
+                                        <el-tag type="success" v-if="member.role === 2">Giám sát</el-tag>
+                                        <el-tag type="warning" v-if="member.role === 1">Trưởng phòng</el-tag>
+                                    </span>
+                                    <template #dropdown>
+                                        <el-dropdown-menu>
+                                            <el-dropdown-item :icon="Edit" @click="assignRole(member.id, 3)" v-if="member.role != 3">Chuyển thành thành viên</el-dropdown-item>
+                                            <el-dropdown-item :icon="Edit" @click="assignRole(member.id, 2)" v-if="member.role != 2">Chuyển thành giám sát</el-dropdown-item>
+                                            <el-dropdown-item :icon="Edit" @click="assignRole(member.id, 1)" v-if="member.role != 1">Chuyển thành trưởng phòng</el-dropdown-item>
+                                            <el-dropdown-item :icon="Delete" @click="removeMember(member.id)">Xóa thành viên</el-dropdown-item>
+                                        </el-dropdown-menu>
+                                    </template>
+                                </el-dropdown>
+                            </el-card>
+                        </el-col>
+                    </el-row>
                 </div>
                 <div class="modal-footer flex flex-shrink-0 flex-wrap items-center justify-end p-4 border-t border-gray-200 rounded-b-md">
                     <SecondaryButton @click="closeModal"> Đóng </SecondaryButton>
@@ -235,42 +268,17 @@ function getRoleName(role)
         font-weight: 600;
     }
 
-    ul.members {
-        display: flex;
-        list-style-type: none;
-        flex-wrap: wrap;
-        justify-content: space-between;
+    .el-col {
+        padding: 0.25rem;
     }
 
-    ul.members > li {
-        border: 1px dashed #ccc;
-        width: 46%;
-        margin-right: 15px;
-        padding: 8px;
-        margin-bottom: 10px;
-        position: relative;
+    .el-dropdown-link {
+        padding-left: 8px;
+        line-height: 25px;
+        width: 240px;
     }
 
-    ul.members > li:hover ul.member-actions {
-        display: block;
-    }
-
-    ul.member-actions {
-        position: absolute;
-        width: 250px;
-        list-style-type: none;
-        background: #f1f1f1;
-        border: 1px solid #ccc;
-        top: 0px;
-        left: 90%;
-        display: none;
-    }
-
-    ul.member-actions li {
-        background: #ccc;
-    }
-
-    ul.member-actions li:hover {
-        background: orange;
+    .el-card {
+        white-space: nowrap;
     }
 </style>

@@ -5,6 +5,7 @@ import { useForm, usePage, Link } from '@inertiajs/inertia-vue3'
 import { reactive, nextTick, ref, defineEmits, watch, onBeforeMount } from 'vue';
 import type { FormInstance } from 'element-plus';
 import { ElMessage } from 'element-plus';
+import FileUpload from '@/Components/FileUpload.vue';
 import axios from 'axios';
 import request from '../../utils/request';
 import {
@@ -143,11 +144,7 @@ onBeforeMount(async () => {
                                 clearable />
                         </el-form-item>
                         <el-form-item label="Tệp đính kèm">
-                            <el-upload v-model:file-list="taskForm.fileList" class="upload-demo" :auto-upload="false">
-                                <template #trigger>
-                                    <el-button type="primary">Chọn file</el-button>
-                                </template>
-                            </el-upload>
+                          <FileUpload></FileUpload>
                         </el-form-item>
                         <div style="display: flex;">
                             <el-form-item prop="user_id">

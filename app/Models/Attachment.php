@@ -17,11 +17,6 @@ class Attachment extends Model
         'extension',
         'mime_type',
         'size',
-        'title', 
+        'title',    
     ];
-
-    public function attachable()
-    {
-        return $this->morphTo();
-    }
 }

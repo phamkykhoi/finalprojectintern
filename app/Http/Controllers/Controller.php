@@ -20,7 +20,6 @@ class Controller extends BaseController
         ], $statusCode ?? HttpResponse::HTTP_OK);
     }
 
-
     protected function error($message, $statusCode = 400)
     {
         return response()->json([
