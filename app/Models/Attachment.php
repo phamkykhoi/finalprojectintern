@@ -10,13 +10,14 @@ class Attachment extends Model
     use HasFactory;
 
     protected $fillable = [
-        'attachbale_id',
+        'uuid',
         'attachable_type',
         'file_path',
         'file_name',
         'extension',
         'mime_type',
-        'size'
+        'size',
+        'title', 
     ];
 
     public function attachable()

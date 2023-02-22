@@ -172,6 +172,7 @@ onBeforeMount(async () => {
                         </div>
                         <el-row>
                             <el-col :span="12">
+                                <p>Ngày bắt đầu</p>
                                 <el-input v-model="taskForm.start_date" class="mb-2 mt-2" placeholder="Chọn ngày bắt đầu" />
                                 <el-checkbox v-model="taskForm.is_important" label="Xác định là khẩn cấp" />
                                 <el-checkbox v-model="taskForm.is_quickly" label="Xác định là quan trọng" />
@@ -179,6 +180,7 @@ onBeforeMount(async () => {
                                 <el-checkbox label="Cập nhật vào kế hoạch" />
                             </el-col>
                             <el-col :span="12">
+                                <p>Ngày kết thúc</p>
                                 <el-input v-model="taskForm.end_date" class="m-2" placeholder="Chọn ngày kết thúc" />
                             </el-col>
                         </el-row>
