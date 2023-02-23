@@ -14,7 +14,7 @@ const props = defineProps({
     departments: Array,
     activityId: Number,
 });
-console.log(props.activity.name)
+
 const showFormTask = ref(false);
 
 const state  = reactive({
