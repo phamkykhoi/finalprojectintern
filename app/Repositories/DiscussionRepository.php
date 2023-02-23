@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Models\Discussion;
+use App\Models\Task;
 
 class DiscussionRepository extends BaseRepository
 {
@@ -11,8 +12,12 @@ class DiscussionRepository extends BaseRepository
         $this->model = $model;
     }
 
-    public function getDiscussionById()
+    public function getDiscussionById($id)
     {
-        
+        return $this->model
+        ->join('users', 'discussions.user_id', '=', 'users.id')
+        ->select('discussions.description', 'discussions.created_at', 'users.name')
+        ->where('task_id', $id)
+        ->get();
     }
 }

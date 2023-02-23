@@ -10,7 +10,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TaskGroupController;
 use App\Http\Controllers\AttachmentController;
-use App\Models\Discussion;
+use App\Http\Controllers\DiscussionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -36,7 +36,7 @@ Route::middleware(['auth', 'verified'])->group(function() {
     Route::get('department/{departmentId}/members', [DepartmentController::class, 'getMembers'])->name('department.members');
     Route::delete('department/{departmentId}/remove/member/{userId}', [DepartmentController::class, 'removeMember'])->name('department.remove.member');
     Route::post('/upload-file', [AttachmentController::class,'upload']);
-    Route::get('/get-discussion/{id}',[Discussion::class,'getDiscussionById']);
+    Route::get('/get-discussion/{id}',[DiscussionController::class,'getDiscussion']);
 });
 
 Route::middleware('auth')->group(function () {

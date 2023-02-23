@@ -16,7 +16,10 @@ class DiscussionController extends Controller
         $this->discussionRepo = $discussionRepo;
     }
 
-    public function getDiscussionById($id)
+    public function getDiscussion($id)
     {
+        return $this->success([
+            'discussion_list'=>$this->discussionRepo->getDiscussionById($id)
+        ]);
     }
 }

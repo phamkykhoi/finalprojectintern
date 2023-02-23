@@ -26,6 +26,12 @@ class Task extends Model
     {
         return $this->morphOne(Attachment::class, 'attachable');
     }
+
+    public function discussions()
+    {
+        return $this->hasMany(Discussion::class);
+    }
+
     protected $casts = [
         'is_important' => 'boolean',
         'is_quickly' => 'boolean',
