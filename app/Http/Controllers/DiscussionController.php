@@ -19,7 +19,7 @@ class DiscussionController extends Controller
     public function getDiscussion($id)
     {
         return $this->success([
-            'discussion_list'=>$this->discussionRepo->getByTaskId($id)
+            'discussions'=>$this->discussionRepo->getByTaskId($id)
         ]);
     }
 }
