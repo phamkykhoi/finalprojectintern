@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Models\Attachment;
+use App\Models\Task;
 
 class AttachmentRepository extends BaseRepository
 {
@@ -11,8 +12,8 @@ class AttachmentRepository extends BaseRepository
         $this->model = $model;
     }
 
-    public function getAttachmentsById($id)
+    public function getByTaskId($id)
     {
-        return $this->model->where('attachable_id', $id)->get();
+        return Task::find($id)->attachment;
     }
 }
