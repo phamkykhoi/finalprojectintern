@@ -36,7 +36,7 @@ Route::middleware(['auth', 'verified'])->group(function() {
     Route::get('department/{departmentId}/members', [DepartmentController::class, 'getMembers'])->name('department.members');
     Route::delete('department/{departmentId}/remove/member/{userId}', [DepartmentController::class, 'removeMember'])->name('department.remove.member');
     Route::post('/upload-file', [AttachmentController::class,'upload']);
-    Route::get('/get-discussion/{id}',[DiscussionController::class,'getDiscussion']);
+    Route::get('/get-discussion-by-task-id/{taskId}',[DiscussionController::class,'getDiscussion']);
 });
 
 Route::middleware('auth')->group(function () {
