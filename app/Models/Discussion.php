@@ -9,11 +9,7 @@ class Discussion extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
-        'description',
-        'user_id',
-        'task_id',
-    ];
+    protected $guarded = ['id'];
 
     public function task()
     {

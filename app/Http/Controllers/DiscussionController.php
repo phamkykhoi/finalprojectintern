@@ -23,9 +23,8 @@ class DiscussionController extends Controller
         ]);
     }
 
-    public function createDiscussion(Request $request, $taskId, $userId)
+    public function store(Request $request)
     {
-        $request->request->add(['user_id' => $userId, 'task_id' => $taskId]);
         $this->discussionRepo->save($request->all());
         return $this->success();
     }
