@@ -26,4 +26,13 @@ class SubTaskController extends Controller
             return $this->error($e->getMessage(), $e->getCode());
         }
     }
+
+    public function edit($subTaskId)
+    {
+        try {
+            return $this->success(['subtask' => $this->taskRepo->findById($subTaskId)]);
+        } catch (\Exception $e) {
+            return $this->error($e->getMessage(), $e->getCode());
+        }
+    }
 }
