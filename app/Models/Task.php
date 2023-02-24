@@ -37,8 +37,4 @@ class Task extends Model
         'is_quickly' => 'boolean',
     ];
 
-    public function attachment()
-    {
-        return $this->morphOne(Attachment::class, 'attachable');
-    }
 }
