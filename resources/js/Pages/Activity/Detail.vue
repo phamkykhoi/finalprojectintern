@@ -43,7 +43,6 @@ const state  = reactive({
 
 const taskGroups = ref(props.taskGroups);
 const loading = ref(true);
-const groupsTask = ref([]);
 
 const createTaskForm = (currentTask) => {
     showFormTask.value = true;
@@ -75,12 +74,6 @@ const closeFormMoveTaskGroup = (value) => {
 watch(showFormTask, () => {
     getGroupsTask()
 })
-
-async function getGroupsTask() {
-    await request.get(`/api/activity/${props.activityId}`).then((res) => {
-        taskGroups.value = res.data.result.taskGroups
-    })
-}
 
 //Handle TaskGroup
 function getTaskGroups(id)
@@ -177,11 +170,8 @@ async function copyTaskGroup(id)
             getTaskGroups(state.activityId);
 }
 
-provide('getGroupsTask', getGroupsTask)
-
 onBeforeMount(async () => {
     getTaskGroups(props.activityId);
-    getGroupsTask()
 });
 </script>
 
