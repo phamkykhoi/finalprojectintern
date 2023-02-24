@@ -3,7 +3,6 @@
 namespace App\Repositories;
 
 use App\Models\Discussion;
-use App\Models\Task;
 
 class DiscussionRepository extends BaseRepository
 {

@@ -22,6 +22,16 @@ class DiscussionController extends Controller
         ]);
     }
 
+    public function destroy($discussionId)
+    {
+         try {
+            $this->discussionRepo->deleteById($discussionId);
+            return $this->success();
+        } catch (\Exception $e) {
+            return $this->error($e->getMessage(), $e->getCode());
+        }
+    }
+
     public function store(Request $request)
     {
         try {
