@@ -22,4 +22,14 @@ class DiscussionController extends Controller
             'discussions'=>$this->discussionRepo->getByTaskId($id)
         ]);
     }
+
+    public function store(Request $request)
+    {
+        try {
+            $this->discussionRepo->save($request->all());
+            return $this->success();
+        } catch (\Exception $e) {
+            return $this->error($e->getMessage(), $e->getCode());
+        }
+    }
 }
