@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Task\CreateSubTaskRequest;
 use Illuminate\Http\Request;
 use App\Repositories\TaskRepository;
 use App\Repositories\TaskGroupRepository;
@@ -23,8 +24,7 @@ class TaskController extends Controller
         TaskRepository $taskRepo,
         TaskGroupRepository $taskGroupRepo,
         UserTaskRepository $userTaskRepo,
-    ) 
-    {
+    ) {
         $this->taskRepo = $taskRepo;
         $this->taskGroupRepo = $taskGroupRepo;
         $this->userTaskRepo = $userTaskRepo;
@@ -61,6 +61,19 @@ class TaskController extends Controller
     {
         try {
             $this->taskRepo->save($request->all(), ['id' => $id]);
+            return $this->success();
+        } catch (\Exception $e) {
+            return $this->error($e->getMessage(), $e->getCode());
+        }
+    }
+
+    public function createSubTask(CreateSubTaskRequest $request, $taskParentId)
+    {
+        try {
+            $request->merge([
+                'parent_id' => (int)$taskParentId,
+            ]);
+            $this->taskRepo->save($request->all());
             return $this->success();
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());

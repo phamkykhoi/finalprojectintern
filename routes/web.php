@@ -28,6 +28,7 @@ Route::middleware(['auth', 'verified'])->group(function() {
     Route::get('api/activity/{id}', [TaskController::class, 'show']);
     Route::resource('activity', ActivityController::class);
     Route::resource('task', TaskController::class);
+    Route::post('/create-subtask/{taskId}', [TaskController::class, 'createSubTask']);
     Route::get('user/list', [UserController::class, 'indexJson']);
     Route::resource('user', UserController::class);
     Route::resource('department', DepartmentController::class);
