@@ -22,4 +22,10 @@ class DiscussionController extends Controller
             'discussions'=>$this->discussionRepo->getByTaskId($id)
         ]);
     }
+
+    public function deleteDiscussion($taskId, $userId)
+    {
+         $this->discussionRepo->deleteByTaskId($taskId, $userId);
+         return $this->success();
+    }
 }
