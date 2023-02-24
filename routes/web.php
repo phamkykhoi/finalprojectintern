@@ -11,7 +11,6 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TaskGroupController;
 use App\Http\Controllers\AttachmentController;
 use App\Http\Controllers\DiscussionController;
-use App\Models\Discussion;
 
 /*
 |--------------------------------------------------------------------------
@@ -42,7 +41,7 @@ Route::middleware(['auth', 'verified'])->group(function() {
     Route::post('/upload-file', [AttachmentController::class,'upload']);
     Route::post('get-attachments-by-task/{taskId}', [AttachmentController::class, 'getAttachments']);
     Route::post('/get-discussion-by-task-id/{taskId}',[DiscussionController::class,'getDiscussion']);
-    Route::resource('discussion', Discussion::class);
+    Route::resource('discussion', DiscussionController::class);
 });
 
 Route::middleware('auth')->group(function () {

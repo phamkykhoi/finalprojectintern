@@ -32,4 +32,14 @@ class DiscussionController extends Controller
             return $this->error($e->getMessage(), $e->getCode());
         }
     }
+    
+    public function store(Request $request)
+    {
+        try {
+            $this->discussionRepo->save($request->all());
+            return $this->success();
+        } catch (\Exception $e) {
+            return $this->error($e->getMessage(), $e->getCode());
+        }
+    }
 }
