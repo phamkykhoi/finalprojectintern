@@ -23,9 +23,13 @@ class DiscussionController extends Controller
         ]);
     }
 
-    public function deleteDiscussion($taskId, $userId)
+    public function destroy($id)
     {
-         $this->discussionRepo->deleteByTaskId($taskId, $userId);
-         return $this->success();
+         try {
+            $this->discussionRepo->deleteById($id);
+            return $this->success();
+        } catch (\Exception $e) {
+            return $this->error($e->getMessage(), $e->getCode());
+        }
     }
 }

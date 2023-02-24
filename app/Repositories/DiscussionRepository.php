@@ -21,9 +21,4 @@ class DiscussionRepository extends BaseRepository
         ->where('task_id', $taskId)
         ->get();
     }
-
-    public function deleteByTaskId($taskId, $userId)
-    {
-        Task::find($taskId)->discussions()->where('user_id', $userId)->delete();
-    }
 }
