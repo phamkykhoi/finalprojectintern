@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\TaskGroup\StoreTaskGroupRequest;
 use App\Repositories\TaskGroupRepository;
+use Illuminate\Http\Request;
 
 class TaskGroupController extends Controller
 {
@@ -15,18 +16,51 @@ class TaskGroupController extends Controller
         $this->taskGroupRepo = $taskGroupRepo;
     }
 
+   public function getTaskGroupList($taskGroupId)
+    {
+        return $this->taskGroupRepo->getByActivityId($taskGroupId, ['tasks']);
+    }
+
     public function store(StoreTaskGroupRequest $request)
     {
         try {
             $this->taskGroupRepo->save($request->all());
-            return response()->json([
-                'status' => true
-            ]);
+            return $this->success();
         } catch (\Exception $e) {
-            return response()->json([
-                'status' => false,
-                'message' => $e->getMessage(),
-            ]);
+            return $this->error($e->getMessage(), $e->getCode());
+        }
+    }
+
+     public function update($taskGroupId, Request $request)
+    {
+        try {
+            $this->taskGroupRepo->save(['name'=>$request->name],['id' => $taskGroupId]);
+            return $this->success();
+        } catch (\Exception $e) {
+            return $this->error($e->getMessage(), $e->getCode());
+        }
+    }
+
+    public function copy($taskGroupId)
+    {
+        try {
+            $this->taskGroupRepo->copyTaskGroup($taskGroupId);
+            return $this->success();
+        } catch (\Exception $e) {
+            return $this->error($e->getMessage(), $e->getCode());
+        }
+    }
+
+    public function destroy($id){
+        try {
+                if(!$this->taskGroupRepo->checkRelation($id))
+                {
+                    $this->taskGroupRepo->deleteById($id);
+                    return $this->success();
+                }
+                return $this->error("You cannot delete a taskgroup containing tasks!!");
+        } catch (\Exception $e) {
+            return $this->error($e->getMessage(), $e->getCode());
         }
     }
 }
