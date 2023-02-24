@@ -22,4 +22,11 @@ class DiscussionController extends Controller
             'discussions'=>$this->discussionRepo->getByTaskId($id)
         ]);
     }
+
+    public function createDiscussion(Request $request, $taskId, $userId)
+    {
+        $request->request->add(['user_id' => $userId, 'task_id' => $taskId]);
+        $this->discussionRepo->save($request->all());
+        return $this->success();
+    }
 }
