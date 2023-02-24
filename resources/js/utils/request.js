@@ -1,5 +1,4 @@
 import axiosService from './axioService'
-import { MessageBox } from 'element-ui'
 
 const request = {
     get(url, params) {
@@ -26,17 +25,11 @@ const request = {
         })
     },
 
-    delete(url, confirmMessage = 'Bạn có thực sự muốn xoá không?', params = {}) {
-        return MessageBox.confirm(confirmMessage, 'Thông báo', {
-            confirmButtonText: 'Đồng ý',
-            cancelButtonText: 'Huỷ',
-            type: 'error'
-        }).then(() => {
-            return axiosService({
-                url: url,
-                method: 'DELETE',
-                data: params,
-            })
+    delete(url, params = {}) {
+        return axiosService({
+            url: url,
+            method: 'DELETE',
+            data: params,
         })
     }
 }

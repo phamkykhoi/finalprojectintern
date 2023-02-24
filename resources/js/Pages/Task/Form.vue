@@ -5,7 +5,9 @@ import { useForm, usePage, Link } from '@inertiajs/inertia-vue3'
 import { reactive, nextTick, ref, defineEmits, watch, onBeforeMount } from 'vue';
 import type { FormInstance } from 'element-plus';
 import { ElMessage } from 'element-plus';
+import FileUpload from '@/Components/FileUpload.vue';
 import axios from 'axios';
+import request from '../../utils/request';
 import {
   Check,
   Delete,
@@ -29,6 +31,9 @@ const props = defineProps({
         type: Boolean,
         default: false,
     },
+    getGroupsTask :{
+        type:Function,
+    },
 })
 
 const taskForm = reactive({
@@ -36,9 +41,25 @@ const taskForm = reactive({
     description: '',
     task_group_id: props.task.id,
     start_date: '2021-10-29',
+    end_date: '2021-10-30',
+    is_quickly: 0,
+    is_important: 0,
+    file: null,
+    fileList: [],
+    user_id: '',
+    role_id: ''
 })
 
-const value = ref('2021-10-29')
+const roles = ref([
+    {id: 1, role: 'Admin'},
+    {id: 2, role: 'Giám sát department'},
+    {id: 3, role: 'Giám sát activity'},
+    {id: 4, role: 'Người phối hợp'},
+    {id: 5, role: 'Người theo dõi'},
+    {id: 6, role: 'Chủ task'},
+])
+
+const uploadRef = ref()
 
 const emit = defineEmits(['closeModal', 'unClose'])
 
@@ -53,12 +74,22 @@ const rules = {
     name: [
         { required: true, message: 'name is required' },
     ],
+    description: [
+        { required: true, message: 'description is required' },
+    ],
+    user_id: [
+        { required: true, message: 'user_id is required' },
+    ],
+    role_id: [
+        { required: true, message: 'role_id is required' },
+    ],
 }
+
 const addTask = (formEl: FormInstance | undefined) => {
     if (!formEl) return
     formEl.validate((valid) => {
         if (valid) {
-            axios.post('/task', taskForm).then(res => {
+            request.post('/task', taskForm).then(res => {
                 if (res.data.status) {
                     ElMessage({
                         showClose: true,
@@ -66,17 +97,20 @@ const addTask = (formEl: FormInstance | undefined) => {
                         type: 'success',
                     })
                     closeModal()
+                    props.getGroupsTask()
                 }
-            }).catch(err => {
-                ElMessage({
-                    showClose: true,
-                    message: err.response.data.message,
-                    type: 'error',
-                })
             })
         }
     })
 }
+
+const users = ref([])
+
+onBeforeMount(async () => {
+    await axios.get(`/user/list`).then((res) => {
+        users.value = res.data.users
+    })
+});
 </script>
 
 <template>
@@ -101,8 +135,7 @@ const addTask = (formEl: FormInstance | undefined) => {
                 </div>
 
                 <div class="modal-body relative p-4">
-
-                    <el-form ref="ruleFormRef" :model="taskForm" label-width="110px" class="demo-ruleForm" :rules="rules">
+                    <el-form enctype="multipart/form-data" ref="ruleFormRef" :model="taskForm" label-width="110px" class="demo-ruleForm" :rules="rules">
                         <el-form-item label="Tên công việc" prop="name">
                             <el-input v-model="taskForm.name" type="text" autocomplete="off" clearable />
                         </el-form-item>
@@ -110,27 +143,42 @@ const addTask = (formEl: FormInstance | undefined) => {
                             <el-input v-model="taskForm.description" type="textarea" :rows="3" autocomplete="off"
                                 clearable />
                         </el-form-item>
-
                         <el-form-item label="Tệp đính kèm">
-                            <el-upload ref="uploadRef" class="upload-demo" :auto-upload="false">
-                                <template #trigger>
-                                    <el-button type="primary">Chọn file</el-button>
-                                </template>
-                            </el-upload>
+                          <FileUpload></FileUpload>
                         </el-form-item>
-
-                       <p>Danh sách Users:</p>
-                        <el-input v-model="textarea" :rows="2" type="textarea" placeholder="Please input" />
+                        <div style="display: flex;">
+                            <el-form-item prop="user_id">
+                                <el-select v-model="taskForm.user_id" class="m-2" placeholder="Thành viên">
+                                    <el-option
+                                        v-for="user in users"
+                                        :key="user.id"
+                                        :label="user.name"
+                                        :value="user.id"/>
+                                </el-select>
+                            </el-form-item>
+                        
+                            <el-form-item prop="role_id">
+                                <el-select v-model="taskForm.role_id" placeholder="Quyền hạn">
+                                    <el-option
+                                        v-for="role in roles"
+                                        :key="role.id"
+                                        :label="role.role"
+                                        :value="role.id" />
+                                    </el-select>
+                            </el-form-item>
+                        </div>
                         <el-row>
                             <el-col :span="12">
-                                <el-input class="mb-2 mt-2" placeholder="Chọn ngày bắt đầu" />
-                                <el-checkbox label="Xác định là khẩn cấp" />
-                                <el-checkbox label="Xác định là quan trọng" />
+                                <p>Ngày bắt đầu</p>
+                                <el-input v-model="taskForm.start_date" class="mb-2 mt-2" placeholder="Chọn ngày bắt đầu" />
+                                <el-checkbox v-model="taskForm.is_important" label="Xác định là khẩn cấp" />
+                                <el-checkbox v-model="taskForm.is_quickly" label="Xác định là quan trọng" />
                                 <el-checkbox label="Đánh dấu tập huấn hội nghị" />
                                 <el-checkbox label="Cập nhật vào kế hoạch" />
                             </el-col>
                             <el-col :span="12">
-                                <el-input class="m-2" placeholder="Chọn ngày kết thúc" />
+                                <p>Ngày kết thúc</p>
+                                <el-input v-model="taskForm.end_date" class="m-2" placeholder="Chọn ngày kết thúc" />
                             </el-col>
                         </el-row>
                     </el-form>

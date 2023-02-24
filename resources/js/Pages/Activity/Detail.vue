@@ -20,15 +20,17 @@ import {
 MoreFilled,
 } from '@element-plus/icons-vue';
 
+
 const props = defineProps({
+    activity: Object,
     departments: Array,
-    taskGroups: Array,
     activityId: Number,
 });
-
+console.log(props.activity.name)
 const showFormTask = ref(false);
 const showFormTaskGroup = ref(false);
 const showFormMoveTaskGroup=ref(false);
+
 const state  = reactive({
     activityId: props.activityId,
     task: {
@@ -75,8 +77,8 @@ watch(showFormTask, () => {
 })
 
 async function getGroupsTask() {
-    await axios.get(`/api/activity/${props.activityId}`).then((res) => {
-        groupsTask.value = res.data.taskGroups
+    await request.get(`/api/activity/${props.activityId}`).then((res) => {
+        taskGroups.value = res.data.result.taskGroups
     })
 }
 
@@ -175,8 +177,11 @@ async function copyTaskGroup(id)
             getTaskGroups(state.activityId);
 }
 
+provide('getGroupsTask', getGroupsTask)
+
 onBeforeMount(async () => {
     getTaskGroups(props.activityId);
+    getGroupsTask()
 });
 </script>
 
@@ -188,7 +193,6 @@ onBeforeMount(async () => {
             <template #departen>
                 <DepartenList :departments="departments" :activityId="activityId" />
             </template>
-
             <section class="lists-container" v-loading="loading">
                 <div class="list" :key="index" v-for="(taskGroup, index) in taskGroups" >
                     <div class="list-group-title">
@@ -323,7 +327,7 @@ onBeforeMount(async () => {
 @supports (display: grid) {
     .lists-container {
         display: grid;
-        grid-auto-columns: 27rem;
+        grid-auto-columns: 18rem;
         grid-auto-flow: column;
         grid-column-gap: 1rem;
     }
