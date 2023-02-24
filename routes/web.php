@@ -42,7 +42,7 @@ Route::middleware(['auth', 'verified'])->group(function() {
     Route::post('get-attachments-by-task/{taskId}', [AttachmentController::class, 'getAttachments']);
     Route::post('/get-discussion-by-task-id/{taskId}',[DiscussionController::class,'getDiscussion']);
 
-    Route::post('/delete-discussion-on-task/{taskId}/{userId}',[DiscussionController::class,'deleteDiscussion']);
+    Route::post('/delete-discussion-by-task-id/{taskId}/{userId}',[DiscussionController::class,'deleteDiscussion']);
 });
 
 Route::middleware('auth')->group(function () {
