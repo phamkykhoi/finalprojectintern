@@ -38,4 +38,11 @@ class AttachmentController extends Controller
         ]);
     }
 
+    public function getAttachments($id)
+    {
+       return $this->success([
+            'attachment_list' => $this->attachmentRepo->getByTaskId($id)
+        ]);
+    }
+
 }
