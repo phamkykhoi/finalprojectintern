@@ -1,7 +1,7 @@
 <script setup>
 
 import TaskDetail from './Detail.vue'
-import { ref, reactive } from 'vue';
+import { ref, reactive} from 'vue';
 
 const props = defineProps({
     tasks: Array,
@@ -21,7 +21,7 @@ const state  = reactive({
 
 function taskDetail(task) {
     isShowTaskDetail.value = true;
-    state.task = task
+    state.task = task;
 }
 
 function closeTaskDetail(value) {
@@ -38,7 +38,6 @@ function closeTaskDetail(value) {
 </template>
 
 <style scoped>
-
 .list-items {
     flex: 1;
     display: flex;
