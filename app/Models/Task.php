@@ -20,6 +20,7 @@ class Task extends Model
         'is_quickly',
         'status',
         'completed_at',
+        'parent_id',
     ];
 
     public function attachment()

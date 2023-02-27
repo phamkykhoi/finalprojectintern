@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TaskGroupController;
 use App\Http\Controllers\AttachmentController;
 use App\Http\Controllers\DiscussionController;
+use App\Http\Controllers\SubTaskController;
 
 /*
 |--------------------------------------------------------------------------
@@ -28,6 +29,7 @@ Route::middleware(['auth', 'verified'])->group(function() {
     Route::get('api/activity/{id}', [TaskController::class, 'show']);
     Route::resource('activity', ActivityController::class);
     Route::resource('task', TaskController::class);
+    Route::resource('subtask', SubTaskController::class);
     Route::get('user/list', [UserController::class, 'indexJson']);
     Route::resource('user', UserController::class);
     Route::resource('department', DepartmentController::class);
