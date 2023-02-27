@@ -31,7 +31,6 @@ class SubTaskController extends Controller
     public function update($id, UpdateSubTaskRequest $request)
     {
         try {
-            $request->request->add(['description'=>'dcscasccs']);
             $this->taskRepo->save($request->all(), ['id' => $id]);
             return $this->success();
         } catch (\Exception $e) {
