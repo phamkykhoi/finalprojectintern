@@ -35,4 +35,14 @@ class SubTaskController extends Controller
             return $this->error($e->getMessage(), $e->getCode());
         }
     }
+
+    public function destroy($id)
+    {
+        try {
+            $this->taskRepo->deleteById($id);
+            return $this->success();
+        } catch (\Exception $e) {
+            return $this->error($e->getMessage(), $e->getCode());
+        }
+    }
 }
