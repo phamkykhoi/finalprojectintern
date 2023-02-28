@@ -206,7 +206,7 @@ onBeforeMount(async () => {
                             </el-dropdown-menu>
                             </template>
                         </el-dropdown>
-                    <TaskList :tasks="taskGroup.tasks" />
+                    <TaskList :activity="props.activity" :tasks="taskGroup.tasks" :taskGroup="taskGroup" :task_group_id="taskGroup.id" :activityId="activityId"/>
                 </div>
                 <button class="add-list-btn btn" @click="createTaskGroupForm(activityId)">Thêm nhóm công việc </button>
             </section>
