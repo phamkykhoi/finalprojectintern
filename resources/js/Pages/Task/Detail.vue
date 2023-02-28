@@ -35,8 +35,14 @@ const props = defineProps({
         default: false,
     },
     task_group_id: Number,
-    taskGroup: Object,
-    activity: Object,
+    activity: {
+      type: Object,
+      default: () => ({ name: 'activityName' })
+    },
+    taskGroup: {
+      type: Object,
+      default: () => ({ name: 'taskGroupName' })
+    }
 })
 
 const taskForm = reactive({
@@ -46,7 +52,7 @@ const taskForm = reactive({
     is_important: props.task.is_important,
     is_quickly: props.task.is_quickly
 })
-
+console.log(props.activity)
 const emit = defineEmits(['closeModal', 'unClose'])
 
 confirmingTaskDeletion.value = props.isShowModal;
@@ -334,7 +340,7 @@ const handleClose = (done: () => void) => {
                                 </el-col>
                             </el-row>
                         </el-row>
-                        <p class="ml-31" style="display: inline-block;"> {{ props.activity.name }} -> {{taskGroup.name}}</p>
+                        <p v-if="props.activity" class="ml-31" style="display: inline-block;"> {{ props.activity.name }} -> {{taskGroup.name}}</p>
                         <div class="flex description" style="margin: 16px 0;">
                             <el-icon :size="25"><EditPen /></el-icon>
                             <el-form-item label="Mô tả:" style="display: block; margin-bottom: 0; margin-left: 6px; ">
