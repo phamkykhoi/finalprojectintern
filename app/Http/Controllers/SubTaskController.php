@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\Task\CreateSubTaskRequest;
-use App\Http\Requests\Task\UpdateSubTaskRequest;
 use App\Repositories\TaskRepository;
 
 class SubTaskController extends Controller
@@ -28,11 +27,10 @@ class SubTaskController extends Controller
         }
     }
 
-    public function update($id, UpdateSubTaskRequest $request)
+    public function edit($id)
     {
         try {
-            $this->taskRepo->save($request->all(), ['id' => $id]);
-            return $this->success();
+            return $this->success(['subtask' => $this->taskRepo->findById($id)]);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
         }
