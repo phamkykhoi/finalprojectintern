@@ -1,34 +1,43 @@
 <script setup>
 
 import TaskDetail from './Detail.vue'
-import {ref, defineEmits, reactive } from 'vue';
+import { ref, reactive} from 'vue';
 
-defineProps({
+const props = defineProps({
     tasks: Array,
+    task_group_id: Number,
+    taskGroup: Object,
+    activity: Object
 });
-
 const isShowTaskDetail = ref(false);
 
-function taskDetail(taskId) {
+const state  = reactive({
+    task: {
+        name: "",
+        description: "",
+    },
+    task_group_id: props.task_group_id,
+})
+
+function taskDetail(task) {
     isShowTaskDetail.value = true;
+    state.task = task;
 }
 
 function closeTaskDetail(value) {
     isShowTaskDetail.value = value
 }
-
 </script>
 
 <template>
     <ul class="list-items" :key="index" v-for="(task, index) in tasks">
-        <li @click="taskDetail(task.id)">{{  task.name }}</li>
+        <li @click="taskDetail(task)">{{  task.name }}</li>
     </ul>
 
-    <TaskDetail v-if="isShowTaskDetail" v-on:closeModal="closeTaskDetail" :isShowModal="isShowTaskDetail" />
+    <TaskDetail :activity="props.activity" v-if="isShowTaskDetail" v-on:closeModal="closeTaskDetail" :taskGroup="taskGroup" :isShowModal="isShowTaskDetail" :task="state.task" :task_group_id="state.task_group_id"/>
 </template>
 
 <style scoped>
-
 .list-items {
     flex: 1;
     display: flex;

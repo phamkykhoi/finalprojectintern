@@ -1,32 +1,43 @@
 <script setup>
-
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head } from '@inertiajs/inertia-vue3';
 import DepartenList from '@/Pages/Departen/Index.vue';
 import TaskForm from '@/Pages/Task/Form.vue';
 import TaskList from '@/Pages/Task/Index.vue';
-import { reactive, ref, onBeforeMount, watch, unref } from 'vue';
+import MoveTaskGroupForm from '@/Pages/TaskGroup/MoveForm.vue';
+import TaskGroupForm from '@/Pages/TaskGroup/Form.vue';
+import { reactive, ref, onBeforeMount, watch, unref, markRaw } from 'vue';
 import { 
-    InfoFilled, DCaret, MoreFilled, Plus, EditPen, 
-    CopyDocument, Switch, Rank, TakeawayBox, Delete, 
+    InfoFilled, DCaret, MoreFilled, Plus, EditPen, Files,
+    CopyDocument, Switch, Rank, TakeawayBox, Delete, Folder,
     CaretTop, CaretBottom, Select, CircleClose 
 } from '@element-plus/icons-vue';
 import { ClickOutside as vClickOutside, ElMessageBox  } from 'element-plus';
+import axios from 'axios';
+import { ElMessage} from 'element-plus';
 
 const props = defineProps({
+    activity: Object,
     departments: Array,
-    taskGroups: Array,
     activityId: Number,
 });
 
 const showFormTask = ref(false);
+const showFormTaskGroup = ref(false);
+const showFormMoveTaskGroup=ref(false);
+
 const state  = reactive({
+    activityId: props.activityId,
     task: {
         name: "",
         description: "",
         task_group_id: ""
-}
+    },
+    moveTaskGroupId:0,
 })
+
+const taskGroups = ref(props.taskGroups);
+const loading = ref(true);
 
 const createTaskForm = (currentTask) => {
     showFormTask.value = true;
@@ -37,21 +48,23 @@ const closeFormTask = (value) => {
     showFormTask.value = value;
 }
 
-const groupsTask = ref([])
-
-onBeforeMount(async () => {
-    getGroupsTask()
-});
-
-async function getGroupsTask() {
-    await axios.get(`/api/activity/${props.activityId}`).then((res) => {
-        groupsTask.value = res.data.taskGroups
-    })
+const createTaskGroupForm = (currentActivityId) => {
+    showFormTaskGroup.value = true;
+    state.activityId = currentActivityId;
+}
+const closeFormTaskGroup = (value) => {
+    showFormTaskGroup.value = value;
 }
 
-watch(showFormTask, () => {
-    getGroupsTask()
-})
+const createMoveTaskGroupForm = (currentActivityId,moveTaskGroupId) => {
+    showFormMoveTaskGroup.value = true;
+    state.activityId = currentActivityId;
+    state.moveTaskGroupId = moveTaskGroupId;
+}
+
+const closeFormMoveTaskGroup = (value) => {
+    showFormMoveTaskGroup.value = value;
+}
 
 const popoverRef = ref([])
 const popoverInfoTaskGroup = () => {
@@ -74,44 +87,159 @@ const popoverCopy = () => {
 }
 
 const moveJobGroup = ref()
-const  popoverMove= () => {
+const popoverMove= () => {
   unref(moveJobGroup).popperRef?.delayHide?.()
 }
 
 const moveAllTheWork = ref()
-const  popoverMoveAll= () => {
+const popoverMoveAll= () => {
   unref(moveAllTheWork).popperRef?.delayHide?.()
 }
 
 const storeTaskGroup = ref()
-const  popoverstoreTaskGroup= () => {
+const popoverstoreTaskGroup= () => {
   unref(popoverstoreTaskGroup).popperRef?.delayHide?.()
 }
 
 const storeAllWorkInGroup = ref()
-const  popoverstoreAllWorkInGroup= () => {
+const popoverstoreAllWorkInGroup= () => {
   unref(popoverstoreAllWorkInGroup).popperRef?.delayHide?.()
 }
 
-const deleteTaskGroup = ref()
-const  popoverDeleteTaskGroup= () => {
+// const deleteTaskGroup = ref()
+const popoverDeleteTaskGroup= () => {
   unref(popoverDeleteTaskGroup).popperRef?.delayHide?.()
 }
 
-const dialogVisible = ref(false)
-const dialogCopy = ref(false)
-const dialogMove = ref(false)
-const dialogMoveAll = ref(false)
-const dialogStore = ref(false)
-const dialogStoreAllWork = ref(false)
-const dialogDelete = ref(false)
+const dialog = reactive({
+       dialogVisible: false,
+       dialogCopy: false,
+       dialogMove: false,
+       dialogMoveAll: false,
+       dialogStore: false,
+       dialogStoreAllWork: false,
+       dialogDelete: false,
+       addTaskGroup: false,
+       editNameTaskGroup: [false],
+       showIconSort: [false],
+       showIcon: [false],
+       input:'',
+});
 
-const addTaskGroup = ref(false)
-const editNameTaskGroup = ref([false])
-const showIconSort = ref([false])
-const showIcon = ref([false])
-const input = ref('')
+const toggleChildPopover = () => {
+    copyJobGroup.value = !copyJobGroup.value;
+};
 
+const showParentPopover = () => {
+    if (!copyJobGroup.value) {
+        popoverRef2.value.doShow();
+    }
+};
+
+const hideParentPopover = () => {
+    if (!childPopoverVisible.value) {
+        popoverRef2.value.doClose();
+    }
+};
+
+//Handle TaskGroup
+function getTaskGroups(id)
+{
+  axios.get(`/taskgroup/list/${id}`).then(res => {
+          taskGroups.value = res.data;
+        }).catch(err => {
+           ElMessage({
+                showClose: true,
+                message: err.response.data.message,
+                type: 'error',
+                })
+            })
+            loading.value=false;
+}
+
+async function editTaskGroup(id){
+    loading.value=true;
+     await axios.patch(`/taskgroup/${id}`,{'name':event.target.innerText}).then(res => {
+        if (res.data.status) {
+                    ElMessage({
+                        showClose: true,
+                        message: 'Sửa tên taskgroup thành công',
+                        type: 'success',
+                    })
+                }
+            }).catch(err => {
+                ElMessage({
+                    showClose: true,
+                    message: err.response.data.message,
+                    type: 'error',
+                })
+            })
+            getTaskGroups(state.activityId);
+}
+
+async function deleteTaskGroup(id)
+{
+    ElMessageBox.confirm(
+    'It will permanently delete this task group . Continue?',
+    'Warning',
+    {
+      type: 'warning',
+      icon: markRaw(Delete),
+      confirmButtonText: 'Confirm',
+      cancelButtonText: 'Cancel',
+    }
+  )
+  .then(() => {
+    loading.value=true;
+    axios.delete(`/taskgroup/${id}`).then(res => {
+        if (res.data.status) {
+              ElMessage({
+                        showClose: true,
+                        message: 'Delete taskgroup successfully',
+                        type: 'success',
+                    })
+        }
+            }).catch(err => {
+                ElMessage({
+                    showClose: true,
+                    message: err.response.data.message,
+                    type: 'error',
+                })
+            })
+            getTaskGroups(state.activityId);
+    })
+    .catch(() => {
+      ElMessage({
+        type: 'info',
+        message: 'Delete canceled',
+      })
+    })
+}
+
+async function copyTaskGroup(id)
+{
+    loading.value=true;
+    await axios.get(`/taskgroup/copy/${id}`).then(res => {
+        if (res.data.status) {
+             ElMessage({
+                        showClose: true,
+                        message: 'Copy taskgroup successfully',
+                        type: 'success',
+                    })
+                }
+            }).catch(err => {
+                ElMessage({
+                    showClose: true,
+                    message: err.response.data.message,
+                    type: 'error',
+                })
+            })
+            getTaskGroups(state.activityId);
+}
+
+onBeforeMount(async () => {
+    getTaskGroups(props.activityId);
+});
 </script>
 
 <template>
@@ -124,12 +252,12 @@ const input = ref('')
             </template>
 
             <section class="lists-container">
-                <div :key="index" v-for="(taskGroup, index) in groupsTask">
+                 <div :key="index" v-for="(taskGroup, index) in taskGroups">
                     <el-card class="box-card">
                         <template #header>
-                            <div class="card-header" v-if="!editNameTaskGroup[index]">
+                            <div class="card-header" v-if="!dialog.editNameTaskGroup[index]">
                                 <el-col>
-                                    <span @click="editNameTaskGroup[index] = true">{{ taskGroup.name }}</span>
+                                    <span @click="dialog.editNameTaskGroup[index] = true">{{ taskGroup.name }}</span>
                                     <div class="group-icons">
                                         <el-button v-popover="popoverRef[index]" v-click-outside="popoverInfoTaskGroup" :icon="InfoFilled" circle/>
                                         <el-button v-popover="popoverRef1[index]" v-click-outside="popoverSort" :icon="DCaret" circle/>
@@ -137,7 +265,7 @@ const input = ref('')
                                     </div>
                                 </el-col>
                             </div>
-                            <el-form v-if="editNameTaskGroup[index]">
+                            <el-form v-if="dialog.editNameTaskGroup[index]">
                                 <el-row>
                                     <el-input autosize
                                     v-model="taskGroup.name"
@@ -148,7 +276,7 @@ const input = ref('')
                                 <div style="margin: 5px 0 10px 0" />
                                 <el-row> 
                                     <el-button type="success">Lưu</el-button>
-                                    <el-button @click="editNameTaskGroup[index] = false" style="margin-left: 10px;">x</el-button>
+                                    <el-button @click="dialog.editNameTaskGroup[index] = false" style="margin-left: 10px;">x</el-button>
                                 </el-row>
                             </el-form>
                         </template>
@@ -193,7 +321,6 @@ const input = ref('')
                         </el-row>
                     </el-popover>
 
-
                     <el-popover
                         :ref="ref => popoverRef1[index] = ref"
                         title="SẮP XẾP THEO"
@@ -205,146 +332,146 @@ const input = ref('')
                         <div>
                             <el-row>
                                 <el-col class="icon-sort-small" :span="12">
-                                    <el-row v-if="showIcon[3]" :span="24">
-                                        <el-col :span="3" class="icon-small"  @click="showIcon[3] = false">
+                                    <el-row v-if="dialog.showIcon[3]" :span="24">
+                                        <el-col :span="3" class="icon-small"  @click="dialog.showIcon[3] = false">
                                             <el-icon><CircleClose /></el-icon>
                                         </el-col>
                                         <el-col :span="18">Ngày hòan thành</el-col>
-                                        <el-col :span="3" class="icon-small" @click="showIconSort[3] = !showIconSort[3]">
-                                            <el-icon v-if="showIconSort[3]"><CaretTop /></el-icon>
-                                            <el-icon v-if="!showIconSort[3]"><CaretBottom /></el-icon>
+                                        <el-col :span="3" class="icon-small" @click="dialog.showIconSort[3] = !dialog.showIconSort[3]">
+                                            <el-icon v-if="dialog.showIconSort[3]"><CaretTop /></el-icon>
+                                            <el-icon v-if="!dialog.showIconSort[3]"><CaretBottom /></el-icon>
                                         </el-col>
                                     </el-row>
-                                    <el-row v-if="showIcon[5]" :span="24">
-                                        <el-col :span="3" class="icon-small"  @click="showIcon[5] = false">
+                                    <el-row v-if="dialog.showIcon[5]" :span="24">
+                                        <el-col :span="3" class="icon-small"  @click="dialog.showIcon[5] = false">
                                             <el-icon><CircleClose /></el-icon>
                                         </el-col>
                                         <el-col :span="18">Ngày thực hiện</el-col>
-                                        <el-col :span="3" class="icon-small" @click="showIconSort[5] = !showIconSort[5]">
-                                            <el-icon v-if="showIconSort[5]"><CaretTop /></el-icon>
-                                            <el-icon v-if="!showIconSort[5]"><CaretBottom /></el-icon>
+                                        <el-col :span="3" class="icon-small" @click="dialog.showIconSort[5] = !dialog.showIconSort[5]">
+                                            <el-icon v-if="dialog.showIconSort[5]"><CaretTop /></el-icon>
+                                            <el-icon v-if="!dialog.showIconSort[5]"><CaretBottom /></el-icon>
                                         </el-col>
                                     </el-row>
-                                    <el-row v-if="showIcon[1]" :span="24">
-                                        <el-col :span="3" class="icon-small"  @click="showIcon[1] = false">
+                                    <el-row v-if="dialog.showIcon[1]" :span="24">
+                                        <el-col :span="3" class="icon-small"  @click="dialog.showIcon[1] = false">
                                             <el-icon><CircleClose /></el-icon>
                                         </el-col>
                                         <el-col :span="18">Ngày bắt đầu</el-col>
-                                        <el-col :span="3" class="icon-small" @click="showIconSort[1] = !showIconSort[1]">
-                                            <el-icon v-if="showIconSort[1]"><CaretTop /></el-icon>
-                                            <el-icon v-if="!showIconSort[1]"><CaretBottom /></el-icon>
+                                        <el-col :span="3" class="icon-small" @click="dialog.showIconSort[1] = !dialog.showIconSort[1]">
+                                            <el-icon v-if="dialog.showIconSort[1]"><CaretTop /></el-icon>
+                                            <el-icon v-if="!dialog.showIconSort[1]"><CaretBottom /></el-icon>
                                         </el-col>
                                     </el-row>
                                 </el-col>
                                 <el-col class="icon-sort-small" :span="12">
-                                    <el-row v-if="showIcon[3]" :span="24">
-                                        <el-col :span="3" class="icon-small"  @click="showIcon[4] = false">
+                                    <el-row v-if="dialog.showIcon[3]" :span="24">
+                                        <el-col :span="3" class="icon-small"  @click="dialog.showIcon[4] = false">
                                             <el-icon><CircleClose /></el-icon>
                                         </el-col>
                                         <el-col :span="18">Ngày tạo</el-col>
-                                        <el-col :span="3" class="icon-small" @click="showIconSort[4] = !showIconSort[4]">
-                                            <el-icon v-if="showIconSort[4]"><CaretTop /></el-icon>
-                                            <el-icon v-if="!showIconSort[4]"><CaretBottom /></el-icon>
+                                        <el-col :span="3" class="icon-small" @click="dialog.showIconSort[4] = !dialog.showIconSort[4]">
+                                            <el-icon v-if="dialog.showIconSort[4]"><CaretTop /></el-icon>
+                                            <el-icon v-if="!dialog.showIconSort[4]"><CaretBottom /></el-icon>
                                         </el-col>
                                     </el-row>
-                                    <el-row v-if="showIcon[2]" :span="24">
-                                        <el-col :span="3" class="icon-small"  @click="showIcon[2] = false">
+                                    <el-row v-if="dialog.showIcon[2]" :span="24">
+                                        <el-col :span="3" class="icon-small"  @click="dialog.showIcon[2] = false">
                                             <el-icon><CircleClose /></el-icon>
                                         </el-col>
                                         <el-col :span="18">Ngày kết thúc</el-col>
-                                        <el-col :span="3" class="icon-small" @click="showIconSort[2] = !showIconSort[2]">
-                                            <el-icon v-if="showIconSort[2]"><CaretTop /></el-icon>
-                                            <el-icon v-if="!showIconSort[2]"><CaretBottom /></el-icon>
+                                        <el-col :span="3" class="icon-small" @click="dialog.showIconSort[2] = !dialog.showIconSort[2]">
+                                            <el-icon v-if="dialog.showIconSort[2]"><CaretTop /></el-icon>
+                                            <el-icon v-if="!dialog.showIconSort[2]"><CaretBottom /></el-icon>
                                         </el-col>
                                     </el-row>
-                                    <el-row v-if="showIcon[0]" :span="24">
-                                        <el-col :span="3" class="icon-small"  @click="showIcon[0] = false">
+                                    <el-row v-if="dialog.showIcon[0]" :span="24">
+                                        <el-col :span="3" class="icon-small"  @click="dialog.showIcon[0] = false">
                                             <el-icon><CircleClose /></el-icon>
                                         </el-col>
                                         <el-col :span="18">Tên công việc</el-col>
-                                        <el-col :span="3" class="icon-small" @click="showIconSort[0] = !showIconSort[0]">
-                                            <el-icon v-if="showIconSort[0]"><CaretTop /></el-icon>
-                                            <el-icon v-if="!showIconSort[0]"><CaretBottom /></el-icon>
+                                        <el-col :span="3" class="icon-small" @click="dialog.showIconSort[0] = !dialog.showIconSort[0]">
+                                            <el-icon v-if="dialog.showIconSort[0]"><CaretTop /></el-icon>
+                                            <el-icon v-if="!dialog.showIconSort[0]"><CaretBottom /></el-icon>
                                         </el-col>
                                     </el-row>
                                 </el-col>
                             </el-row>
 
                             <el-col>
-                                <el-button @click="showIcon[0] = true" v-if="!showIcon[0]">Tên công việc</el-button>
-                                <el-row v-if="showIcon[0]">
-                                    <el-col :span="2" class="icon-sort" @click="showIconSort[0] = !showIconSort[0]">
-                                        <el-icon v-if="showIconSort[0]"><CaretTop /></el-icon>
-                                        <el-icon v-if="!showIconSort[0]"><CaretBottom /></el-icon>
+                                <el-button @click="dialog.showIcon[0] = true" v-if="!dialog.showIcon[0]">Tên công việc</el-button>
+                                <el-row v-if="dialog.showIcon[0]">
+                                    <el-col :span="2" class="icon-sort" @click="dialog.showIconSort[0] = !dialog.showIconSort[0]">
+                                        <el-icon v-if="dialog.showIconSort[0]"><CaretTop /></el-icon>
+                                        <el-icon v-if="!dialog.showIconSort[0]"><CaretBottom /></el-icon>
                                     </el-col>
                                     <el-col :span="18">Tên công việc</el-col>
                                     <el-col :span="4" class="icon-sort">
-                                        <el-icon  @click="showIcon[0] = false"><Select /></el-icon>
+                                        <el-icon  @click="dialog.showIcon[0] = false"><Select /></el-icon>
                                     </el-col>
                                 </el-row>
                             </el-col>
                             <el-col>
-                                <el-button @click="showIcon[1] = true" v-if="!showIcon[1]">Ngày bắt đầu</el-button>
-                                <el-row v-if="showIcon[1]">
-                                    <el-col :span="2" class="icon-sort" @click="showIconSort[1] = !showIconSort[1]">
-                                        <el-icon v-if="showIconSort[1]"><CaretTop /></el-icon>
-                                        <el-icon v-if="!showIconSort[1]"><CaretBottom /></el-icon>
+                                <el-button @click="dialog.showIcon[1] = true" v-if="!dialog.showIcon[1]">Ngày bắt đầu</el-button>
+                                <el-row v-if="dialog.showIcon[1]">
+                                    <el-col :span="2" class="icon-sort" @click="dialog.showIconSort[1] = !dialog.showIconSort[1]">
+                                        <el-icon v-if="dialog.showIconSort[1]"><CaretTop /></el-icon>
+                                        <el-icon v-if="!dialog.showIconSort[1]"><CaretBottom /></el-icon>
                                     </el-col>
                                     <el-col :span="18">Ngày bắt đầu</el-col>
                                     <el-col :span="4" class="icon-sort">
-                                        <el-icon  @click="showIcon[1] = false"><Select /></el-icon>
+                                        <el-icon  @click="dialog.showIcon[1] = false"><Select /></el-icon>
                                     </el-col>
                                 </el-row>
                             </el-col>
                             <el-col>
-                                <el-button @click="showIcon[2] = true" v-if="!showIcon[2]">Ngày kết thúc</el-button>
-                                <el-row v-if="showIcon[2]">
-                                    <el-col :span="2" class="icon-sort" @click="showIconSort[2] = !showIconSort[2]">
-                                        <el-icon v-if="showIconSort[2]"><CaretTop /></el-icon>
-                                        <el-icon v-if="!showIconSort[2]"><CaretBottom /></el-icon>
+                                <el-button @click="dialog.showIcon[2] = true" v-if="!dialog.showIcon[2]">Ngày kết thúc</el-button>
+                                <el-row v-if="dialog.showIcon[2]">
+                                    <el-col :span="2" class="icon-sort" @click="dialog.showIconSort[2] = !dialog.showIconSort[2]">
+                                        <el-icon v-if="dialog.showIconSort[2]"><CaretTop /></el-icon>
+                                        <el-icon v-if="!dialog.showIconSort[2]"><CaretBottom /></el-icon>
                                     </el-col>
                                     <el-col :span="18">Ngày kết thúc</el-col>
                                     <el-col :span="4" class="icon-sort">
-                                        <el-icon  @click="showIcon[2] = false"><Select /></el-icon>
+                                        <el-icon  @click="dialog.showIcon[2] = false"><Select /></el-icon>
                                     </el-col>
                                 </el-row>
                             </el-col>
                             <el-col>
-                                <el-button @click="showIcon[3] = true" v-if="!showIcon[3]">Ngày hoàn thành</el-button>
-                                <el-row v-if="showIcon[3]">
-                                    <el-col :span="2" class="icon-sort" @click="showIconSort[3] = !showIconSort[3]">
-                                        <el-icon v-if="showIconSort[3]"><CaretTop /></el-icon>
-                                        <el-icon v-if="!showIconSort[3]"><CaretBottom /></el-icon>
+                                <el-button @click="dialog.showIcon[3] = true" v-if="!dialog.showIcon[3]">Ngày hoàn thành</el-button>
+                                <el-row v-if="dialog.showIcon[3]">
+                                    <el-col :span="2" class="icon-sort" @click="dialog.showIconSort[3] = !dialog.showIconSort[3]">
+                                        <el-icon v-if="dialog.showIconSort[3]"><CaretTop /></el-icon>
+                                        <el-icon v-if="!dialog.showIconSort[3]"><CaretBottom /></el-icon>
                                     </el-col>
                                     <el-col :span="18">Ngày hoàn thành</el-col>
                                     <el-col :span="4" class="icon-sort">
-                                        <el-icon  @click="showIcon[3] = false"><Select /></el-icon>
+                                        <el-icon  @click="dialog.showIcon[3] = false"><Select /></el-icon>
                                     </el-col>
                                 </el-row>
                             </el-col>
                             <el-col>
-                                <el-button @click="showIcon[4] = true" v-if="!showIcon[4]">Ngày tạo</el-button>
-                                <el-row v-if="showIcon[4]">
-                                    <el-col :span="2" class="icon-sort" @click="showIconSort[4] = !showIconSort[4]">
-                                        <el-icon v-if="showIconSort[4]"><CaretTop /></el-icon>
-                                        <el-icon v-if="!showIconSort[4]"><CaretBottom /></el-icon>
+                                <el-button @click="dialog.showIcon[4] = true" v-if="!dialog.showIcon[4]">Ngày tạo</el-button>
+                                <el-row v-if="dialog.showIcon[4]">
+                                    <el-col :span="2" class="icon-sort" @click="dialog.showIconSort[4] = !dialog.showIconSort[4]">
+                                        <el-icon v-if="dialog.showIconSort[4]"><CaretTop /></el-icon>
+                                        <el-icon v-if="!dialog.showIconSort[4]"><CaretBottom /></el-icon>
                                     </el-col>
                                     <el-col :span="18">Ngày tạo</el-col>
                                     <el-col :span="4" class="icon-sort">
-                                        <el-icon  @click="showIcon[4] = false"><Select /></el-icon>
+                                        <el-icon  @click="dialog.showIcon[4] = false"><Select /></el-icon>
                                     </el-col>
                                 </el-row>
                             </el-col>
                             <el-col>
-                                <el-button @click="showIcon[5] = true" v-if="!showIcon[5]">Ngày thực hiện</el-button>
-                                <el-row v-if="showIcon[5]">
-                                    <el-col :span="2" class="icon-sort" @click="showIconSort[5] = !showIconSort[5]">
-                                        <el-icon v-if="showIconSort[5]"><CaretTop /></el-icon>
-                                        <el-icon v-if="!showIconSort[5]"><CaretBottom /></el-icon>
+                                <el-button @click="dialog.showIcon[5] = true" v-if="!dialog.showIcon[5]">Ngày thực hiện</el-button>
+                                <el-row v-if="dialog.showIcon[5]">
+                                    <el-col :span="2" class="icon-sort" @click="dialog.showIconSort[5] = !dialog.showIconSort[5]">
+                                        <el-icon v-if="dialog.showIconSort[5]"><CaretTop /></el-icon>
+                                        <el-icon v-if="!dialog.showIconSort[5]"><CaretBottom /></el-icon>
                                     </el-col>
                                     <el-col :span="18">Ngày thực hiện</el-col>
                                     <el-col :span="4" class="icon-sort">
-                                        <el-icon  @click="showIcon[5] = false"><Select /></el-icon>
+                                        <el-icon  @click="dialog.showIcon[5] = false"><Select /></el-icon>
                                     </el-col>
                                 </el-row>
                             </el-col> 
@@ -365,38 +492,38 @@ const input = ref('')
                             v-click-outside="popover" :icon="Plus" circle > 
                             Thêm mới công việc
                         </el-button>
-                        <el-button @click="editNameTaskGroup[index] = true"
+                        <el-button @click="dialog.editNameTaskGroup[index] = true"
                             v-click-outside="popover" :icon="EditPen" circle>
                             Hiệu chỉnh nhóm công việc
                         </el-button>
                         <hr>
-                        <el-button @click="dialogVisible = true"
+                        <el-button @click="dialog.dialogVisible = true"
                             v-click-outside="popover" :icon="Plus" circle>
                             Tạo nhóm công việc
                         </el-button>
-                        <el-button v-popover="copyJobGroup" @click="dialogCopy = true"
+                        <el-button  v-popover="copyJobGroup" @click="dialog.dialogCopy = true"
                             v-click-outside="popoverCopy" :icon="CopyDocument" circle>
                             Sao chép nhóm công việc
                         </el-button>
-                        <el-button v-popover="moveJobGroup" @click="dialogMove = true"
+                        <el-button v-popover="moveJobGroup" @click="dialog.dialogMove = true"
                             v-click-outside="popoverMove" :icon="Switch" circle>
                             Di chuyển nhóm công việc
                         </el-button>
-                        <el-button  v-popover="moveAllTheWork" @click="dialogMoveAll = true"
+                        <el-button  v-popover="moveAllTheWork" @click="dialog.dialogMoveAll = true"
                             v-click-outside="popover" :icon="Rank" circle>
                             Di chuyển toàn bộ công việc trong nhóm
                         </el-button>
                         <hr>
-                        <el-button v-popover="storeTaskGroup"  @click="dialogStore = true"
+                        <el-button v-popover="storeTaskGroup"  @click="dialog.dialogStore = true"
                             v-click-outside="popover" :icon="TakeawayBox" circle>
                             Lưu trữ nhóm việc
                         </el-button>
-                        <el-button v-popover="storeAllWorkInGroup" @click="dialogStoreAllWork = true"
+                        <el-button v-popover="storeAllWorkInGroup" @click="dialog.dialogStoreAllWork = true"
                             v-click-outside="popover" :icon="TakeawayBox" circle>
                             Lưu trữ toàn bộ việc trong nhóm
                         </el-button>
                         <hr>
-                        <el-button v-popover="deleteTaskGroup" @click="dialogDelete = true"
+                        <el-button v-popover="deleteTaskGroup" @click="dialog.dialogDelete = true"
                             v-click-outside="popover" :icon="Delete" circle>
                             Xóa nhóm việc
                         </el-button>
@@ -406,11 +533,11 @@ const input = ref('')
                 <el-button 
                     class="add-list-btn btn" 
                     style="place-content: baseline; background: gainsboro;"
-                    @click="addTaskGroup = true" v-if="!addTaskGroup"
+                    @click="dialog.addTaskGroup = true" v-if="!dialog.addTaskGroup"
                 >
                     <el-icon><Plus /></el-icon>Tạo nhóm công việc
                 </el-button>
-                <el-form v-if="addTaskGroup">
+                <el-form v-if="dialog.addTaskGroup">
                     <el-row>
                         <el-input autosize
                         v-model="input"
@@ -422,228 +549,229 @@ const input = ref('')
                     <div style="margin: 5px 0 10px 0" />
                     <el-row> 
                         <el-button type="success">Tạo việc</el-button>
-                        <el-button @click="addTaskGroup = false" style="margin-left: 10px;">x</el-button>
+                        <el-button @click="dialog.addTaskGroup = false" style="margin-left: 10px;">x</el-button>
                     </el-row>
                 </el-form>
             </section>
+
+            <el-popover
+                :visible="dialog.dialogCopy"
+                ref="copyJobGroup"
+                trigger="click"
+                virtual-triggering
+                width="300px"
+                persistent
+                @mouseenter="showParentPopover"
+                @mouseleave="hideParentPopover"
+            >
+                <el-row class="title-dialog">
+                    <el-col :span="18" class="title">
+                        <el-form-item label="Sao chép nhóm việc"></el-form-item>
+                    </el-col>
+                    <el-col :span="2">
+                        <el-button class="close" @click="dialog.dialogCopy = false">x</el-button>
+                    </el-col>
+                </el-row>
+                <div class="select">
+                    <p>Team</p>
+                    <el-select v-model="value" placeholder="Chọn">
+                        <el-option key="" label="" value="Team 1"
+                        />
+                    </el-select>        
+                </div>
+                <div class="select">
+                    <p>Kế hoạch</p>
+                    <el-select v-model="value" placeholder="Chọn">
+                        <el-option key="" label="Kế hoạch" value=""
+                        />
+                    </el-select>
+                </div>
+                <div class="select">
+                    <el-button type="success" @click="copyTaskGroup(taskGroup.id)">Sao chép</el-button>
+                </div>
+            </el-popover>
+
+            <el-popover
+                :visible="dialog.dialogMove"
+                ref="moveJobGroup"
+                trigger="click"
+                virtual-triggering
+                width="300px"
+                persistent
+            >
+                <el-row class="title-dialog">
+                    <el-col :span="18" class="title">
+                        <el-form-item label="Di chuyển nhóm việc"></el-form-item>
+                    </el-col>
+                    <el-col :span="2">
+                        <el-button class="close" @click="dialog.dialogMove = false">x</el-button>
+                    </el-col>
+                </el-row>
+                <div class="select">
+                    <p>Team</p>
+                    <el-select v-model="value" placeholder="Chọn">
+                        <el-option key="" label="" value="Team 1"
+                        />
+                    </el-select>        
+                </div>
+                <div class="select">
+                    <p>Kế hoạch</p>
+                    <el-select v-model="value" placeholder="Chọn">
+                        <el-option key="" label="Kế hoạch" value=""
+                        />
+                    </el-select>
+                </div>
+                <div class="select">
+                    <el-button type="success">Sao chép</el-button>
+                </div>
+            </el-popover>
+
+            <el-popover
+                :visible="dialog.dialogMoveAll"
+                ref="moveAllTheWork"
+                trigger="click"
+                virtual-triggering
+                width="350px"
+                persistent
+            >
+                <el-row class="title-dialog">
+                    <el-col :span="17" class="title">
+                        <p>Di chuyển toàn bộ công việc trong nhóm việc</p>
+                    </el-col>
+                    <el-col :span="5">
+                        <el-button class="close" @click="dialog.dialogMoveAll = false">x</el-button>
+                    </el-col>
+                </el-row>
+                <el-row>
+                    <el-col>
+                        <div>Team</div>
+                        <el-select v-model="value" placeholder="Chọn" style="width: 315px;">
+                            <el-option key="" label="Team 1" value="Team 1"
+                            />
+                        </el-select>  
+                    </el-col>
+                </el-row>
+                <el-row>
+                    <el-col>
+                        <div>Kế hoạch</div>
+                        <el-select v-model="value" placeholder="Chọn" style="width: 315px;">
+                            <el-option key="" label="Kế hoạch" value="Kế hoạch"
+                            />
+                        </el-select>  
+                    </el-col>
+                </el-row>
+                <el-row>
+                    <el-col>
+                        <div>Nhóm việc</div>
+                        <el-select v-model="value" placeholder="Chọn" style="width: 315px;">
+                            <el-option key="" label="Nhóm việc" value="Nhóm việc"
+                            />
+                        </el-select>  
+                    </el-col>
+                </el-row>
+                <el-row>
+                    <el-col>Thành viên theo dõi công việc</el-col>
+                </el-row>
+                <el-row>
+                    <el-checkbox v-model="checked" size="large" label="Mời thành viên theo dõi công việc vào kế hoạch , nếu chưa được mời" />
+                </el-row>
+                <div class="select">
+                    <el-button type="success">Sao chép</el-button>
+                </div>
+            </el-popover>
+
+            <el-popover
+                :visible="dialog.dialogStore"
+                ref="storeTaskGroup"
+                trigger="click"
+                virtual-triggering
+                width="303px"
+                persistent
+            >
+                <el-row class="title-dialog">
+                    <el-col :span="18" class="title">
+                        <el-form-item label="Lưu trữ Nhóm việc"></el-form-item>
+                    </el-col>
+                    <el-col :span="2">
+                        <el-button class="close" @click="dialog.dialogStore = false">x</el-button>
+                    </el-col>
+                </el-row>
+                <el-row>
+                    <p style="white-space: pre-line;">Thao tác này sẽ chuyển Nhóm công việc vào lưu trữ.
+                        Bạn có thể vào danh sách công việc lưu trữ để phục hồi lại.
+                        Bạn có muốn tiếp tục không?
+                    </p>
+                </el-row>
+                <el-row>
+                    <el-col :span="10"></el-col>
+                    <el-col :span="8"><el-button type="success" round>Xác nhận</el-button></el-col>
+                    <el-col :span="6"><el-button type="info" round @click="dialog.dialogStore = false">Hủy</el-button></el-col>
+                </el-row>
+            </el-popover>
+
+            <el-popover
+                :visible="dialog.dialogStoreAllWork"
+                ref="storeAllWorkInGroup"
+                trigger="click"
+                virtual-triggering
+                width="444px"
+                persistent
+            >
+                <el-row class="title-dialog">
+                    <el-col :span="18" class="title">
+                        <el-form-item label="Lưu trữ toàn bộ việc trong nhóm"></el-form-item>
+                    </el-col>
+                    <el-col :span="2">
+                        <el-button class="close" @click="dialog.dialogStoreAllWork = false">x</el-button>
+                    </el-col>
+                </el-row>
+                <el-row>
+                    <p style="white-space: pre-line;">Thao tác này sẽ chuyển toàn bộ Công việc trong Nhóm vào lưu trữ. 
+                        Bạn có thể vào danh sách công việc lưu trữ để phục hồi lại. 
+                        Bạn có muốn tiếp tục không?
+                    </p>
+                </el-row>
+                <el-row>
+                    <el-col :span="3"></el-col>
+                    <el-col :span="6"><el-button type="success" round>Lưu tất cả</el-button></el-col>
+                    <el-col :span="11"><el-button type="primary">Lưu việc đã hoàn thành</el-button></el-col>
+                    <el-col :span="4"><el-button type="info" round @click="dialog.dialogStoreAllWork = false">Đóng</el-button></el-col>
+                </el-row>
+            </el-popover>
+
+            <el-popover
+                :visible="dialog.dialogDelete"
+                ref="deleteTaskGroup"
+                trigger="click"
+                virtual-triggering
+                width="350px"
+                persistent
+            >
+                <el-row class="title-dialog">
+                    <el-col :span="18" class="title">
+                        <el-form-item label="Xóa nhóm việc"></el-form-item>
+                    </el-col>
+                    <el-col :span="2"> 
+                        <el-button class="close" @click="dialog.dialogDelete = false">x</el-button>
+                    </el-col>
+                </el-row>
+                <el-row>
+                    <p style="white-space: pre-line;">Bạn có chắc là xoá nhóm việc này không?
+                        Vui lòng nhập số <b>5</b> vào ô bên dưới để xác nhận
+                        <b style="color: red;">Nếu xoá bạn sẽ không thể phục hồi lại.</b>
+                    </p>
+                </el-row>
+                <el-row>
+                    <el-input v-model="input" placeholder="5" />
+                </el-row>
+                <el-row>
+                    <el-col><el-button style="place-content: center;" type="danger" round>Xóa</el-button></el-col>
+                </el-row>
+            </el-popover>
         </AuthenticatedLayout>
 
-        <el-popover
-            :visible="dialogCopy"
-            ref="copyJobGroup"
-            trigger="click"
-            virtual-triggering
-            width="300px"
-            persistent
-        >
-            <el-row class="title-dialog">
-                <el-col :span="18" class="title">
-                    <el-form-item label="Sao chép nhóm việc"></el-form-item>
-                </el-col>
-                <el-col :span="2">
-                    <el-button class="close" @click="dialogCopy = false">x</el-button>
-                </el-col>
-            </el-row>
-            <div class="select">
-                <p>Team</p>
-                <el-select v-model="value" placeholder="Chọn">
-                    <el-option key="" label="" value="Team 1"
-                    />
-                </el-select>        
-            </div>
-            <div class="select">
-                <p>Kế hoạch</p>
-                <el-select v-model="value" placeholder="Chọn">
-                    <el-option key="" label="Kế hoạch" value=""
-                    />
-                </el-select>
-            </div>
-            <div class="select">
-                <el-button type="success">Sao chép</el-button>
-            </div>
-        </el-popover>
-
-        <el-popover
-            :visible="dialogMove"
-            ref="moveJobGroup"
-            trigger="click"
-            virtual-triggering
-            width="300px"
-            persistent
-        >
-            <el-row class="title-dialog">
-                <el-col :span="18" class="title">
-                    <el-form-item label="Di chuyển nhóm việc"></el-form-item>
-                </el-col>
-                <el-col :span="2">
-                    <el-button class="close" @click="dialogMove = false">x</el-button>
-                </el-col>
-            </el-row>
-            <div class="select">
-                <p>Team</p>
-                <el-select v-model="value" placeholder="Chọn">
-                    <el-option key="" label="" value="Team 1"
-                    />
-                </el-select>        
-            </div>
-            <div class="select">
-                <p>Kế hoạch</p>
-                <el-select v-model="value" placeholder="Chọn">
-                    <el-option key="" label="Kế hoạch" value=""
-                    />
-                </el-select>
-            </div>
-            <div class="select">
-                <el-button type="success">Sao chép</el-button>
-            </div>
-        </el-popover>
-
-        <el-popover
-            :visible="dialogMoveAll"
-            ref="moveAllTheWork"
-            trigger="click"
-            virtual-triggering
-            width="350px"
-            persistent
-        >
-            <el-row class="title-dialog">
-                <el-col :span="17" class="title">
-                    <p>Di chuyển toàn bộ công việc trong nhóm việc</p>
-                </el-col>
-                <el-col :span="5">
-                    <el-button class="close" @click="dialogMoveAll = false">x</el-button>
-                </el-col>
-            </el-row>
-            <el-row>
-                <el-col>
-                    <div>Team</div>
-                    <el-select v-model="value" placeholder="Chọn" style="width: 315px;">
-                        <el-option key="" label="Team 1" value="Team 1"
-                        />
-                    </el-select>  
-                </el-col>
-            </el-row>
-            <el-row>
-                <el-col>
-                    <div>Kế hoạch</div>
-                    <el-select v-model="value" placeholder="Chọn" style="width: 315px;">
-                        <el-option key="" label="Kế hoạch" value="Kế hoạch"
-                        />
-                    </el-select>  
-                </el-col>
-            </el-row>
-            <el-row>
-                <el-col>
-                    <div>Nhóm việc</div>
-                    <el-select v-model="value" placeholder="Chọn" style="width: 315px;">
-                        <el-option key="" label="Nhóm việc" value="Nhóm việc"
-                        />
-                    </el-select>  
-                </el-col>
-            </el-row>
-            <el-row>
-                <el-col>Thành viên theo dõi công việc</el-col>
-            </el-row>
-            <el-row>
-                <el-checkbox v-model="checked" size="large" label="Mời thành viên theo dõi công việc vào kế hoạch , nếu chưa được mời" />
-            </el-row>
-            <div class="select">
-                <el-button type="success">Sao chép</el-button>
-            </div>
-        </el-popover>
-
-        <el-popover
-            :visible="dialogStore"
-            ref="storeTaskGroup"
-            trigger="click"
-            virtual-triggering
-            width="303px"
-            persistent
-        >
-            <el-row class="title-dialog">
-                <el-col :span="18" class="title">
-                    <el-form-item label="Lưu trữ Nhóm việc"></el-form-item>
-                </el-col>
-                <el-col :span="2">
-                    <el-button class="close" @click="dialogStore = false">x</el-button>
-                </el-col>
-            </el-row>
-            <el-row>
-                <p style="white-space: pre-line;">Thao tác này sẽ chuyển Nhóm công việc vào lưu trữ.
-                    Bạn có thể vào danh sách công việc lưu trữ để phục hồi lại.
-                    Bạn có muốn tiếp tục không?
-                </p>
-            </el-row>
-            <el-row>
-                <el-col :span="10"></el-col>
-                <el-col :span="8"><el-button type="success" round>Xác nhận</el-button></el-col>
-                <el-col :span="6"><el-button type="info" round>Hủy</el-button></el-col>
-            </el-row>
-        </el-popover>
-
-        
-        <el-popover
-            :visible="dialogStoreAllWork"
-            ref="storeAllWorkInGroup"
-            trigger="click"
-            virtual-triggering
-            width="444px"
-            persistent
-        >
-            <el-row class="title-dialog">
-                <el-col :span="18" class="title">
-                    <el-form-item label="Lưu trữ toàn bộ việc trong nhóm"></el-form-item>
-                </el-col>
-                <el-col :span="2">
-                    <el-button class="close" @click="dialogStoreAllWork = false">x</el-button>
-                </el-col>
-            </el-row>
-            <el-row>
-                <p style="white-space: pre-line;">Thao tác này sẽ chuyển toàn bộ Công việc trong Nhóm vào lưu trữ. 
-                    Bạn có thể vào danh sách công việc lưu trữ để phục hồi lại. 
-                    Bạn có muốn tiếp tục không?
-                </p>
-            </el-row>
-            <el-row>
-                <el-col :span="3"></el-col>
-                <el-col :span="6"><el-button type="success" round>Lưu tất cả</el-button></el-col>
-                <el-col :span="11"><el-button type="primary">Lưu việc đã hoàn thành</el-button></el-col>
-                <el-col :span="4"><el-button type="info" round>Đóng</el-button></el-col>
-            </el-row>
-        </el-popover>
-
-        <el-popover
-            :visible="dialogDelete"
-            ref="deleteTaskGroup"
-            trigger="click"
-            virtual-triggering
-            width="350px"
-            persistent
-        >
-            <el-row class="title-dialog">
-                <el-col :span="18" class="title">
-                    <el-form-item label="Xóa nhóm việc"></el-form-item>
-                </el-col>
-                <el-col :span="2"> 
-                    <el-button class="close" @click="dialogDelete = false">x</el-button>
-                </el-col>
-            </el-row>
-            <el-row>
-                <p style="white-space: pre-line;">Bạn có chắc là xoá nhóm việc này không?
-                    Vui lòng nhập số <b>5</b> vào ô bên dưới để xác nhận
-                    <b style="color: red;">Nếu xoá bạn sẽ không thể phục hồi lại.</b>
-                </p>
-            </el-row>
-            <el-row>
-                <el-input v-model="input" placeholder="5" />
-            </el-row>
-            <el-row>
-                <el-col><el-button style="place-content: center;" type="danger" round>Xóa</el-button></el-col>
-            </el-row>
-        </el-popover>
-
         <el-dialog
-            v-model="dialogVisible"
+            v-model="dialog.dialogVisible"
             title="Tạo nhóm công việc"
             width="30%"
             :before-close="handleClose"
@@ -651,13 +779,15 @@ const input = ref('')
             <input type="text" name="" placeholder="Nhập tên nhóm công việc" style="width: 100%; border-radius: 8px;">
             <template #footer>
             <span class="dialog-footer">
-                <el-button @click="dialogVisible = false">Đóng</el-button>
-                <el-button type="primary" @click="dialogVisible = false">Lưu</el-button>
+                <el-button style="margin-right: 10px;" @click="dialog.dialogVisible = false">Đóng</el-button>
+                <el-button type="primary" @click="dialog.dialogVisible = false">Lưu</el-button>
             </span>
             </template>
         </el-dialog>
     </div>
     <TaskForm v-if="showFormTask" :task="state.task" :isShowModal="showFormTask" v-on:closeModal="closeFormTask" />
+    <TaskGroupForm  v-if="showFormTaskGroup" :getTaskGroups="getTaskGroups" :activityId="activityId" :isShowModal="showFormTaskGroup" v-on:closeModal="closeFormTaskGroup" />
+    <MoveTaskGroupForm v-if="showFormMoveTaskGroup" :getTaskGroups="getTaskGroups" :activityId="activityId" :moveTaskGroupId="state.moveTaskGroupId" :taskGroups="taskGroups" :isShowModal="showFormMoveTaskGroup" v-on:closeModal="closeFormMoveTaskGroup" />
 </template>
 
 <style scoped>

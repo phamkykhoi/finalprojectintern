@@ -9,7 +9,8 @@ use App\Http\Controllers\TaskController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TaskGroupController;
-
+use App\Http\Controllers\AttachmentController;
+use App\Http\Controllers\DiscussionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -34,6 +35,13 @@ Route::middleware(['auth', 'verified'])->group(function() {
     Route::resource('taskgroup', TaskGroupController::class);
     Route::get('department/{departmentId}/members', [DepartmentController::class, 'getMembers'])->name('department.members');
     Route::delete('department/{departmentId}/remove/member/{userId}', [DepartmentController::class, 'removeMember'])->name('department.remove.member');
+    Route::get('taskgroup/copy/{id}', [TaskGroupController::class,'copy']);
+    Route::get('taskgroup/list/{id}', [TaskGroupController::class,'getTaskGroupList']);
+    Route::post('taskgroup/move', [TaskGroupController::class,'move']);
+    Route::post('/upload-file', [AttachmentController::class,'upload']);
+    Route::post('get-attachments-by-task/{taskId}', [AttachmentController::class, 'getAttachments']);
+    Route::post('/get-discussion-by-task-id/{taskId}',[DiscussionController::class,'getDiscussion']);
+    Route::resource('discussion', DiscussionController::class);
 });
 
 Route::middleware('auth')->group(function () {
