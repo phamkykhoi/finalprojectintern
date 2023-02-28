@@ -5,9 +5,10 @@ import DepartenList from '@/Pages/Departen/Index.vue';
 import TaskForm from '@/Pages/Task/Form.vue';
 import TaskList from '@/Pages/Task/Index.vue';
 import MoveTaskGroupForm from '@/Pages/TaskGroup/MoveForm.vue';
-import { reactive, ref, onBeforeMount, watch, markRaw } from 'vue';
+import { reactive, ref, onBeforeMount, watch, markRaw, provide } from 'vue';
 import TaskGroupForm from '@/Pages/TaskGroup/Form.vue';
 import axios from 'axios';
+import request from '../../utils/request';
 import { ElMessage} from 'element-plus';
 import { ElMessageBox } from 'element-plus';
 import {
@@ -41,8 +42,16 @@ const state  = reactive({
     moveTaskGroupId:0,
 })
 
-const taskGroups = ref(props.taskGroups);
+const taskGroups = ref([]);
 const loading = ref(true);
+
+async function getGroupsTask() {
+    await request.get(`/api/activity/${props.activityId}`).then((res) => {
+        taskGroups.value = res.data.result.taskGroups
+    })
+}
+provide('getGroupsTask', getGroupsTask)
+
 
 const createTaskForm = (currentTask) => {
     showFormTask.value = true;
@@ -70,10 +79,6 @@ const createMoveTaskGroupForm = (currentActivityId,moveTaskGroupId) => {
 const closeFormMoveTaskGroup = (value) => {
     showFormMoveTaskGroup.value = value;
 }
-
-watch(showFormTask, () => {
-    getGroupsTask()
-})
 
 //Handle TaskGroup
 function getTaskGroups(id)
