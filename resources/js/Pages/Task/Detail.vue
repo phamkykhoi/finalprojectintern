@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import Modal from '@/Components/Modal.vue';
 import FileManagerOfTask from '@/Components/FileManagerOfTask.vue';
-import FileUpload from '@/Components/FileUpload.vue';
 import { reactive, ref, defineEmits, inject, computed, unref  } from 'vue';
 import type { FormInstance } from 'element-plus';
 import { ElMessage } from 'element-plus';
