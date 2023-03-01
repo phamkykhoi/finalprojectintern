@@ -4,6 +4,7 @@ import { ref } from "vue";
 import FileUpload from '@/Components/FileUpload.vue';
 import {ArrowDown} from '@element-plus/icons-vue';
 import { ElMessage, ElMessageBox } from "element-plus";
+import axios from "axios";
 
 defineProps({
     taskForm: {
@@ -19,6 +20,7 @@ let files = ref([
 {
         id: 1,
         title: "cskc",
+        extention: "jpg",
         user: "Vo Van Duc",
         created_at: "16:00:00",
         description: "Đây là một file ảnh",
@@ -27,6 +29,7 @@ let files = ref([
     {
         id:2,
         title: "vnascnakc",
+        extention: "jpg",
         user: "Nguyen Dinh Manh",
         created_at: "16:00:00",
         description: "Đây là một file ảnh",
@@ -36,25 +39,30 @@ let files = ref([
 
 const fileList= files.value.map(a => a.id);
 
-function handleShowEdit() {
+function handleShowEdit()
+{
     showInputEdit.value = true;
 }
 
-function handleCloseEdit() {
+function handleCloseEdit()
+{
     showInputEdit.value = false;
 }
 
-const handleCheckAllClick = ()=>{
+const handleCheckAllClick = ()=>
+{
     checkedFiles.value = fileList;
     checkAll.value = true;
 }
 
-const handleRemoveCheckAllClick = ()=>{
+const handleRemoveCheckAllClick = ()=>
+{
     checkedFiles.value = [];
     checkAll.value = false;
 }
 
-const handleCheckAllChange = (val) => {
+const handleCheckAllChange = (val) =>
+{
     checkedFiles.value = val ? fileList : [];
 }
 
@@ -63,7 +71,8 @@ const handleCheckedFilesChange = (value) => {
     checkAll.value = checkedCount === fileList .length;
 }
 
-const handleRemoveFile = (id) => {
+const handleRemoveFile = (id) =>
+{
   ElMessageBox.confirm(
     'The file will be permanently deleted, continue to delete the file?',
     {
@@ -88,7 +97,8 @@ const handleRemoveFile = (id) => {
     })
 }
 
-const handleRemoveCheckedFile = () => {
+const handleRemoveCheckedFile = () =>
+{
     ElMessageBox.confirm(
     'All selected files will be permanently deleted, keep deleting ?',
     {
@@ -115,13 +125,36 @@ const handleRemoveCheckedFile = () => {
     })
 }
 
-const handleGetLink = (url)=>{
+const handleGetLink = (url)=>
+{
     console.log(url);
     navigator.clipboard.writeText(url);
     ElMessage({
         showClose: true,
         message: 'Đã copy url vào clipboard',
         type: 'success',
+    })
+}
+
+const handleDownloadFile=(file)=>
+{
+      const link = document.createElement('a');
+      link.href = file.url;
+      link.download =file.title.concat('.'+file.extention);;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+}
+
+const handleDownloadAllFiles = ()=>
+{
+    files.value.map(function(file){
+      const link = document.createElement('a');
+      link.href = file.url;
+      link.download = file.title.concat('.'+file.extention);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
     })
 }
 </script>
@@ -169,7 +202,7 @@ const handleGetLink = (url)=>{
                         <span
                             v-if="!showInputEdit"
                             @click="handleShowEdit"
-                            class="info-edit"
+                            class="info-edit cursor-pointer"
                             >Bấm để cập nhật mô tả
                             <el-icon class="info-edit-icon"
                                 ><EditPen
@@ -202,7 +235,7 @@ const handleGetLink = (url)=>{
 
                         <div>
                             <el-link class="mr-2" href="#">Bình luận</el-link>
-                            <el-link class="mr-2" href="#">Tải về</el-link>
+                            <el-link class="mr-2" @click="handleDownloadFile(file)">Tải về</el-link>
                             <el-link class="mr-2" @click="handleGetLink(file.url)">Lấy link</el-link>
                             <el-link class="mr-2" href="#">Bỏ ảnh bìa</el-link>
                             <el-link class="mr-2" @click="handleRemoveFile(file.id)">Xóa</el-link>
@@ -220,7 +253,7 @@ const handleGetLink = (url)=>{
             </div>
 
             <div v-if="files.length" class="d-flex justify-content-end mr-4 w-[100%]">
-                <el-button type="primary">Tải tất cả</el-button>
+                <el-button type="primary" @click="handleDownloadAllFiles">Tải tất cả</el-button>
                 <el-button  v-if="checkedFiles.length" type="danger" class="ml-2" @click="handleRemoveCheckedFile" >Xóa tập tin đã chọn</el-button
                 >
                 <el-button class="ml-2" @click=" handleCheckAllClick">Chọn tất cả</el-button>
