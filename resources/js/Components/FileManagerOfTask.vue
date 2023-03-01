@@ -3,6 +3,8 @@ import { CloseBold } from "@element-plus/icons-vue";
 import { ref } from "vue";
 import FileUpload from '@/Components/FileUpload.vue';
 import {ArrowDown} from '@element-plus/icons-vue';
+import { ElMessage, ElMessageBox } from "element-plus";
+
 defineProps({
     taskForm: {
         type: Object,
@@ -11,6 +13,8 @@ defineProps({
 
 const checkAll = ref(false);
 const checkedFiles = ref([]);
+const showInputEdit = ref(false);
+
 let files = ref([
 {
         id: 1,
@@ -31,8 +35,6 @@ let files = ref([
 ]);
 
 const fileList= files.value.map(a => a.id);
-
-const showInputEdit = ref(false);
 
 function handleShowEdit() {
     showInputEdit.value = true;
@@ -62,14 +64,65 @@ const handleCheckedFilesChange = (value) => {
 }
 
 const handleRemoveFile = (id) => {
-   files.value = files.value.filter(obj => obj.id !== id);
+  ElMessageBox.confirm(
+    'The file will be permanently deleted, continue to delete the file?',
+    {
+      confirmButtonText: 'OK',
+      cancelButtonText: 'Cancel',
+      type: 'warning',
+    }
+  )
+    .then(() => {
+      files.value = files.value.filter(obj => obj.id !== id);
+      checkedFiles.value = checkedFiles.value.filter(item => item !== id);
+      ElMessage({
+        type: 'success',
+        message: 'Delete completed',
+      })
+    })
+    .catch(() => {
+      ElMessage({
+        type: 'info',
+        message: 'Delete canceled',
+      })
+    })
 }
 
 const handleRemoveCheckedFile = () => {
-    if(files.value.length){
-        files.value = files.value.filter(obj => !checkedFiles.value.includes(obj.id));
+    ElMessageBox.confirm(
+    'All selected files will be permanently deleted, keep deleting ?',
+    {
+      confirmButtonText: 'OK',
+      cancelButtonText: 'Cancel',
+      type: 'warning',
     }
-    handleRemoveCheckAllClick();
+  )
+    .then(() => {
+        if(files.value.length){
+        files.value = files.value.filter(obj => !checkedFiles.value.includes(obj.id));
+        }
+        handleRemoveCheckAllClick();
+      ElMessage({
+        type: 'success',
+        message: 'Delete completed',
+      })
+    })
+    .catch(() => {
+      ElMessage({
+        type: 'info',
+        message: 'Delete canceled',
+      })
+    })
+}
+
+const handleGetLink = (url)=>{
+    console.log(url);
+    navigator.clipboard.writeText(url);
+    ElMessage({
+        showClose: true,
+        message: 'Đã copy url vào clipboard',
+        type: 'success',
+    })
 }
 </script>
 <template>
@@ -150,7 +203,7 @@ const handleRemoveCheckedFile = () => {
                         <div>
                             <el-link class="mr-2" href="#">Bình luận</el-link>
                             <el-link class="mr-2" href="#">Tải về</el-link>
-                            <el-link class="mr-2" href="#">Lấy link</el-link>
+                            <el-link class="mr-2" @click="handleGetLink(file.url)">Lấy link</el-link>
                             <el-link class="mr-2" href="#">Bỏ ảnh bìa</el-link>
                             <el-link class="mr-2" @click="handleRemoveFile(file.id)">Xóa</el-link>
                         </div>
