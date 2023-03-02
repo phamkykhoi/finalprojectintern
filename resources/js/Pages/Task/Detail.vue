@@ -151,16 +151,6 @@ function CloseTaskName(){
     showTask.value = false
 }
 
-// const showAddTask = ref(false)
-
-// function createFormAddTask(){
-//     showAddTask.value = true
-// }
-
-// function closeAddTask(){
-//     showAddTask.value = false
-// }
-
 const showInputEdit = ref(false)
 
 function handleShowEdit() {
@@ -324,7 +314,6 @@ const form_sub_task = reactive({
 function addSubTask(){
     subTasks.value.push(form_sub_task)
     showAddTask.value = false
-    console.log(subTasks)
 }
 </script>
 
