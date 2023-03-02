@@ -151,15 +151,15 @@ function CloseTaskName(){
     showTask.value = false
 }
 
-const showAddTask = ref(false)
+// const showAddTask = ref(false)
 
-function createFormAddTask(){
-    showAddTask.value = true
-}
+// function createFormAddTask(){
+//     showAddTask.value = true
+// }
 
-function closeAddTask(){
-    showAddTask.value = false
-}
+// function closeAddTask(){
+//     showAddTask.value = false
+// }
 
 const showInputEdit = ref(false)
 
@@ -314,7 +314,7 @@ const subTasks = ref([
       { id: 3,
         name: 'Việc con 3',
         description: 'Mô tả thành phần' }
-    ])
+])
 const subTask = ref([])
 const form_sub_task = reactive({
     name: '',
@@ -324,6 +324,7 @@ const form_sub_task = reactive({
 function addSubTask(){
     subTasks.value.push(form_sub_task)
     showAddTask.value = false
+    console.log(subTasks)
 }
 </script>
 
@@ -377,40 +378,9 @@ function addSubTask(){
                             </span>
                         </div>
                         <el-row class="mb-2" style="display: block; margin-top: 16px; margin-right: 8px;">
-                            <el-row class="task-child">
-                                    <div class="flex list-task">
-                                        <el-icon style="padding-left: 0px;" :size="25"><List /></el-icon>
-                                        <el-form-item style="margin-bottom: 0; margin-left: 6px;" label="Danh sách việc con: (1/2)"></el-form-item>
-                                    </div>
-                                    <el-button @click="createFormAddTask">Tạo việc con</el-button>
-                            </el-row>
-                            <div class="task-progress">
-                                <el-progress :percentage="0"/>
-                            </div>
-                            <el-row v-if="showAddTask">
-                                    <el-col :span="1" style="text-align: right;">
-                                    </el-col>
-                                    <el-col :span="23" style="text-align: right;">
-                                        <el-input v-model="form_sub_task.name" type="textarea" :rows="1" autocomplete="off" placeholder="Tạo mới tên việc"
-                                            clearable style="display: block;" />
-                                        <el-input v-model="form_sub_task.description" type="textarea" :rows="1" autocomplete="off" placeholder="tạo mới mô tả"
-                                            clearable style="display: block; margin-top: 8px;" />
-                                            <span class="task-btn">
-                                        <el-button color="green" style="margin-right: 8px;" @click="addSubTask">Tạo việc</el-button>
-                                        <el-icon @click="closeAddTask" class="task-icon-close close"><CloseBold /></el-icon>
-                                    </span>    
-                                    </el-col>
-                            </el-row>
                             
-                            <SubTask v-for="(item, index) in subTasks" 
-                            :label= "item.name" 
-                            :description= "item.description"
-                            :subTask="item"
-                            :subTasks="subTasks"
-                            :key="item.id"
-                            :index="index"
-                            >
-                            </SubTask>
+                            
+                            <SubTask :taskId="task.id"></SubTask>
                         </el-row>
                         
                         <div>
