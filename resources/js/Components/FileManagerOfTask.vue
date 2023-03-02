@@ -7,8 +7,8 @@ import { ElMessage, ElMessageBox } from "element-plus";
 import axios from "axios";
 
 defineProps({
-    taskForm: {
-        type: Object,
+    taskId: {
+        type: Number,
     },
 });
 
@@ -209,8 +209,8 @@ const handleDownloadAllFiles = ()=>
                         </span>
                         <span v-if="showInputEdit">
                             <el-input
-                                v-model="taskForm.name"
-                                :value="taskForm.name"
+                                v-model="file.description"
+                                :value="file.description"
                                 type="textarea"
                                 :rows="2"
                                 autocomplete="off"

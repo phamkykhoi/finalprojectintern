@@ -438,7 +438,7 @@ const handleClose = (done: () => void) => {
 
 
                         </el-row>
-                        <FileManagerOfTask :taskForm="taskForm"></FileManagerOfTask>
+                        <FileManagerOfTask :taskId="task.id"></FileManagerOfTask>
                         <div class="flex comment" style="margin-right: 8px;">
                             <el-icon style="margin-right: 6px;" :size="25"><Comment /></el-icon>
                             <el-form-item label="Bình luận:" style="display: block; width: 100%;">
