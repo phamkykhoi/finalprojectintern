@@ -66,9 +66,8 @@ const handleCheckAllChange = (val) =>
     checkedFiles.value = val ? fileList : [];
 }
 
-const handleCheckedFilesChange = (value) => {
-    const checkedCount = value.length;
-    checkAll.value = checkedCount === fileList .length;
+const handleCheckedFilesChange = () => {
+    checkAll.value = checkedFiles.value.length === files.value.length;
 }
 
 const handleRemoveFile = (id) =>
