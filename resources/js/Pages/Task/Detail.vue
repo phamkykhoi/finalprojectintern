@@ -15,10 +15,10 @@ Delete, CloseBold, Search, CircleCheck,
 CirclePlusFilled, CircleCloseFilled,
 StarFilled, Calendar, MoreFilled,
 DocumentCopy, Rank, Bell, Share,
-Pointer, Finished, Lock, TakeawayBox, 
-Close, DocumentAdd, Link, ChromeFilled, 
+Pointer, Finished, Lock, TakeawayBox,
+Close, DocumentAdd, Link, ChromeFilled,
 Box, Cloudy, Folder, ArrowUpBold
-} 
+}
 from '@element-plus/icons-vue';
 
 const ruleFormRef = ref<FormInstance>()
@@ -85,7 +85,7 @@ const saveTask = (formEl: FormInstance | undefined) => {
                     })
                     closeModal()
                     getGroupsTask();
-                   
+
                 }
             })
         }
@@ -321,7 +321,7 @@ const handleClose = (done: () => void) => {
                                     </el-icon>
                                 </el-col>
                                 <el-col :span="22">
-                                    <el-input v-model="taskForm.name" :value="taskForm.name" 
+                                    <el-input v-model="taskForm.name" :value="taskForm.name"
                                     type="textarea" :rows="2" autocomplete="off" placeholder="Mô tả công việc" clearable style="display: inline-block;" />
                                     <span class="name-btn">
                                         <el-button color="green" style="margin-right: 8px;">Cập nhật</el-button>
@@ -530,7 +530,7 @@ const handleClose = (done: () => void) => {
                                 <el-button style="margin-left: 6px;">Bỏ chọn tất cả</el-button>
                             </div>
                         </div>
-                        <TaskCommentSection></TaskCommentSection>
+                        <TaskCommentSection :taskId="task.id"></TaskCommentSection>
                         <el-row class="mt-4" style="display: block; margin-bottom: 0; margin-right: 8px;">
                             <el-row class="task-child">
                                 <div class="flex">
