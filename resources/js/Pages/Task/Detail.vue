@@ -1,16 +1,16 @@
 <script lang="ts" setup>
 import Modal from '@/Components/Modal.vue';
 import FileUpload from '@/Components/FileUpload.vue';
-import { reactive, ref, defineEmits, inject, computed, unref  } from 'vue';
+import TaskCommentSection from '@/Components/TaskCommentSection.vue';
+import { reactive, ref, defineEmits, inject, unref  } from 'vue';
 import type { FormInstance } from 'element-plus';
 import { ElMessage } from 'element-plus';
-import axios from 'axios';
 import request from '../../utils/request';
 import { ClickOutside as vClickOutside } from 'element-plus'
 import { ElMessageBox } from 'element-plus'
-import { 
-ArrowDown, Document, EditPen, 
-List, Comment , Avatar, Clock,
+import {
+ArrowDown, Document, EditPen,
+List, Avatar, Clock,
 Delete, CloseBold, Search, CircleCheck,
 CirclePlusFilled, CircleCloseFilled,
 StarFilled, Calendar, MoreFilled,
@@ -169,15 +169,6 @@ function handleShowEdit() {
 function closeEdit() {
     showInputEdit.value = false
 }
-const showEditCmt = ref(false)
-
-function handleEditCmt(){
-    showEditCmt.value = true
-}
-
-function closeEditCmt() {
-    showEditCmt.value = false
-}
 
 const buttonRef = ref()
 const popoverRef = ref()
@@ -311,7 +302,6 @@ const handleClose = (done: () => void) => {
         <Modal :show="isShowModal" @close="closeModal" v-bind:max-width="'4xl'">
             <form class="space-y-6 m-3">
                 <el-form enctype="multipart/form-data" ref="ruleFormRef" :model="taskForm" class="demo-ruleForm" :rules="rules">
-                
                 <el-row>
                     <el-col :span="18">
                         <div v-if="!showTask" class="modal-header flex flex-shrink-0 items-center justify-between rounded-t-md">
@@ -348,7 +338,7 @@ const handleClose = (done: () => void) => {
                         </div>
                         <span class="ml-31" v-if="!showInputDescription" @click="ShowInputDes">{{ taskForm.description }}</span>
                         <div v-if="showInputDescription" style="margin: 16px 0;">
-                            <el-input v-model="taskForm.description" :value="taskForm.description" 
+                            <el-input v-model="taskForm.description" :value="taskForm.description"
                             type="textarea" :rows="2" autocomplete="off" placeholder="Mô tả công việc" clearable style="display: inline-block;" />
                             <span class="description-btn">
                                 <el-button color="green" style="margin-right: 8px;">Cập nhật</el-button>
@@ -540,46 +530,7 @@ const handleClose = (done: () => void) => {
                                 <el-button style="margin-left: 6px;">Bỏ chọn tất cả</el-button>
                             </div>
                         </div>
-                        <div class="flex comment" style="margin-right: 8px;">
-                            <el-icon style="margin-right: 6px;" :size="25"><Comment /></el-icon>
-                            <el-form-item label="Bình luận:" style="display: block; width: 100%;">
-                                <el-input type="textarea" :rows="2" autocomplete="off" placeholder="Nhập bình luận" clearable
-                                style="display: inline-block;" />
-                                <el-button class="mt-2" style="margin-left: auto;">Gửi bình luận</el-button>
-                            </el-form-item>
-                            <el-icon class="comment-icon" :size="25"><Avatar /></el-icon>
-                        </div>
-                            
-                        <div class="flex" style="margin-right: 8px; margin-top: 16px;">
-                            <el-icon style="margin-right: 6px;" :size="25"><Avatar /></el-icon>
-                            <div style="width: 100%;">
-                                <div v-if="!showEditCmt">
-                                    <span>Tên tác giả bình luận</span>
-                                    <div class="commented">Bình luận của tác giả</div>
-                                    <div>
-                                        <el-link href="#">Thích</el-link>
-                                        <el-link href="#">Trả lời</el-link>
-                                        <el-link @click="handleEditCmt">Sửa</el-link>
-                                        <el-link href="#">Xóa</el-link>
-                                        <el-link href="#">Hôm nay 16:00</el-link>
-                                    </div>
-                                </div>
-                                <el-form-item v-if="showEditCmt" style="display: block; width: 100%;">
-                                    <el-input value="Bình luận của tác giả" type="textarea" :rows="2" autocomplete="off" clearable
-                                        style="display: inline-block;" />
-                                        <div class="flex" style="justify-content: space-between; align-items: center; width: 100%; margin-top: 8px;">
-                                            <span>Nhấn Shift + Enter để gửi</span>
-                                            <div>
-                                                <el-button type="success">Cập nhật</el-button>
-                                                <el-icon class="close" style="margin-left: 4px;" @click="closeEditCmt" size="15"><Close></Close></el-icon>
-                                            </div>
-                                        </div>
-                                </el-form-item>
-                                
-                                
-                            </div>
-                        </div>
-                        
+                        <TaskCommentSection></TaskCommentSection>
                         <el-row class="mt-4" style="display: block; margin-bottom: 0; margin-right: 8px;">
                             <el-row class="task-child">
                                 <div class="flex">
@@ -640,7 +591,7 @@ const handleClose = (done: () => void) => {
                                     <CircleCloseFilled />
                                 </el-icon>
                             </div>
-                                
+
                             <el-icon size="25" class="icon-plus" @click="showNguoiThucHien" ref="buttonRef" v-click-outside="onClickOutside">
                                 <CirclePlusFilled />
                             </el-icon>
@@ -805,8 +756,8 @@ const handleClose = (done: () => void) => {
                                 </span>
                             </div>
                         </div>
-                        
-                        
+
+
                         <el-checkbox v-model="taskForm.is_quickly" id="is_quickly" @change="changeQuicklyStatus(task.id)" label="Việc Khẩn cấp" size="large" />
                         <el-checkbox v-model="taskForm.is_important" id="is_important" @change="changeImportantStatus(task.id)" label="Việc Quan trọng" size="large" />
                         <div class="btn-container">
@@ -889,8 +840,8 @@ const handleClose = (done: () => void) => {
                                                 <el-icon class="close" @click="hidePopover8"><CloseBold /></el-icon>
                                         </div>
                                         <p>
-                                            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Incidunt inventore 
-                                            nostrum laudantium consequuntur doloremque accusantium autem nam sit culpa 
+                                            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Incidunt inventore
+                                            nostrum laudantium consequuntur doloremque accusantium autem nam sit culpa
                                             odit eligendi exercitationem provident error, dignissimos pariatur fugit id facere? Quae.
                                         </p>
                                         <el-button style="width: 100%; margin-top: 12px;" type="danger">Xác nhận</el-button>
