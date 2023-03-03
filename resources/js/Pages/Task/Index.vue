@@ -9,6 +9,7 @@ const props = defineProps({
     taskGroup: Object,
     activity: Object
 });
+
 const isShowTaskDetail = ref(false);
 
 const state  = reactive({
@@ -47,7 +48,6 @@ function closeTaskDetail(value) {
     overflow-y: scroll;
     scrollbar-width: thin;
 }
-
 
 .list-items::-webkit-scrollbar {
     width: 1rem;
