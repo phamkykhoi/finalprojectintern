@@ -8,7 +8,6 @@ defineProps({
     },
 });
 
-const showEditCmt = ref(false);
 const currentCmt = ref("");
 let listComments = ref([
     {
@@ -29,18 +28,20 @@ let listComments = ref([
     },
 ]);
 
+const showEditCmt = ref(new Array(listComments.value.length).fill(false));
+
 document.addEventListener("keydown", function (event) {
     if (event.shiftKey && event.keyCode === 13) {
         handleSendComment();
     }
 });
 
-function handleEditCmt() {
-    showEditCmt.value = true;
+function handleShowEditCmt(index) {
+    showEditCmt.value[index] = true;
 }
 
-function closeEditCmt() {
-    showEditCmt.value = false;
+function closeEditCmt(index) {
+    showEditCmt.value[index] = false;
 }
 
 function handleDeleteCmt(commentId) {
@@ -83,6 +84,7 @@ const handleSendComment = () => {
         attachment:
             "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcShN0nuLT7HIpIANuDi6wbMKpeuCgZsl2PtAA&usqp=CAU",
     });
+        showEditCmt.value.push(false);
         ElMessage({
         showClose: true,
         message: "Bạn đã đăng comment thành công!",
@@ -126,13 +128,13 @@ const handleSendComment = () => {
         </div>
     </div>
 
-    <div v-for="comment in listComments" class="flex mr-2 mt-1">
+    <div v-for="(comment,index) in listComments" class="flex mr-2 mt-1">
         <img class="comment-img" :src="comment.attachment" />
         <div class="w-[100%]">
             <span>{{ comment.user }}</span>
             <el-form-item class="d-block w-[100%]">
                 <el-input
-                    v-if="showEditCmt"
+                    v-if="showEditCmt[index]"
                     v-model="comment.description"
                     type="textarea"
                     :rows="2"
@@ -141,7 +143,7 @@ const handleSendComment = () => {
                 />
                 <div
                     class="border w-[100%] h-[60%] bg-white"
-                    v-if="!showEditCmt"
+                    v-if="!showEditCmt[index]"
                 >
                     <span class="mt-4 mx-3">{{ comment.description }}</span>
                 </div>
@@ -149,7 +151,7 @@ const handleSendComment = () => {
                     <div class="w-[50%]">
                         <el-link class="mr-2" href="#">Thích</el-link>
                         <el-link class="mr-2" href="#">Trả lời</el-link>
-                        <el-link class="mr-2" @click="handleEditCmt"
+                        <el-link class="mr-2" @click="handleShowEditCmt(index)"
                             >Sửa</el-link
                         >
                         <el-link
@@ -163,12 +165,12 @@ const handleSendComment = () => {
                     </div>
 
                     <div
-                        v-if="showEditCmt"
+                        v-if="showEditCmt[index]"
                         class="flex justify-content-between align-items-center ml-auto"
                     >
                         <div>
                             <el-button type="success">Cập nhật</el-button>
-                            <el-button type="danger" @click="closeEditCmt"
+                            <el-button type="danger" @click="closeEditCmt(index)"
                                 >Hủy</el-button
                             >
                         </div>
