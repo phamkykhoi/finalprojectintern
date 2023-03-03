@@ -1,15 +1,14 @@
 <script lang="ts" setup>
 import Modal from '@/Components/Modal.vue';
 import FileManagerOfTask from '@/Components/FileManagerOfTask.vue';
-import { reactive, ref, defineEmits, inject, computed, unref  } from 'vue';
+import { reactive, ref, defineEmits, inject, unref  } from 'vue';
 import type { FormInstance } from 'element-plus';
 import { ElMessage } from 'element-plus';
-import axios from 'axios';
 import request from '../../utils/request';
 import { ClickOutside as vClickOutside } from 'element-plus'
 import { ElMessageBox } from 'element-plus'
 import {
-ArrowDown, Document, EditPen,
+Document, EditPen,
 List, Comment , Avatar, Clock,
 Delete, CloseBold, Search, CircleCheck,
 CirclePlusFilled, CircleCloseFilled,
