@@ -130,7 +130,7 @@ const handleSaveEdit = (index) => {
                     />
                 </div>
 
-                <el-button class="mt-2 ml-auto" @click="handleSendComment"
+                <el-button class="mt-2 ml-auto" type="success" @click="handleSendComment"
                     >Gửi bình luận</el-button
                 >
             </el-form-item>
