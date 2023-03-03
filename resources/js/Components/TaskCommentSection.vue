@@ -94,6 +94,15 @@ const handleSendComment = () => {
 
     currentCmt.value = "";
 };
+
+const handleSaveEdit = (index) => {
+    closeEditCmt(index);
+    ElMessage({
+            showClose: true,
+            message: "Bạn đã sửa comment thành công!!",
+            type: "success",
+        });
+}
 </script>
 
 <template>
@@ -169,7 +178,7 @@ const handleSendComment = () => {
                         class="flex justify-content-between align-items-center ml-auto"
                     >
                         <div>
-                            <el-button type="success">Cập nhật</el-button>
+                            <el-button type="success" @click="handleSaveEdit(index)">Cập nhật</el-button>
                             <el-button type="danger" @click="closeEditCmt(index)"
                                 >Hủy</el-button
                             >
