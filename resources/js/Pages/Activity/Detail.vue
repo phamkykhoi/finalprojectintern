@@ -315,7 +315,7 @@ onBeforeMount(async () => {
                     </el-popover>
         
                     <el-popover
-                        :ref="ref => popoverRef2[index] = ref"
+                        :ref="ref => popoverRef2[index]"
                         :visible="popoverRef2"
                         virtual-triggering
                         persistent
@@ -323,7 +323,7 @@ onBeforeMount(async () => {
                         trigger="click"
                     >
                         <ActionTagGroup :idTaskGroup="index" :taskGroup="taskGroup" 
-                        :state="state" :popperRef="popoverRef" :popperRef2="popoverRef2"/>
+                        :state="state" :popperRef="popoverRef"/>
                         <!-- <el-button @click="createTaskForm(taskGroup)"
                             v-click-outside="popover" :icon="Plus" circle > 
                             Thêm mới công việc

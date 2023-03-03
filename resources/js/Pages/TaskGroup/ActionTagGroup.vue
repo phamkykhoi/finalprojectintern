@@ -15,8 +15,6 @@ const props = defineProps({
     }
 });
 
-console.log(props.popperRef2[0])
-
 const dialogVisible = ref(false)
 // console.log(props.taskGroup)
 const copyJobGroup = ref()
@@ -54,7 +52,6 @@ const dialog = reactive({
     dialogDelete: false,
     addTaskGroup: false,
     editNameTaskGroup: [false],
-    popoverRef2: props.popperRef2[0],
     input:'',
 });
 
