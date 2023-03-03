@@ -131,16 +131,6 @@ function CloseInputDes(){
     showInputDescription.value = false
 }
 
-const showInputTask = ref(false)
-
-function ShowInputTask(){
-    showInputTask.value = true
-}
-
-function CloseInputTask(){
-    showInputTask.value = false
-}
-
 const showTask = ref(false)
 
 function ShowTaskName(){
@@ -176,7 +166,7 @@ const onClickOutside = () => {
     unref(popoverRef).popperRef?.delayHide?.()
 }
 const hidePopover = () => {
-    isPopoverVisible.value = !isPopoverVisible.value;
+    isPopoverVisible.value = false;
     popoverRef.value.hide()
 }
 
@@ -205,24 +195,6 @@ const onClickOutside4 = () => {
 }
 const hidePopover4 = () => {
     popoverRef4.value.hide()
-}
-
-const buttonRef5 = ref()
-const popoverRef5 = ref()
-const onClickOutside5 = () => {
-  unref(popoverRef5).popperRef5?.delayHide?.()
-}
-const hidePopover5 = () => {
-    popoverRef5.value.hide()
-}
-
-const buttonRef6 = ref()
-const popoverRef6 = ref()
-const onClickOutside6 = () => {
-  unref(popoverRef6).popperRef6?.delayHide?.()
-}
-const hidePopover6 = () => {
-    popoverRef6.value.hide()
 }
 
 const buttonRef7 = ref()
@@ -294,27 +266,6 @@ const handleClose = (done: () => void) => {
       // catch error
     })
 }
-const subTasks = ref([
-      { id: 1,
-        name: 'Việc con 1',
-        description: 'Mô tả thành phần' },
-      { id: 2,
-        name: 'Việc con 2',
-        description: 'Mô tả thành phần' },
-      { id: 3,
-        name: 'Việc con 3',
-        description: 'Mô tả thành phần' }
-])
-const subTask = ref([])
-const form_sub_task = reactive({
-    name: '',
-    description: ''
-})
-
-function addSubTask(){
-    subTasks.value.push(form_sub_task)
-    showAddTask.value = false
-}
 </script>
 
 <template>
@@ -366,7 +317,7 @@ function addSubTask(){
                                 <el-icon @click="CloseInputDes" class="description-icon-close close"><CloseBold /></el-icon>
                             </span>
                         </div>
-                        <el-row class="mb-2" style="display: block; margin-top: 16px; margin-right: 8px;">
+                        <el-row class="mb-2" style="display: block; margin-top: 16px;">
                             
                             
                             <SubTask :taskId="task.id"></SubTask>
