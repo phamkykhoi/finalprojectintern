@@ -7,20 +7,10 @@ import TaskList from '@/Pages/Task/Index.vue';
 import MoveTaskGroupForm from '@/Pages/TaskGroup/MoveForm.vue';
 import { reactive, ref, onBeforeMount, watch, markRaw, provide } from 'vue';
 import TaskGroupForm from '@/Pages/TaskGroup/Form.vue';
-import axios from 'axios';
 import request from '../../utils/request';
 import { ElMessage} from 'element-plus';
 import { ElMessageBox } from 'element-plus';
-import {
-  Delete,
-  CopyDocument,
-  Files,
-  Folder,
-  Switch,
-  Rank,
-MoreFilled,
-} from '@element-plus/icons-vue';
-
+import { Delete, CopyDocument, Files, Folder, Switch, Rank, MoreFilled } from '@element-plus/icons-vue';
 
 const props = defineProps({
     activity: Object,
@@ -83,8 +73,9 @@ const closeFormMoveTaskGroup = (value) => {
 //Handle TaskGroup
 function getTaskGroups(id)
 {
-  axios.get(`/taskgroup/list/${id}`).then(res => {
-          taskGroups.value = res.data;
+    request.get(`/taskgroup/list/${id}`)
+        .then((res) => {
+            taskGroups.value = res.data.result.taskGroups;
         }).catch(err => {
            ElMessage({
                 showClose: true,
@@ -97,7 +88,7 @@ function getTaskGroups(id)
 
 async function editTaskGroup(id){
     loading.value=true;
-     await axios.patch(`/taskgroup/${id}`,{'name':event.target.innerText}).then(res => {
+     await request.patch(`/taskgroup/${id}`,{'name':event.target.innerText}).then(res => {
         if (res.data.status) {
                     ElMessage({
                         showClose: true,
@@ -129,7 +120,7 @@ async function deleteTaskGroup(id)
   )
   .then(() => {
     loading.value=true;
-    axios.delete(`/taskgroup/${id}`).then(res => {
+    request.delete(`/taskgroup/${id}`).then(res => {
         if (res.data.status) {
               ElMessage({
                         showClose: true,
@@ -157,7 +148,7 @@ async function deleteTaskGroup(id)
 async function copyTaskGroup(id)
 {
     loading.value=true;
-    await axios.get(`/taskgroup/copy/${id}`).then(res => {
+    await request.get(`/taskgroup/copy/${id}`).then(res => {
         if (res.data.status) {
              ElMessage({
                         showClose: true,

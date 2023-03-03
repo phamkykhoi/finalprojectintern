@@ -5,7 +5,6 @@ import FileUpload from '@/Components/FileUpload.vue';
 import { reactive, ref, defineEmits, inject, computed, unref  } from 'vue';
 import type { FormInstance } from 'element-plus';
 import { ElMessage } from 'element-plus';
-import axios from 'axios';
 import request from '../../utils/request';
 import { ClickOutside as vClickOutside } from 'element-plus'
 import { ElMessageBox } from 'element-plus'
