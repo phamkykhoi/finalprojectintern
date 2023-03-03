@@ -2,8 +2,8 @@
 import TaskForm from '@/Pages/Task/Form.vue';
 import { reactive, ref, unref, defineProps } from 'vue';
 import { Plus, EditPen, CopyDocument, Switch, Rank, TakeawayBox, Delete} from '@element-plus/icons-vue';
-import { ClickOutside as vClickOutside } from 'element-plus';
-import { ElMessageBox } from 'element-plus'
+import { ClickOutside as vClickOutside, ElMessageBox, ElMessage } from 'element-plus';
+import axios from 'axios';
 
 const props = defineProps({
     idTaskGroup: Number,
@@ -65,7 +65,45 @@ const createTaskForm = (currentTask) => {
     props.state.task = currentTask
 }
 
-const popoverRef2 = ref([])
+async function deleteTaskGroup(id)
+{
+    ElMessageBox.confirm(
+    'It will permanently delete this task group . Continue?',
+    'Warning',
+    {
+      type: 'warning',
+      icon: markRaw(Delete),
+      confirmButtonText: 'Confirm',
+      cancelButtonText: 'Cancel',
+    }
+  )
+  .then(() => {
+    loading.value=true;
+    axios.delete(`/taskgroup/${id}`).then(res => {
+        if (res.data.status) {
+              ElMessage({
+                        showClose: true,
+                        message: 'Delete taskgroup successfully',
+                        type: 'success',
+                    })
+        }
+            }).catch(err => {
+                ElMessage({
+                    showClose: true,
+                    message: err.response.data.message,
+                    type: 'error',
+                })
+            })
+            getTaskGroups(state.activityId);
+    })
+    .catch(() => {
+      ElMessage({
+        type: 'info',
+        message: 'Delete canceled',
+      })
+    })
+}
+
 
 </script>
 <template>
