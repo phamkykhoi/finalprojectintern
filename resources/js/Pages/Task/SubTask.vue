@@ -23,7 +23,10 @@ function CloseInputTask(){
     checked.value = [false]
 }
 
-function editSubTask(){
+function editSubTask(item){
+    if (item.name == ''){
+        return;
+    }
     CloseInputTask()
 }
 
@@ -54,22 +57,24 @@ function createFormAddTask(){
     checked.value = [false]
 }
 
+const name = ref('')
+const description = ref('')
+const lineThrough = ref('')
+
 function saveSubTask(){
     subTasks.value.push({
-        name: 'Việc con n',
-        description: 'Mô tả thành phần',
+        name: name.value,
+        description: description.value,
     })
     checkedSubTask.value.push('false')
+    name.value = ''
+    description.value = ''
     showAddTask.value = false
 }
 
 function closeAddTask(){
     showAddTask.value = false
 }
-
-const name = ref('')
-const description = ref('')
-const lineThrough = ref('')
 
 function countCheckSubTask() {
     var count = 0
@@ -91,6 +96,13 @@ function addClass(count){
     } 
     
     return lineThrough.value = ''
+}
+
+function closeFormUpdate(index, item){
+    if (item.name == ''){
+        return;
+    }
+    checked.value[index] = false
 }
 </script>
 
@@ -160,13 +172,13 @@ function addClass(count){
 
         <div v-if="checked[index]" style="display: flex; align-items: center; width: 110%;">
             <el-col :span="23" style="text-align: right;">
-                <el-input v-model="item.name" type="textarea" :rows="1" autocomplete="off" placeholder="Chỉnh sửa tên việc"
+                <el-input v-model="item.name" :value="item.name" type="textarea" :rows="1" autocomplete="off" placeholder="Chỉnh sửa tên việc"
                     clearable style="display: block;" />
-                <el-input v-model="item.description" type="textarea" :rows="1" autocomplete="off" placeholder="Chỉnh sửa mô tả"
+                <el-input v-model="item.description" :value="item.description" type="textarea" :rows="2" autocomplete="off" placeholder="Chỉnh sửa mô tả"
                     clearable style="display: block; margin-top: 8px;" />
                     <span class="task-btn">
-                <el-button color="green" style="margin-right: 8px;" @click="editSubTask(index)">Cập nhật</el-button>
-                <el-icon @click="checked[index] = false" class="task-icon-close close"><CloseBold /></el-icon>
+                <el-button color="green" style="margin-right: 8px;" @click="editSubTask(item)">Cập nhật</el-button>
+                <el-icon @click="closeFormUpdate(index, item)" class="task-icon-close close"><CloseBold /></el-icon>
             </span>    
             </el-col>
         </div>
