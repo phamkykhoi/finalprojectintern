@@ -18,7 +18,9 @@ class TaskGroupController extends Controller
 
    public function getTaskGroupList($taskGroupId)
     {
-        return $this->taskGroupRepo->getByActivityId($taskGroupId, ['tasks']);
+        return $this->success([
+            'taskGroups' => $this->taskGroupRepo->getByActivityId($taskGroupId, ['tasks']),
+        ]);
     }
 
     public function store(StoreTaskGroupRequest $request)

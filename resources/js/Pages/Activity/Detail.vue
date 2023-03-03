@@ -36,8 +36,16 @@ const state  = reactive({
     moveTaskGroupId:0,
 })
 
-const taskGroups = ref(props.taskGroups);
+const taskGroups = ref([]);
 const loading = ref(true);
+
+async function getGroupsTask() {
+    await request.get(`/api/activity/${props.activityId}`).then((res) => {
+        taskGroups.value = res.data.result.taskGroups
+    })
+}
+provide('getGroupsTask', getGroupsTask)
+
 
 const createTaskForm = (currentTask) => {
     showFormTask.value = true;
@@ -145,8 +153,9 @@ const hideParentPopover = () => {
 //Handle TaskGroup
 function getTaskGroups(id)
 {
-  axios.get(`/taskgroup/list/${id}`).then(res => {
-          taskGroups.value = res.data;
+    request.get(`/taskgroup/list/${id}`)
+        .then((res) => {
+            taskGroups.value = res.data.result.taskGroups;
         }).catch(err => {
            ElMessage({
                 showClose: true,
@@ -159,7 +168,7 @@ function getTaskGroups(id)
 
 async function editTaskGroup(id){
     loading.value=true;
-     await axios.patch(`/taskgroup/${id}`,{'name':event.target.innerText}).then(res => {
+     await request.patch(`/taskgroup/${id}`,{'name':event.target.innerText}).then(res => {
         if (res.data.status) {
                     ElMessage({
                         showClose: true,
@@ -191,7 +200,7 @@ async function deleteTaskGroup(id)
   )
   .then(() => {
     loading.value=true;
-    axios.delete(`/taskgroup/${id}`).then(res => {
+    request.delete(`/taskgroup/${id}`).then(res => {
         if (res.data.status) {
               ElMessage({
                         showClose: true,
@@ -219,7 +228,7 @@ async function deleteTaskGroup(id)
 async function copyTaskGroup(id)
 {
     loading.value=true;
-    await axios.get(`/taskgroup/copy/${id}`).then(res => {
+    await request.get(`/taskgroup/copy/${id}`).then(res => {
         if (res.data.status) {
              ElMessage({
                         showClose: true,
