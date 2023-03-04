@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Repositories\TaskRepository;
 use App\Repositories\TaskGroupRepository;
 use App\Repositories\UserTaskRepository;
@@ -23,8 +22,7 @@ class TaskController extends Controller
         TaskRepository $taskRepo,
         TaskGroupRepository $taskGroupRepo,
         UserTaskRepository $userTaskRepo,
-    ) 
-    {
+    ) {
         $this->taskRepo = $taskRepo;
         $this->taskGroupRepo = $taskGroupRepo;
         $this->userTaskRepo = $userTaskRepo;
@@ -66,4 +64,5 @@ class TaskController extends Controller
             return $this->error($e->getMessage(), $e->getCode());
         }
     }
+
 }
