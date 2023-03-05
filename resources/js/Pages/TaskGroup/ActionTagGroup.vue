@@ -3,20 +3,36 @@ import TaskForm from '@/Pages/Task/Form.vue';
 import { reactive, ref, unref, defineProps } from 'vue';
 import { Plus, EditPen, CopyDocument, Switch, Rank, TakeawayBox, Delete} from '@element-plus/icons-vue';
 import { ClickOutside as vClickOutside, ElMessageBox, ElMessage } from 'element-plus';
-import axios from 'axios';
+import request from '../../utils/request';
 
 const props = defineProps({
     idTaskGroup: Number,
     state: Object,
     taskGroup: Object,
+    editNameTaskGroup: Array,
+    popoverAction: Array,
+    dialogAddTaskGroup: Boolean,
     popperRef: {
       type: Object, 
       required: true
-    }
+    },
+    visible: Boolean,
+    popoverRef2: Object,
 });
 
+const emit = defineEmits([
+    'openDialogAddTask', 
+    'openDialogAddTaskGroup', 
+    'closePopoverAction',
+]);
+
+const indexTaskGroup = props.idTaskGroup
 const dialogVisible = ref(false)
-// console.log(props.taskGroup)
+const poppveraddNewTask = ref()
+const popoveraddNewTask = () => {
+  unref(poppveraddNewTask).popperRef?.delayHide?.()
+}
+
 const copyJobGroup = ref()
 const popoverCopy = () => {
   unref(copyJobGroup).popperRef?.delayHide?.()
@@ -43,6 +59,7 @@ const popoverstoreAllWorkInGroup= () => {
 }
 
 const dialog = reactive({
+    popoverAction: false,
     dialogVisible: false,
     dialogCopy: false,
     dialogMove: false,
@@ -50,7 +67,8 @@ const dialog = reactive({
     dialogStore: false,
     dialogStoreAllWork: false,
     dialogDelete: false,
-    addTaskGroup: false,
+    // addNewTask: false,
+    addTaskGroup: props.dialogAddTaskGroup,
     editNameTaskGroup: [false],
     input:'',
 });
@@ -64,6 +82,8 @@ const createTaskForm = (currentTask) => {
     showFormTask.value = true;
     props.state.task = currentTask
 }
+
+const popoverOption = props.visible;
 
 async function deleteTaskGroup(id)
 {
@@ -79,7 +99,7 @@ async function deleteTaskGroup(id)
   )
   .then(() => {
     loading.value=true;
-    axios.delete(`/taskgroup/${id}`).then(res => {
+    request.delete(`/taskgroup/${id}`).then(res => {
         if (res.data.status) {
               ElMessage({
                         showClose: true,
@@ -104,31 +124,39 @@ async function deleteTaskGroup(id)
     })
 }
 
+const openDialogAddTask = () => {
+    emit('openDialogAddTask');
+};
+
+const openDialogAddTaskGroup = () => {
+    emit('openDialogAddTaskGroup');
+};
 
 </script>
 <template>
     <!-- <el-popover
-        :ref="ref => popoverRef2[props.idTaskGroup] = ref"
+        :ref="ref => popoverRef2[indexTaskGroup] = ref"
+        :visible="props.visible"
         virtual-triggering
         persistent
         width="300px"
         trigger="click"
     > -->
-        <el-button @click="createTaskForm(props.taskGroup)"
+        <el-button @click="openDialogAddTask" v-popover="poppveraddNewTask"
             v-click-outside="false" :icon="Plus" circle > 
             Thêm mới công việc
         </el-button>
-        <el-button @click="dialog.editNameTaskGroup[props.idTaskGroup] = true"
-            :icon="EditPen" circle>
+        <el-button @click="props.editNameTaskGroup[indexTaskGroup] = !props.editNameTaskGroup[indexTaskGroup];
+            closePopoverAction" :icon="EditPen" circle>
             Hiệu chỉnh nhóm công việc
         </el-button>
         <hr>
-        <el-button @click="dialog.dialogVisible = true"
+        <el-button @click="openDialogAddTaskGroup"
             :icon="Plus" circle>
             Tạo nhóm công việc
         </el-button>
         <el-button  v-popover="copyJobGroup" @click="dialog.dialogCopy = true" 
-            :icon="CopyDocument" circle>
+            :icon="CopyDocument" circle >
             Sao chép nhóm công việc
         </el-button>
         <el-button v-popover="moveJobGroup" @click="dialog.dialogMove = true"
@@ -367,7 +395,6 @@ async function deleteTaskGroup(id)
                 <el-col><el-button style="place-content: center;" type="danger" round>Xóa</el-button></el-col>
             </el-row>
         </el-popover>
-
         <TaskForm v-if="showFormTask" :task="state.task" :isShowModal="showFormTask" v-on:closeModal="closeFormTask" />
     <!-- </el-popover> -->
 </template>
