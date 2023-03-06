@@ -132,22 +132,17 @@ const openDialogAddTaskGroup = () => {
     emit('openDialogAddTaskGroup');
 };
 
+function editNameTaskGroup(index) {
+    props.editNameTaskGroup[indexTaskGroup] = !props.editNameTaskGroup[indexTaskGroup]
+}
+
 </script>
 <template>
-    <!-- <el-popover
-        :ref="ref => popoverRef2[indexTaskGroup] = ref"
-        :visible="props.visible"
-        virtual-triggering
-        persistent
-        width="300px"
-        trigger="click"
-    > -->
         <el-button @click="openDialogAddTask" v-popover="poppveraddNewTask"
             v-click-outside="false" :icon="Plus" circle > 
             Thêm mới công việc
         </el-button>
-        <el-button @click="props.editNameTaskGroup[indexTaskGroup] = !props.editNameTaskGroup[indexTaskGroup];
-            closePopoverAction" :icon="EditPen" circle>
+        <el-button @click="editNameTaskGroup(indexTaskGroup)" :icon="EditPen" circle>
             Hiệu chỉnh nhóm công việc
         </el-button>
         <hr>
@@ -396,7 +391,6 @@ const openDialogAddTaskGroup = () => {
             </el-row>
         </el-popover>
         <TaskForm v-if="showFormTask" :task="state.task" :isShowModal="showFormTask" v-on:closeModal="closeFormTask" />
-    <!-- </el-popover> -->
 </template>
 <style scoped>
 .card-header {
