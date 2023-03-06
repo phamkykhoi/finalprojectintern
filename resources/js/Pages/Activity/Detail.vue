@@ -5,8 +5,8 @@ import DepartenList from '@/Pages/Departen/Index.vue';
 import TaskForm from '@/Pages/Task/Form.vue';
 import TaskList from '@/Pages/Task/Index.vue';
 import TaskGroupInfo from '@/Pages/TaskGroup/TaskGroupInfo.vue';
-import SortTagGroup from '@/Pages/TaskGroup/SortTagGroup.vue';
-import ActionTagGroup from '@/Pages/TaskGroup/ActionTagGroup.vue';
+import SortTaskGroup from '@/Pages/TaskGroup/SortTaskGroup.vue';
+import ActionTaskGroup from '@/Pages/TaskGroup/ActionTaskGroup.vue';
 import MoveTaskGroupForm from '@/Pages/TaskGroup/MoveForm.vue';
 import TaskGroupForm from '@/Pages/TaskGroup/Form.vue';
 import { reactive, ref, onBeforeMount, watch, unref, markRaw, provide } from 'vue';
@@ -340,7 +340,7 @@ function closePopoverAction() {
                         width="300px"
                         trigger="click"
                     >
-                        <SortTagGroup />
+                        <SortTaskGroup />
                     </el-popover>
                     <el-popover
                         :ref="ref => popoverRef2[index] = ref"
@@ -350,7 +350,7 @@ function closePopoverAction() {
                         width="300px"
                         trigger="click"
                     >
-                        <ActionTagGroup :idTaskGroup="index" :taskGroup="taskGroup" :visible="dialog.popoverAction" 
+                        <ActionTaskGroup :idTaskGroup="index" :taskGroup="taskGroup" :visible="dialog.popoverAction" 
                             :state="state" :popperRef="popoverRef" :popoverRef2="popoverRef2" :editNameTaskGroup="dialog.editNameTaskGroup" 
                             @open-dialog-add-task-group="openDialogAddTaskGroup" @open-dialog-add-task="openDialogAddTask"
                             @close-popover-action="closePopoverAction" :popoverAction="dialog.popoverAction" 
