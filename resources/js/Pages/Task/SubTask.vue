@@ -78,7 +78,7 @@ function closeAddTask(){
 
 function countCheckSubTask() {
     var count = 0
-    
+
     checkedSubTask.value.filter(function (task) {
         if (task == true){
             count = count + 1
@@ -93,23 +93,24 @@ function countCheckSubTask() {
 function addClass(count){
     if (count == subTasks.value.length && count!=0){
         return lineThrough.value = 'line-through'
-    } 
-    
+    }
+
     return lineThrough.value = ''
 }
 
 function closeFormUpdate(index, item){
-    if (!item.name.trim()) { 
-        item.name = item.name.trim(); 
+    if (!item.name.trim()) {
+        item.name = item.name.trim();
     }
     checked.value[index] = false
 }
+
 function updateSubTask(subTask, value) {
     return subTask
 }
-watch(updateSubTask, (newVal, oldVal) => {
-    alert(JSON.stringify(newVal));
-    alert(JSON.stringify(oldVal));
+
+watch(subTasks, (newVal, oldVal) => {
+    alert(newVal)
 });
 </script>
 
@@ -136,7 +137,7 @@ watch(updateSubTask, (newVal, oldVal) => {
                 <span class="task-btn">
             <el-button color="green" style="margin-right: 8px;" @click="saveSubTask">Tạo việc</el-button>
             <el-icon @click="closeAddTask" class="task-icon-close close"><CloseBold /></el-icon>
-        </span>    
+        </span>
         </el-col>
     </el-row>
 <div v-for="(item, index) in subTasks" :key="index">
@@ -179,14 +180,14 @@ watch(updateSubTask, (newVal, oldVal) => {
 
         <div v-if="checked[index]" style="display: flex; align-items: center; width: 110%;">
             <el-col :span="23" style="text-align: right;">
-                <el-input @blur="updateSubTask(item, $event.target.value)" v-model="item.name" :value="item.name" type="textarea" :rows="1" autocomplete="off" placeholder="Chỉnh sửa tên việc"
+                <el-input @blur="updateSubTask(item, $event.target.value)" v-model.lazy="item.name" :value="item.name" type="textarea" :rows="1" autocomplete="off" placeholder="Chỉnh sửa tên việc"
                     clearable style="display: block;"/>
                 <el-input v-model="item.description" :value="item.description" type="textarea" :rows="2" autocomplete="off" placeholder="Chỉnh sửa mô tả"
                     clearable style="display: block; margin-top: 8px;" />
                     <span class="task-btn">
                 <el-button color="green" style="margin-right: 8px;" @click="editSubTask(item)">Cập nhật</el-button>
                 <el-icon @click="closeFormUpdate(index, item)" class="task-icon-close close"><CloseBold /></el-icon>
-            </span>    
+            </span>
             </el-col>
         </div>
     </div>
@@ -345,13 +346,13 @@ watch(updateSubTask, (newVal, oldVal) => {
     padding-left: 0;
 }
 .date {
-    position: relative; 
+    position: relative;
 }
 
 .date-icon {
-    position: absolute; 
-    left: 0px; 
-    bottom: 10px; 
+    position: absolute;
+    left: 0px;
+    bottom: 10px;
     display: none;
 }
 .date:hover .date-icon{
@@ -384,12 +385,12 @@ watch(updateSubTask, (newVal, oldVal) => {
 }
 .people-icon:hover .people-icon-remove{
     display: block;
-    left: 50%; 
-    bottom: 70%; 
+    left: 50%;
+    bottom: 70%;
 }
 .people-icon-remove{
     display: none;
-    position: absolute; 
+    position: absolute;
     color: red;
 }
 .info-user-icon{
