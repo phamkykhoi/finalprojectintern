@@ -104,7 +104,6 @@ function closeFormUpdate(index, item){
         item.name = item.name.trim()
         subTasks.value[index] = subTaskBackup.value
     }
-
     checked.value[index] = false
 }
 
