@@ -2,160 +2,64 @@
 import { CaretTop, CaretBottom, Select, CircleClose } from '@element-plus/icons-vue';
 import { reactive, ref } from 'vue';
 
-    const dialog = reactive({
+    const icon = reactive({
        showIconSort: [false],
        showIcon: [false],
        input:'',
     });
+
+    const sortList=ref([
+        "Tên công việc", 
+        "Ngày bắt đầu", 
+        "Ngày kết thúc",
+        "Ngày hòan thành", 
+        "Ngày tạo", 
+        "Ngày thực hiện"
+    ])
+
+    function iconShow(index) {
+        icon.showIcon[index] = true;
+    }
+
+    function iconClose(index) {
+        icon.showIcon[index] = false;
+    }
+
+    function showIconSort(index) {
+        icon.showIconSort[index] = !icon.showIconSort[index];
+    }
 </script>
 
 <template>
     <div>
     <el-row>
-        <el-col class="icon-sort-small" :span="12">
-            <el-row v-if="dialog.showIcon[3]" :span="24">
-                <el-col :span="3" class="icon-small"  @click="dialog.showIcon[3] = false">
+        <el-col v-for="(list, index) in sortList" :key="index" :span="12" class="icon-sort-small">
+            <el-row v-if="icon.showIcon[index]" :span="24">
+                <el-col :span="3" class="icon-small"  @click="iconClose(index)">
                     <el-icon><CircleClose /></el-icon>
                 </el-col>
-                <el-col :span="18">Ngày hòan thành</el-col>
-                <el-col :span="3" class="icon-small" @click="dialog.showIconSort[3] = !dialog.showIconSort[3]">
-                    <el-icon v-if="dialog.showIconSort[3]"><CaretTop /></el-icon>
-                    <el-icon v-if="!dialog.showIconSort[3]"><CaretBottom /></el-icon>
-                </el-col>
-            </el-row>
-            <el-row v-if="dialog.showIcon[5]" :span="24">
-                <el-col :span="3" class="icon-small"  @click="dialog.showIcon[5] = false">
-                    <el-icon><CircleClose /></el-icon>
-                </el-col>
-                <el-col :span="18">Ngày thực hiện</el-col>
-                <el-col :span="3" class="icon-small" @click="dialog.showIconSort[5] = !dialog.showIconSort[5]">
-                    <el-icon v-if="dialog.showIconSort[5]"><CaretTop /></el-icon>
-                    <el-icon v-if="!dialog.showIconSort[5]"><CaretBottom /></el-icon>
-                </el-col>
-            </el-row>
-            <el-row v-if="dialog.showIcon[1]" :span="24">
-                <el-col :span="3" class="icon-small"  @click="dialog.showIcon[1] = false">
-                    <el-icon><CircleClose /></el-icon>
-                </el-col>
-                <el-col :span="18">Ngày bắt đầu</el-col>
-                <el-col :span="3" class="icon-small" @click="dialog.showIconSort[1] = !dialog.showIconSort[1]">
-                    <el-icon v-if="dialog.showIconSort[1]"><CaretTop /></el-icon>
-                    <el-icon v-if="!dialog.showIconSort[1]"><CaretBottom /></el-icon>
-                </el-col>
-            </el-row>
-        </el-col>
-        <el-col class="icon-sort-small" :span="12">
-            <el-row v-if="dialog.showIcon[3]" :span="24">
-                <el-col :span="3" class="icon-small"  @click="dialog.showIcon[4] = false">
-                    <el-icon><CircleClose /></el-icon>
-                </el-col>
-                <el-col :span="18">Ngày tạo</el-col>
-                <el-col :span="3" class="icon-small" @click="dialog.showIconSort[4] = !dialog.showIconSort[4]">
-                    <el-icon v-if="dialog.showIconSort[4]"><CaretTop /></el-icon>
-                    <el-icon v-if="!dialog.showIconSort[4]"><CaretBottom /></el-icon>
-                </el-col>
-            </el-row>
-            <el-row v-if="dialog.showIcon[2]" :span="24">
-                <el-col :span="3" class="icon-small"  @click="dialog.showIcon[2] = false">
-                    <el-icon><CircleClose /></el-icon>
-                </el-col>
-                <el-col :span="18">Ngày kết thúc</el-col>
-                <el-col :span="3" class="icon-small" @click="dialog.showIconSort[2] = !dialog.showIconSort[2]">
-                    <el-icon v-if="dialog.showIconSort[2]"><CaretTop /></el-icon>
-                    <el-icon v-if="!dialog.showIconSort[2]"><CaretBottom /></el-icon>
-                </el-col>
-            </el-row>
-            <el-row v-if="dialog.showIcon[0]" :span="24">
-                <el-col :span="3" class="icon-small"  @click="dialog.showIcon[0] = false">
-                    <el-icon><CircleClose /></el-icon>
-                </el-col>
-                <el-col :span="18">Tên công việc</el-col>
-                <el-col :span="3" class="icon-small" @click="dialog.showIconSort[0] = !dialog.showIconSort[0]">
-                    <el-icon v-if="dialog.showIconSort[0]"><CaretTop /></el-icon>
-                    <el-icon v-if="!dialog.showIconSort[0]"><CaretBottom /></el-icon>
+                <el-col :span="18">{{ list }}</el-col>
+                <el-col :span="3" class="icon-small" @click="showIconSort(index)">
+                    <el-icon v-if="icon.showIconSort[index]"><CaretTop /></el-icon>
+                    <el-icon v-if="!icon.showIconSort[index]"><CaretBottom /></el-icon>
                 </el-col>
             </el-row>
         </el-col>
     </el-row>
 
-    <el-col>
-        <el-button @click="dialog.showIcon[0] = true" v-if="!dialog.showIcon[0]">Tên công việc</el-button>
-        <el-row v-if="dialog.showIcon[0]">
-            <el-col :span="2" class="icon-sort" @click="dialog.showIconSort[0] = !dialog.showIconSort[0]">
-                <el-icon v-if="dialog.showIconSort[0]"><CaretTop /></el-icon>
-                <el-icon v-if="!dialog.showIconSort[0]"><CaretBottom /></el-icon>
+    <el-col v-for="(list, index) in sortList" :key="index">
+        <el-button @click="iconShow(index)" v-if="!icon.showIcon[index]">{{ list }}</el-button>
+        <el-row v-if="icon.showIcon[index]">
+            <el-col :span="2" class="icon-sort" @click="showIconSort(index)">
+                <el-icon v-if="icon.showIconSort[index]"><CaretTop /></el-icon>
+                <el-icon v-if="!icon.showIconSort[index]"><CaretBottom /></el-icon>
             </el-col>
-            <el-col :span="18">Tên công việc</el-col>
+            <el-col :span="18">{{ list }}</el-col>
             <el-col :span="4" class="icon-sort">
-                <el-icon  @click="dialog.showIcon[0] = false"><Select /></el-icon>
+                <el-icon  @click="iconClose(index)"><Select /></el-icon>
             </el-col>
         </el-row>
     </el-col>
-    <el-col>
-        <el-button @click="dialog.showIcon[1] = true" v-if="!dialog.showIcon[1]">Ngày bắt đầu</el-button>
-        <el-row v-if="dialog.showIcon[1]">
-            <el-col :span="2" class="icon-sort" @click="dialog.showIconSort[1] = !dialog.showIconSort[1]">
-                <el-icon v-if="dialog.showIconSort[1]"><CaretTop /></el-icon>
-                <el-icon v-if="!dialog.showIconSort[1]"><CaretBottom /></el-icon>
-            </el-col>
-            <el-col :span="18">Ngày bắt đầu</el-col>
-            <el-col :span="4" class="icon-sort">
-                <el-icon  @click="dialog.showIcon[1] = false"><Select /></el-icon>
-            </el-col>
-        </el-row>
-    </el-col>
-    <el-col>
-        <el-button @click="dialog.showIcon[2] = true" v-if="!dialog.showIcon[2]">Ngày kết thúc</el-button>
-        <el-row v-if="dialog.showIcon[2]">
-            <el-col :span="2" class="icon-sort" @click="dialog.showIconSort[2] = !dialog.showIconSort[2]">
-                <el-icon v-if="dialog.showIconSort[2]"><CaretTop /></el-icon>
-                <el-icon v-if="!dialog.showIconSort[2]"><CaretBottom /></el-icon>
-            </el-col>
-            <el-col :span="18">Ngày kết thúc</el-col>
-            <el-col :span="4" class="icon-sort">
-                <el-icon  @click="dialog.showIcon[2] = false"><Select /></el-icon>
-            </el-col>
-        </el-row>
-    </el-col>
-    <el-col>
-        <el-button @click="dialog.showIcon[3] = true" v-if="!dialog.showIcon[3]">Ngày hoàn thành</el-button>
-        <el-row v-if="dialog.showIcon[3]">
-            <el-col :span="2" class="icon-sort" @click="dialog.showIconSort[3] = !dialog.showIconSort[3]">
-                <el-icon v-if="dialog.showIconSort[3]"><CaretTop /></el-icon>
-                <el-icon v-if="!dialog.showIconSort[3]"><CaretBottom /></el-icon>
-            </el-col>
-            <el-col :span="18">Ngày hoàn thành</el-col>
-            <el-col :span="4" class="icon-sort">
-                <el-icon  @click="dialog.showIcon[3] = false"><Select /></el-icon>
-            </el-col>
-        </el-row>
-    </el-col>
-    <el-col>
-        <el-button @click="dialog.showIcon[4] = true" v-if="!dialog.showIcon[4]">Ngày tạo</el-button>
-        <el-row v-if="dialog.showIcon[4]">
-            <el-col :span="2" class="icon-sort" @click="dialog.showIconSort[4] = !dialog.showIconSort[4]">
-                <el-icon v-if="dialog.showIconSort[4]"><CaretTop /></el-icon>
-                <el-icon v-if="!dialog.showIconSort[4]"><CaretBottom /></el-icon>
-            </el-col>
-            <el-col :span="18">Ngày tạo</el-col>
-            <el-col :span="4" class="icon-sort">
-                <el-icon  @click="dialog.showIcon[4] = false"><Select /></el-icon>
-            </el-col>
-        </el-row>
-    </el-col>
-    <el-col>
-        <el-button @click="dialog.showIcon[5] = true" v-if="!dialog.showIcon[5]">Ngày thực hiện</el-button>
-        <el-row v-if="dialog.showIcon[5]">
-            <el-col :span="2" class="icon-sort" @click="dialog.showIconSort[5] = !dialog.showIconSort[5]">
-                <el-icon v-if="dialog.showIconSort[5]"><CaretTop /></el-icon>
-                <el-icon v-if="!dialog.showIconSort[5]"><CaretBottom /></el-icon>
-            </el-col>
-            <el-col :span="18">Ngày thực hiện</el-col>
-            <el-col :span="4" class="icon-sort">
-                <el-icon  @click="dialog.showIcon[5] = false"><Select /></el-icon>
-            </el-col>
-        </el-row>
-    </el-col> 
     <el-col>
         <el-button style="place-content: center;" type="danger" round>Mặc định theo kế hoạch</el-button>
     </el-col>
