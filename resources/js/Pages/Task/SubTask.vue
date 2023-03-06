@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { ref, defineEmits, unref, reactive } from 'vue';
+import { ref, defineEmits, unref, reactive, watch } from 'vue';
 import { ClickOutside as vClickOutside } from 'element-plus'
 import { EditPen, CloseBold, CirclePlusFilled, Calendar, MoreFilled, DocumentCopy, Rank, Bell, Share, List } from '@element-plus/icons-vue';
 
@@ -99,11 +99,18 @@ function addClass(count){
 }
 
 function closeFormUpdate(index, item){
-    if (item.name == ''){
-        return;
+    if (!item.name.trim()) { 
+        item.name = item.name.trim(); 
     }
     checked.value[index] = false
 }
+function updateSubTask(subTask, value) {
+    return subTask
+}
+watch(updateSubTask, (newVal, oldVal) => {
+    alert(JSON.stringify(newVal));
+    alert(JSON.stringify(oldVal));
+});
 </script>
 
 <template>
@@ -172,8 +179,8 @@ function closeFormUpdate(index, item){
 
         <div v-if="checked[index]" style="display: flex; align-items: center; width: 110%;">
             <el-col :span="23" style="text-align: right;">
-                <el-input v-model="item.name" :value="item.name" type="textarea" :rows="1" autocomplete="off" placeholder="Chỉnh sửa tên việc"
-                    clearable style="display: block;" />
+                <el-input @blur="updateSubTask(item, $event.target.value)" v-model="item.name" :value="item.name" type="textarea" :rows="1" autocomplete="off" placeholder="Chỉnh sửa tên việc"
+                    clearable style="display: block;"/>
                 <el-input v-model="item.description" :value="item.description" type="textarea" :rows="2" autocomplete="off" placeholder="Chỉnh sửa mô tả"
                     clearable style="display: block; margin-top: 8px;" />
                     <span class="task-btn">
