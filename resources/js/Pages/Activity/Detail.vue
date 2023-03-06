@@ -5,8 +5,8 @@ import DepartenList from '@/Pages/Departen/Index.vue';
 import TaskForm from '@/Pages/Task/Form.vue';
 import TaskList from '@/Pages/Task/Index.vue';
 import TaskGroupInfo from '@/Pages/TaskGroup/TaskGroupInfo.vue';
-import SortTagGroup from '@/Pages/TaskGroup/SortTagGroup.vue';
-import ActionTagGroup from '@/Pages/TaskGroup/ActionTagGroup.vue';
+import SortTaskGroup from '@/Pages/TaskGroup/SortTaskGroup.vue';
+import ActionTaskGroup from '@/Pages/TaskGroup/ActionTaskGroup.vue';
 import MoveTaskGroupForm from '@/Pages/TaskGroup/MoveForm.vue';
 import TaskGroupForm from '@/Pages/TaskGroup/Form.vue';
 import { reactive, ref, onBeforeMount, watch, unref, markRaw, provide } from 'vue';
@@ -17,6 +17,7 @@ import {
 } from '@element-plus/icons-vue';
 import { ClickOutside as vClickOutside, ElMessageBox, ElMessage } from 'element-plus';
 import axios from 'axios';
+import request from '../../utils/request';
 // import { ta } from 'element-plus/es/locale';
 
 const props = defineProps({
@@ -124,7 +125,6 @@ const popoverDeleteTaskGroup= () => {
 }
 
 const dialog = reactive({
-    //    dialogVisible: false,
         popoverAction: false,
         dialogCopy: false,
         dialogMove: false,
@@ -132,6 +132,7 @@ const dialog = reactive({
         dialogStore: false,
         dialogStoreAllWork: false,
         dialogDelete: false,
+        addNewTask: false,
         addTaskGroup: false,
         editNameTaskGroup: [false],
         input:'',
@@ -173,20 +174,20 @@ async function editTaskGroup(id){
     loading.value=true;
      await request.patch(`/taskgroup/${id}`,{'name':event.target.innerText}).then(res => {
         if (res.data.status) {
-                    ElMessage({
-                        showClose: true,
-                        message: 'Sửa tên taskgroup thành công',
-                        type: 'success',
-                    })
-                }
-            }).catch(err => {
-                ElMessage({
-                    showClose: true,
-                    message: err.response.data.message,
-                    type: 'error',
-                })
+            ElMessage({
+                showClose: true,
+                message: 'Sửa tên taskgroup thành công',
+                type: 'success',
             })
-            getTaskGroups(state.activityId);
+        }
+    }).catch(err => {
+        ElMessage({
+            showClose: true,
+            message: err.response.data.message,
+            type: 'error',
+        })
+    })
+    getTaskGroups(state.activityId);
 }
 
 async function deleteTaskGroup(id)
@@ -252,6 +253,26 @@ async function copyTaskGroup(id)
 onBeforeMount(async () => {
     getTaskGroups(props.activityId);
 });
+
+function openDialogAddTask() {
+    dialog.addNewTask = true
+}
+
+function openDialogAddTaskGroup() {
+    dialog.addTaskGroup = true
+}
+
+const popoverVisible = ref([false]);
+const openPopoverAction = (index) => {
+    popoverVisible.value[index] = !popoverVisible.value[index];
+};
+
+function closePopoverAction() {
+    popoverVisible.value = false
+}
+ function clickEditNameTaskGroup(index) {
+    dialog.editNameTaskGroup[index] = true
+};
 </script>
 
 <template>
@@ -262,20 +283,20 @@ onBeforeMount(async () => {
             <template #departen>
                 <DepartenList :departments="departments" :activityId="activityId" />
             </template>
-
             <section class="lists-container">
                  <div :key="index" v-for="(taskGroup, index) in taskGroups">
                     <el-card class="box-card">
                         <template #header>
                             <div class="card-header" v-if="!dialog.editNameTaskGroup[index]">
                                 <el-col>
-                                    <span @click="dialog.editNameTaskGroup[index] = true">
+                                    <span @click="clickEditNameTaskGroup(index)">
                                         {{ taskGroup.name }}
                                     </span>
                                     <div class="group-icons">
                                         <el-button v-popover="popoverRef[index]" v-click-outside="popoverInfoTaskGroup" :icon="InfoFilled" circle/>
                                         <el-button v-popover="popoverRef1[index]" v-click-outside="popoverSort" :icon="DCaret" circle/>
-                                        <el-button v-popover="popoverRef2[index]" @click="dialog.popoverAction = !dialog.popoverAction"  v-click-outside="popoverOption" :icon="MoreFilled" circle/>
+                                        <el-button v-popover="popoverRef2[index]" @click="openPopoverAction(index)"  v-click-outside="popoverOption" :icon="MoreFilled" circle/>
+                                        <el-button @click="hidePopoverAction(index)" style="display: none;"/>
                                     </div>
                                 </el-col>
                             </div>
@@ -290,7 +311,7 @@ onBeforeMount(async () => {
                                 <div style="margin: 5px 0 10px 0" />
                                 <el-row> 
                                     <el-button type="success">Lưu</el-button>
-                                    <el-button @click="dialog.editNameTaskGroup[index] = false" style="margin-left: 10px;">x</el-button>
+                                    <el-button @click="  dialog.editNameTaskGroup[index] = false" style="margin-left: 10px;">x</el-button>
                                 </el-row>
                             </el-form>
                         </template>
@@ -301,19 +322,16 @@ onBeforeMount(async () => {
                         </el-button>
                     </el-card> 
         
-                    <div>
-                        <el-popover 
+                    <el-popover 
                         :ref="ref => popoverRef[index] = ref"
                         title="taskGroup1"
                         virtual-triggering
                         persistent
                         width="300px"
-                        >
-                            <hr>
-                            <TaskGroupInfo  />
-                        </el-popover>
-                    </div> 
-
+                    >
+                        <hr>
+                        <TaskGroupInfo  />
+                    </el-popover>
                     <el-popover
                         :ref="ref => popoverRef1[index] = ref"
                         title="SẮP XẾP THEO"
@@ -322,22 +340,59 @@ onBeforeMount(async () => {
                         width="300px"
                         trigger="click"
                     >
-                        <SortTagGroup />
+                        <SortTaskGroup />
                     </el-popover>
-        
                     <el-popover
                         :ref="ref => popoverRef2[index] = ref"
-                        :visible="dialog.popoverAction"
+                        :visible="popoverVisible[index]"
                         virtual-triggering
                         persistent
                         width="300px"
                         trigger="click"
                     >
-                        <ActionTagGroup :idTaskGroup="index" :taskGroup="taskGroup" 
-                        :state="state" :popperRef="popoverRef"/>
+                        <ActionTaskGroup :idTaskGroup="index" :taskGroup="taskGroup" :visible="dialog.popoverAction" 
+                            :state="state" :popperRef="popoverRef" :popoverRef2="popoverRef2" :editNameTaskGroup="dialog.editNameTaskGroup" 
+                            @open-dialog-add-task-group="openDialogAddTaskGroup" @open-dialog-add-task="openDialogAddTask"
+                            @close-popover-action="closePopoverAction" :popoverAction="dialog.popoverAction" 
+                        />
                     </el-popover>
                 </div>
-                
+                <el-dialog
+                    v-model="dialog.addTaskGroup"
+                    title="Tạo nhóm công việc"
+                    width="30%"
+                >
+                    <input type="text" name="" placeholder="Nhập tên nhóm công việc" style="width: 100%; border-radius: 8px;">
+                    <template #footer>
+                    <span class="dialog-footer">
+                        <el-button style="margin-right: 10px;" @click="dialog.addTaskGroup = false">Đóng</el-button>
+                        <el-button type="primary" @click="dialog.addTaskGroup = false">Lưu</el-button>
+                    </span>
+                    </template>
+                </el-dialog>
+
+                <el-dialog
+                    v-model="dialog.addNewTask"
+                    title="Thêm mới công việc"
+                    width="50%"
+                >
+                    <el-row>
+                        <el-col>Tên công việc</el-col>
+                        <el-input v-model="input" placeholder="Nhập tên công việc" />
+                    </el-row>
+                    <el-row>
+                        <el-col>Mô tả</el-col>
+                        <el-input v-model="input" :rows="3" type="textarea" placeholder="Nhập mô tả"/>
+                    </el-row>
+                    
+                    <template #footer>
+                    <span class="dialog-footer">
+                        <el-button style="margin-right: 10px;" @click="dialog.addNewTask = false">Đóng</el-button>
+                        <el-button type="primary" @click="dialog.addNewTask = false">Lưu</el-button>
+                    </span>
+                    </template>
+                </el-dialog>
+
                 <el-button 
                     class="add-list-btn btn" 
                     style="place-content: baseline; background: gainsboro;"
@@ -362,20 +417,6 @@ onBeforeMount(async () => {
                 </el-form>
             </section>
         </AuthenticatedLayout>
-
-        <el-dialog
-            v-model="dialog.dialogVisible"
-            title="Tạo nhóm công việc"
-            width="30%"
-        >
-            <input type="text" name="" placeholder="Nhập tên nhóm công việc" style="width: 100%; border-radius: 8px;">
-            <template #footer>
-            <span class="dialog-footer">
-                <el-button style="margin-right: 10px;" @click="dialog.dialogVisible = false">Đóng</el-button>
-                <el-button type="primary" @click="dialog.dialogVisible = false">Lưu</el-button>
-            </span>
-            </template>
-        </el-dialog>
     </div>
     <TaskForm v-if="showFormTask" :task="state.task" :isShowModal="showFormTask" v-on:closeModal="closeFormTask" />
     <TaskGroupForm  v-if="showFormTaskGroup" :getTaskGroups="getTaskGroups" :activityId="activityId" :isShowModal="showFormTaskGroup" v-on:closeModal="closeFormTaskGroup" />
