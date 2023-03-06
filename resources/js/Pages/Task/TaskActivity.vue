@@ -18,18 +18,37 @@ const activities = ref([
     {   
         id: 3,
         content: 'Thành viên đã sửa hoạt động'
+    },
+    { 
+        id: 4,
+        content: 'Thành viên đã đánh giá'
+    },
+    {   
+        id: 5,
+        content: 'Thành viên đã bỏ đánh dấu'
+    },
+    {   
+        id: 6,
+        content: 'Thành viên đã tắt tính năng'
     }
 ])
+
+const limitItem = ref(3);
 
 const showHistory = ref(false)
 
 function ShowHistory(){
     showHistory.value = true
 }
+
 function CloseHistory(){
+    limitItem.value = 3;
     showHistory.value = false
 }
 
+function showMore(){
+    limitItem.value = limitItem.value + 2
+}
 </script>
 
 <template>
@@ -50,12 +69,17 @@ function CloseHistory(){
     <el-form-item label="Thành viên đã xem việc này:" style="display: block; margin-left: 31px; width: 100%;">
         <el-icon v-if="!showHistory" :size="25"><Avatar /></el-icon>
         <div v-if="showHistory" style="width: 100%;">
-            <div v-for="(activity, index) in activities" class="flex" style="padding: 4px 0; align-items: center;">
-                <el-icon :size="25" style="margin-right: 12px;"><Avatar /></el-icon>
-                <div style="display: flex; flex-direction: column; justify-content: space-between; line-height: 140%;">
-                    <p> {{ activity.content }} </p>
-                    <p>03/03 16:00</p>
+            <template v-for="(activity, index) in activities" :key="index" >
+                <div v-if="index < limitItem" class="flex" style="padding: 4px 0; align-items: center;">
+                    <el-icon :size="25" style="margin-right: 12px;"><Avatar /></el-icon>
+                    <div style="display: flex; flex-direction: column; justify-content: space-between; line-height: 140%;">
+                        <p> {{ activity.content }} </p>
+                        <p>03/03 16:00</p>
+                    </div>
                 </div>
+            </template>
+            <div style="text-align: center;">
+                <el-link v-if="limitItem < activities.length" @click="showMore">Xem thêm</el-link>
             </div>
         </div>
     </el-form-item>
