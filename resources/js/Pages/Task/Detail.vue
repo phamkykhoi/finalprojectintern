@@ -1,9 +1,10 @@
 <script lang="ts" setup>
 import Modal from '@/Components/Modal.vue';
-
+import TaskCommentSection from '@/Components/TaskCommentSection.vue';
+import FileManagerOfTask from '@/Components/FileManagerOfTask.vue';
+import { reactive, ref, defineEmits, inject, unref  } from 'vue';
 import SubTask from '@/Pages/Task/SubTask.vue';
 import FileUpload from '@/Components/FileUpload.vue';
-import { reactive, ref, defineEmits, inject, computed, unref  } from 'vue';
 import type { FormInstance } from 'element-plus';
 import { ElMessage } from 'element-plus';
 import axios from 'axios';
@@ -150,15 +151,6 @@ function handleShowEdit() {
 function closeEdit() {
     showInputEdit.value = false
 }
-const showEditCmt = ref(false)
-
-function handleEditCmt(){
-    showEditCmt.value = true
-}
-
-function closeEditCmt() {
-    showEditCmt.value = false
-}
 
 const buttonRef = ref()
 const popoverRef = ref()
@@ -262,7 +254,6 @@ function showNguoiThucHien(){
         <Modal :show="isShowModal" @close="closeModal" v-bind:max-width="'4xl'">
             <form class="space-y-6 m-3">
                 <el-form enctype="multipart/form-data" ref="ruleFormRef" :model="taskForm" class="demo-ruleForm" :rules="rules">
-                
                 <el-row>
                     <el-col :span="18">
                         <div v-if="!showTask" class="modal-header flex flex-shrink-0 items-center justify-between rounded-t-md">
@@ -383,53 +374,9 @@ function showNguoiThucHien(){
                                 <el-button type="primary">Tải tất cả</el-button>
                                 <el-button style="margin-left: 8px;">Chọn tất cả</el-button>
                             </div>
-                            <div v-if="checkAll" style="display: flex; justify-content: flex-end; margin-right: 8px;">
-                                <el-button type="primary">Tải tất cả</el-button>
-                                <el-button type="danger" style="margin-left: 6px;">Xóa tập tin đã chọn</el-button>
-                                <el-button style="margin-left: 6px;">Chọn tất cả</el-button>
-                                <el-button style="margin-left: 6px;">Bỏ chọn tất cả</el-button>
-                            </div>
-                        </div>
-                        <div class="flex comment" style="margin-right: 8px;">
-                            <el-icon style="margin-right: 6px;" :size="25"><Comment /></el-icon>
-                            <el-form-item label="Bình luận:" style="display: block; width: 100%;">
-                                <el-input type="textarea" :rows="2" autocomplete="off" placeholder="Nhập bình luận" clearable
-                                style="display: inline-block;" />
-                                <el-button class="mt-2" style="margin-left: auto;">Gửi bình luận</el-button>
-                            </el-form-item>
-                            <el-icon class="comment-icon" :size="25"><Avatar /></el-icon>
-                        </div>
-                            
-                        <div class="flex" style="margin-right: 8px; margin-top: 16px;">
-                            <el-icon style="margin-right: 6px;" :size="25"><Avatar /></el-icon>
-                            <div style="width: 100%;">
-                                <div v-if="!showEditCmt">
-                                    <span>Tên tác giả bình luận</span>
-                                    <div class="commented">Bình luận của tác giả</div>
-                                    <div>
-                                        <el-link href="#">Thích</el-link>
-                                        <el-link href="#">Trả lời</el-link>
-                                        <el-link @click="handleEditCmt">Sửa</el-link>
-                                        <el-link href="#">Xóa</el-link>
-                                        <el-link href="#">Hôm nay 16:00</el-link>
-                                    </div>
-                                </div>
-                                <el-form-item v-if="showEditCmt" style="display: block; width: 100%;">
-                                    <el-input value="Bình luận của tác giả" type="textarea" :rows="2" autocomplete="off" clearable
-                                        style="display: inline-block;" />
-                                        <div class="flex" style="justify-content: space-between; align-items: center; width: 100%; margin-top: 8px;">
-                                            <span>Nhấn Shift + Enter để gửi</span>
-                                            <div>
-                                                <el-button type="success">Cập nhật</el-button>
-                                                <el-icon class="close" style="margin-left: 4px;" @click="closeEditCmt" size="15"><Close></Close></el-icon>
-                                            </div>
-                                        </div>
-                                </el-form-item>
-                                
-                                
-                            </div>
-                        </div>
-                        
+ </el-row>
+                        <FileManagerOfTask :taskId="task.id"></FileManagerOfTask>
+                        <TaskCommentSection :taskId="task.id"></TaskCommentSection>
                         <el-row class="mt-4" style="display: block; margin-bottom: 0; margin-right: 8px;">
                             <el-row class="task-child">
                                 <div class="flex">
