@@ -29,9 +29,10 @@ class ActivityController extends Controller
 
     public function show($id)
     {
+        $user_id = auth()->user()->id;
         return Inertia::render('Activity/Detail', [
             'activity' => $this->activityRepo->findById($id),
-            'departments' => $this->departmentRepo->getAll(['activities']),
+            'departments' => $this->departmentRepo->getDepartments(['activities'], ['id' => $user_id]),
             'taskGroups' => $this->taskGroupRepo->getByActivityId($id, ['tasks']),
             'activityId' => (int) $id,
         ]);
