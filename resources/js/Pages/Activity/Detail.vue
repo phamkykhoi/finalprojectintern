@@ -9,7 +9,7 @@ import SortTagGroup from '@/Pages/TaskGroup/SortTagGroup.vue';
 import ActionTagGroup from '@/Pages/TaskGroup/ActionTagGroup.vue';
 import MoveTaskGroupForm from '@/Pages/TaskGroup/MoveForm.vue';
 import TaskGroupForm from '@/Pages/TaskGroup/Form.vue';
-import { reactive, ref, onBeforeMount, watch, unref, markRaw } from 'vue';
+import { reactive, ref, onBeforeMount, watch, unref, markRaw, provide } from 'vue';
 import { 
     InfoFilled, DCaret, MoreFilled, Plus, EditPen, Files,
     CopyDocument, Switch, Rank, TakeawayBox, Delete, Folder,
@@ -48,8 +48,8 @@ async function getGroupsTask() {
         taskGroups.value = res.data.result.taskGroups
     })
 }
-provide('getGroupsTask', getGroupsTask)
 
+provide('getGroupsTask', getGroupsTask)
 
 const createTaskForm = (currentTask) => {
     showFormTask.value = true;
