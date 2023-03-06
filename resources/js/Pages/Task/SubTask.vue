@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { ref, defineEmits, unref, reactive, watch } from 'vue';
+import { ref, unref } from 'vue';
 import { ClickOutside as vClickOutside } from 'element-plus'
 import { EditPen, CloseBold, CirclePlusFilled, Calendar, MoreFilled, DocumentCopy, Rank, Bell, Share, List } from '@element-plus/icons-vue';
 
@@ -31,15 +31,15 @@ function editSubTask(item){
 }
 
 const subTasks = ref([
-      { id: 1,
-        name: 'Việc con 1',
-        description: 'Mô tả thành phần' },
-      { id: 2,
-        name: 'Việc con 2',
-        description: 'Mô tả thành phần' },
-      { id: 3,
-        name: 'Việc con 3',
-        description: 'Mô tả thành phần' }
+    { id: 1,
+    name: 'Việc con 1',
+    description: 'Mô tả thành phần' },
+    { id: 2,
+    name: 'Việc con 2',
+    description: 'Mô tả thành phần' },
+    { id: 3,
+    name: 'Việc con 3',
+    description: 'Mô tả thành phần' }
 ])
 
 const checkedSubTask = ref(Array(subTasks.value.length).fill(false));
@@ -97,21 +97,20 @@ function addClass(count){
 
     return lineThrough.value = ''
 }
+const subTaskBackup = ref({})
 
 function closeFormUpdate(index, item){
-    if (!item.name.trim()) {
-        item.name = item.name.trim();
+    if (!item.name) {
+        item.name = item.name.trim()
+        subTasks.value[index] = subTaskBackup.value
     }
     checked.value[index] = false
 }
 
-function updateSubTask(subTask, value) {
-    return subTask
+function clonedItems(index){
+    subTaskBackup.value = JSON.parse(JSON.stringify(subTasks.value[index]))
+    return JSON.parse(JSON.stringify(subTasks.value[index]))
 }
-
-watch(subTasks, (newVal, oldVal) => {
-    alert(newVal)
-});
 </script>
 
 <template>
@@ -180,7 +179,7 @@ watch(subTasks, (newVal, oldVal) => {
 
         <div v-if="checked[index]" style="display: flex; align-items: center; width: 110%;">
             <el-col :span="23" style="text-align: right;">
-                <el-input @blur="updateSubTask(item, $event.target.value)" v-model.lazy="item.name" :value="item.name" type="textarea" :rows="1" autocomplete="off" placeholder="Chỉnh sửa tên việc"
+                <el-input @click="clonedItems(index)" v-model="item.name" :value="item.name" type="textarea" :rows="1" autocomplete="off" placeholder="Chỉnh sửa tên việc"
                     clearable style="display: block;"/>
                 <el-input v-model="item.description" :value="item.description" type="textarea" :rows="2" autocomplete="off" placeholder="Chỉnh sửa mô tả"
                     clearable style="display: block; margin-top: 8px;" />
