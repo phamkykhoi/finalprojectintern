@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { ref, defineEmits, unref, reactive } from 'vue';
+import { ref, unref } from 'vue';
 import { ClickOutside as vClickOutside } from 'element-plus'
 import { EditPen, CloseBold, CirclePlusFilled, Calendar, MoreFilled, DocumentCopy, Rank, Bell, Share, List } from '@element-plus/icons-vue';
 
@@ -31,15 +31,15 @@ function editSubTask(item){
 }
 
 const subTasks = ref([
-      { id: 1,
-        name: 'Việc con 1',
-        description: 'Mô tả thành phần' },
-      { id: 2,
-        name: 'Việc con 2',
-        description: 'Mô tả thành phần' },
-      { id: 3,
-        name: 'Việc con 3',
-        description: 'Mô tả thành phần' }
+    { id: 1,
+    name: 'Việc con 1',
+    description: 'Mô tả thành phần' },
+    { id: 2,
+    name: 'Việc con 2',
+    description: 'Mô tả thành phần' },
+    { id: 3,
+    name: 'Việc con 3',
+    description: 'Mô tả thành phần' }
 ])
 
 const checkedSubTask = ref(Array(subTasks.value.length).fill(false));
@@ -78,7 +78,7 @@ function closeAddTask(){
 
 function countCheckSubTask() {
     var count = 0
-    
+
     checkedSubTask.value.filter(function (task) {
         if (task == true){
             count = count + 1
@@ -93,16 +93,23 @@ function countCheckSubTask() {
 function addClass(count){
     if (count == subTasks.value.length && count!=0){
         return lineThrough.value = 'line-through'
-    } 
-    
+    }
+
     return lineThrough.value = ''
 }
+const subTaskBackup = ref({})
 
 function closeFormUpdate(index, item){
-    if (item.name == ''){
-        return;
+    if (!item.name) {
+        item.name = item.name.trim()
+        subTasks.value[index] = subTaskBackup.value
     }
     checked.value[index] = false
+}
+
+function clonedItems(index){
+    subTaskBackup.value = JSON.parse(JSON.stringify(subTasks.value[index]))
+    return JSON.parse(JSON.stringify(subTasks.value[index]))
 }
 </script>
 
@@ -129,7 +136,7 @@ function closeFormUpdate(index, item){
                 <span class="task-btn">
             <el-button color="green" style="margin-right: 8px;" @click="saveSubTask">Tạo việc</el-button>
             <el-icon @click="closeAddTask" class="task-icon-close close"><CloseBold /></el-icon>
-        </span>    
+        </span>
         </el-col>
     </el-row>
 <div v-for="(item, index) in subTasks" :key="index">
@@ -172,14 +179,14 @@ function closeFormUpdate(index, item){
 
         <div v-if="checked[index]" style="display: flex; align-items: center; width: 110%;">
             <el-col :span="23" style="text-align: right;">
-                <el-input v-model="item.name" :value="item.name" type="textarea" :rows="1" autocomplete="off" placeholder="Chỉnh sửa tên việc"
-                    clearable style="display: block;" />
+                <el-input @click="clonedItems(index)" v-model="item.name" :value="item.name" type="textarea" :rows="1" autocomplete="off" placeholder="Chỉnh sửa tên việc"
+                    clearable style="display: block;"/>
                 <el-input v-model="item.description" :value="item.description" type="textarea" :rows="2" autocomplete="off" placeholder="Chỉnh sửa mô tả"
                     clearable style="display: block; margin-top: 8px;" />
                     <span class="task-btn">
                 <el-button color="green" style="margin-right: 8px;" @click="editSubTask(item)">Cập nhật</el-button>
                 <el-icon @click="closeFormUpdate(index, item)" class="task-icon-close close"><CloseBold /></el-icon>
-            </span>    
+            </span>
             </el-col>
         </div>
     </div>
@@ -338,13 +345,13 @@ function closeFormUpdate(index, item){
     padding-left: 0;
 }
 .date {
-    position: relative; 
+    position: relative;
 }
 
 .date-icon {
-    position: absolute; 
-    left: 0px; 
-    bottom: 10px; 
+    position: absolute;
+    left: 0px;
+    bottom: 10px;
     display: none;
 }
 .date:hover .date-icon{
@@ -377,12 +384,12 @@ function closeFormUpdate(index, item){
 }
 .people-icon:hover .people-icon-remove{
     display: block;
-    left: 50%; 
-    bottom: 70%; 
+    left: 50%;
+    bottom: 70%;
 }
 .people-icon-remove{
     display: none;
-    position: absolute; 
+    position: absolute;
     color: red;
 }
 .info-user-icon{
