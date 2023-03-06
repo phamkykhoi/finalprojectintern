@@ -1,26 +1,27 @@
 <script lang="ts" setup>
 import Modal from '@/Components/Modal.vue';
-import FileManagerOfTask from '@/Components/FileManagerOfTask.vue';
-import TaskAction from './TaskAction.vue';
-import { reactive, ref, defineEmits, inject, unref  } from 'vue';
+
+import SubTask from '@/Pages/Task/SubTask.vue';
+import FileUpload from '@/Components/FileUpload.vue';
+import { reactive, ref, defineEmits, inject, computed, unref  } from 'vue';
 import type { FormInstance } from 'element-plus';
 import { ElMessage } from 'element-plus';
+import axios from 'axios';
 import request from '../../utils/request';
 import { ClickOutside as vClickOutside } from 'element-plus'
 import { ElMessageBox } from 'element-plus'
-import {
-Document, EditPen,
+import { 
+ArrowDown, Document, EditPen, 
 List, Comment , Avatar, Clock,
 Delete, CloseBold, Search, CircleCheck,
 CirclePlusFilled, CircleCloseFilled,
 StarFilled, Calendar, MoreFilled,
 DocumentCopy, Rank, Bell, Share,
-Pointer, Finished, Lock, TakeawayBox,
-Close, DocumentAdd, Link, ChromeFilled,
+Pointer, Finished, Lock, TakeawayBox, 
+Close, DocumentAdd, Link, ChromeFilled, 
 Box, Cloudy, Folder, ArrowUpBold
-}
+} 
 from '@element-plus/icons-vue';
-import { random } from 'lodash';
 
 const ruleFormRef = ref<FormInstance>()
 
@@ -85,7 +86,7 @@ const saveTask = (formEl: FormInstance | undefined) => {
                     })
                     closeModal()
                     getGroupsTask();
-
+                   
                 }
             })
         }
@@ -140,16 +141,15 @@ function CloseTaskName(){
     showTask.value = false
 }
 
-const showAddTask = ref(false)
+const showInputEdit = ref(false)
 
-function createFormAddTask(){
-    showAddTask.value = true
+function handleShowEdit() {
+    showInputEdit.value = true
 }
 
-function closeAddTask(){
-    showAddTask.value = false
+function closeEdit() {
+    showInputEdit.value = false
 }
-
 const showEditCmt = ref(false)
 
 function handleEditCmt(){
@@ -197,6 +197,56 @@ const hidePopover4 = () => {
     popoverRef4.value.hide()
 }
 
+const buttonRef7 = ref()
+const popoverRef7 = ref()
+const onClickOutside7 = () => {
+  unref(popoverRef7).popperRef7?.delayHide?.()
+}
+const hidePopover7 = () => {
+    popoverRef7.value.hide()
+}
+
+const buttonRef8 = ref()
+const popoverRef8 = ref()
+const onClickOutside8 = () => {
+  unref(popoverRef8).popperRef8?.delayHide?.()
+}
+const hidePopover8 = () => {
+    popoverRef8.value.hide()
+}
+
+const buttonRef9 = ref()
+const popoverRef9 = ref()
+const onClickOutside9 = () => {
+  unref(popoverRef9).popperRef9?.delayHide?.()
+}
+const hidePopover9 = () => {
+    popoverRef9.value.hide()
+}
+
+const buttonRef10 = ref()
+const popoverRef10 = ref()
+const onClickOutside10 = () => {
+  unref(popoverRef10).popperRef10?.delayHide?.()
+}
+const hidePopover10 = () => {
+    popoverRef10.value.hide()
+}
+
+const checkAll = ref(false)
+const isIndeterminate = ref(true)
+const checkedFiles = ref([])
+const files = ['']
+const handleCheckAllChange = (val: boolean) => {
+  checkedFiles.value = val ? files : []
+  isIndeterminate.value = false
+}
+const handlecheckedFilesChange = (value: string[]) => {
+  const checkedCount = value.length
+  checkAll.value = checkedCount === files.length
+  isIndeterminate.value = checkedCount > 0 && checkedCount < files.length
+}
+
 const checked1 = ref(false)
 const value = ref()
 
@@ -212,7 +262,7 @@ function showNguoiThucHien(){
         <Modal :show="isShowModal" @close="closeModal" v-bind:max-width="'4xl'">
             <form class="space-y-6 m-3">
                 <el-form enctype="multipart/form-data" ref="ruleFormRef" :model="taskForm" class="demo-ruleForm" :rules="rules">
-
+                
                 <el-row>
                     <el-col :span="18">
                         <div v-if="!showTask" class="modal-header flex flex-shrink-0 items-center justify-between rounded-t-md">
@@ -232,7 +282,7 @@ function showNguoiThucHien(){
                                     </el-icon>
                                 </el-col>
                                 <el-col :span="22">
-                                    <el-input v-model="taskForm.name" :value="taskForm.name"
+                                    <el-input v-model="taskForm.name" :value="taskForm.name" 
                                     type="textarea" :rows="2" autocomplete="off" placeholder="Mô tả công việc" clearable style="display: inline-block;" />
                                     <span class="name-btn">
                                         <el-button color="green" style="margin-right: 8px;">Cập nhật</el-button>
@@ -249,121 +299,97 @@ function showNguoiThucHien(){
                         </div>
                         <span class="ml-31" v-if="!showInputDescription" @click="ShowInputDes">{{ taskForm.description }}</span>
                         <div v-if="showInputDescription" style="margin: 16px 0;">
-                            <el-input v-model="taskForm.description" :value="taskForm.description"
+                            <el-input v-model="taskForm.description" :value="taskForm.description" 
                             type="textarea" :rows="2" autocomplete="off" placeholder="Mô tả công việc" clearable style="display: inline-block;" />
                             <span class="description-btn">
                                 <el-button color="green" style="margin-right: 8px;">Cập nhật</el-button>
                                 <el-icon @click="CloseInputDes" class="description-icon-close close"><CloseBold /></el-icon>
                             </span>
                         </div>
-
-                        <el-row class="mb-2" style="display: block; margin-top: 16px; margin-right: 8px;">
-                            <el-row class="task-child">
-                                    <div class="flex list-task">
-                                        <el-icon style="padding-left: 0px;" :size="25"><List /></el-icon>
-                                        <el-form-item style="margin-bottom: 0; margin-left: 6px;" label="Danh sách việc con: (1/2)"></el-form-item>
-                                    </div>
-                                    <el-button @click="createFormAddTask">Tạo việc con</el-button>
-                            </el-row>
-                            <div class="task-progress">
-                                <el-progress :percentage="0"/>
-                            </div>
-                            <el-row v-if="showAddTask">
-                                    <el-col :span="1" style="text-align: right;">
-                                    </el-col>
-                                    <el-col :span="23" style="text-align: right;">
-                                        <el-input type="textarea" :rows="1" autocomplete="off" placeholder="Tạo mới tên việc"
-                                            clearable style="display: block;" />
-                                        <el-input type="textarea" :rows="1" autocomplete="off" placeholder="tạo mới mô tả"
-                                            clearable style="display: block; margin-top: 8px;" />
-                                            <span class="task-btn">
-                                        <el-button color="green" style="margin-right: 8px;">Tạo việc</el-button>
-                                        <el-icon @click="closeAddTask" class="task-icon-close close"><CloseBold /></el-icon>
-                                    </span>
-                                    </el-col>
-                            </el-row>
-                            <div class="task-option" v-if="!showInputTask">
-                                <div>
-                                    <el-checkbox v-model="checked1" label="Tên việc 1" size="large"/>
-                                    <p @click="ShowInputTask"  class="ml-31" style="font-size: 14px;">Mô tả việc con 1</p>
-                                </div>
-                                <div class="task-option-icon">
-                                    <span>
-                                        <el-icon style="margin: 0 2px;" size="20" ref="buttonRef6" v-click-outside="onClickOutside6"><Calendar /></el-icon>
-                                        <el-popover
-                                            :width="400"
-                                            ref="popoverRef6"
-                                            :virtual-ref="buttonRef6"
-                                            trigger="click"
-                                            virtual-triggering
-                                            placement="left-start"
-                                        >
-                                            <div class="form-add-user">
-                                                    <p>Ngày thực hiện</p>
-                                                    <el-icon class="close" @click="hidePopover6"><CloseBold /></el-icon>
-                                            </div>
-                                            <el-button color="green" style="margin-right: 8px; width: 100%;">Cập nhật</el-button>
-
-
-                                        </el-popover>
-                                        <el-icon style="margin: 0 2px;" size="20"><CirclePlusFilled /></el-icon>
-                                    </span>
-                                    <el-icon size="20"><MoreFilled /></el-icon>
-
-
-                                </div>
-                            </div>
-                                <el-row v-if="showInputTask">
-                                    <el-col :span="1">
-                                        <el-checkbox v-model="checked1" size="large" />
-                                    </el-col>
-                                    <el-col :span="23" style="text-align: right;">
-                                        <el-input type="textarea" :rows="1" autocomplete="off" placeholder="Chỉnh sửa tên việc"
-                                            clearable style="display: block;" />
-                                        <el-input type="textarea" :rows="1" autocomplete="off" placeholder="Chỉnh sửa mô tả"
-                                            clearable style="display: block; margin-top: 8px;" />
-                                            <span class="task-btn">
-                                        <el-button color="green" style="margin-right: 8px;">Cập nhật</el-button>
-                                        <el-icon @click="CloseInputTask" class="task-icon-close close"><CloseBold /></el-icon>
-                                    </span>
-                                    </el-col>
-                                </el-row>
-                            <div class="task-option">
-                                <div>
-                                    <el-checkbox v-model="checked2" label="Tên việc 2" size="large"/>
-                                    <p class="ml-31" style="font-size: 14px;">Mô tả việc con 2</p>
-                                </div>
-                                <div class="task-option-icon">
-                                    <span>
-                                        <el-icon style="margin: 0 2px;" size="20"><Calendar /></el-icon>
-                                        <el-icon style="margin: 0 2px;" size="20"><CirclePlusFilled /></el-icon>
-                                    </span>
-                                    <el-icon size="20" ref="buttonRef5" v-click-outside="onClickOutside5"><MoreFilled /></el-icon>
-                                    <el-popover
-                                        :width="300"
-                                        ref="popoverRef5"
-                                        :virtual-ref="buttonRef5"
-                                        trigger="click"
-                                        virtual-triggering
-                                        placement="right-start"
-                                    >
-                                        <div style="display: flex; align-items: center; justify-content: space-between;">
-                                            <p>Chức năng</p>
-                                            <el-icon class="close" @click="hidePopover5"><CloseBold /></el-icon>
-                                        </div>
-                                        <el-button class="activity-icon" size="medium" :icon="EditPen" style="width: 100%; border: none">Cập nhật mô tả</el-button>
-                                        <el-button class="activity-icon" size="medium" :icon="DocumentCopy" style="width: 100%; border: none">Sao chép</el-button>
-                                        <el-button class="activity-icon" size="medium" :icon="Rank" style="width: 100%; border: none">Di chuyển</el-button>
-                                        <el-button class="activity-icon" size="medium" :icon="Bell" style="width: 100%; border: none">Nhắc việc</el-button>
-                                        <el-button class="activity-icon" size="medium" :icon="Share" style="width: 100%; border: none">Lấy link chia sẻ</el-button>
-                                        <el-button class="activity-icon" size="medium" :icon="CloseBold" style="width: 100%; border: none">Xóa</el-button>
-                                    </el-popover>
-                                </div>
-                            </div>
-
-
+                        <el-row class="mb-2" style="display: block; margin-top: 16px;">
+                            
+                            
+                            <SubTask :taskId="task.id"></SubTask>
                         </el-row>
-                        <FileManagerOfTask :taskId="task.id"></FileManagerOfTask>
+                        
+                        <div>
+                            <el-row style="margin: 16px 0;">
+                                <el-form-item label="Tệp đính kèm:"></el-form-item>
+                                <FileUpload></FileUpload>
+                                <el-dropdown>
+                                    <el-button class="ml-2 mr-2">
+                                        Sắp xếp theo <el-icon class="el-icon--right">
+                                            <ArrowDown />
+                                        </el-icon>
+                                    </el-button>
+                                    <template #dropdown>
+                                        <el-dropdown-menu>
+                                            <el-dropdown-item>Tên tập tin</el-dropdown-item>
+                                            <el-dropdown-item>Ngày tạo</el-dropdown-item>
+                                            <el-dropdown-item>Loại tập tin</el-dropdown-item>
+                                            <el-dropdown-item>Kích thước</el-dropdown-item>
+                                        </el-dropdown-menu>
+                                    </template>
+                                </el-dropdown>
+                                <el-checkbox
+                                    v-model="checkAll"
+                                    :indeterminate="isIndeterminate"
+                                    @change="handleCheckAllChange"
+                                    >Check all</el-checkbox
+                                >
+                            </el-row>
+                                <div class="option-img flex mt-8 mb-8" style="margin-right: 8px; padding-right: 8px;">
+                                    <div class="flex option-img-des" style="align-items: center;">
+                                        <img
+                                            src="https://newmyxteam.blob.core.windows.net/attach/601007/17894854/202302We024328/view/VTV.jpg"
+                                            class="image"
+                                        />
+                                        <div class="info-img ml-8">
+                                            <span class="info-img-item">Tên tệp .jpg</span>
+                                            <span class="flex info-img-item">
+                                                <h6 style="margin-right: 8px;">Mazir</h6>
+                                                <span>  Đã thêm hôm nay 16:00</span>
+                                            </span>
+                                            <span v-if="!showInputEdit" @click="handleShowEdit" class="info-edit">Bấm để cập nhật mô tả
+                                                <el-icon class="info-edit-icon"><EditPen /></el-icon>
+                                            </span>
+                                            <span v-if="showInputEdit">
+                                                <el-input v-model="taskForm.name" :value="taskForm.name" 
+                                                type="textarea" :rows="2" autocomplete="off" placeholder="Mô tả công việc" clearable style="display: inline-block; padding-right: 8px;" />
+                                                <span class="name-btn">
+                                                    <el-button color="green" style="margin-right: 8px;">Cập nhật</el-button>
+                                                    <el-icon @click="closeEdit" class="name-icon-close close"><CloseBold /></el-icon>
+                                                </span>
+                                            </span>
+                                            
+
+                                            <div>
+                                                <el-link href="#">Bình luận</el-link>
+                                                <el-link href="#">Tải về</el-link>
+                                                <el-link href="#">Lấy link</el-link>
+                                                <el-link href="#">Bỏ ảnh bìa</el-link>
+                                                <el-link href="#">Xóa</el-link>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <el-checkbox-group
+                                        v-model="checkedFiles"
+                                        @change="handlecheckedFilesChange"
+                                    >
+                                    <el-checkbox label="" size="large" />
+                                    </el-checkbox-group>
+                                </div>
+                            <div v-if="!checkAll" style="display: flex; justify-content: flex-end; margin-right: 8px;">
+                                <el-button type="primary">Tải tất cả</el-button>
+                                <el-button style="margin-left: 8px;">Chọn tất cả</el-button>
+                            </div>
+                            <div v-if="checkAll" style="display: flex; justify-content: flex-end; margin-right: 8px;">
+                                <el-button type="primary">Tải tất cả</el-button>
+                                <el-button type="danger" style="margin-left: 6px;">Xóa tập tin đã chọn</el-button>
+                                <el-button style="margin-left: 6px;">Chọn tất cả</el-button>
+                                <el-button style="margin-left: 6px;">Bỏ chọn tất cả</el-button>
+                            </div>
+                        </div>
                         <div class="flex comment" style="margin-right: 8px;">
                             <el-icon style="margin-right: 6px;" :size="25"><Comment /></el-icon>
                             <el-form-item label="Bình luận:" style="display: block; width: 100%;">
@@ -373,7 +399,7 @@ function showNguoiThucHien(){
                             </el-form-item>
                             <el-icon class="comment-icon" :size="25"><Avatar /></el-icon>
                         </div>
-
+                            
                         <div class="flex" style="margin-right: 8px; margin-top: 16px;">
                             <el-icon style="margin-right: 6px;" :size="25"><Avatar /></el-icon>
                             <div style="width: 100%;">
@@ -399,11 +425,11 @@ function showNguoiThucHien(){
                                             </div>
                                         </div>
                                 </el-form-item>
-
-
+                                
+                                
                             </div>
                         </div>
-
+                        
                         <el-row class="mt-4" style="display: block; margin-bottom: 0; margin-right: 8px;">
                             <el-row class="task-child">
                                 <div class="flex">
@@ -434,8 +460,8 @@ function showNguoiThucHien(){
                                 </div>
                             </div>
                         </el-form-item>
-
-
+                        
+                            
                     </el-col>
                     <el-col :span="5" class="ml-2">
                         <el-checkbox v-model="checked2" label="Hoàn thành việc" size="large" />
@@ -448,11 +474,11 @@ function showNguoiThucHien(){
                                 <span class="date-finish" style="display: inline-block; color: red;">31/10 - 31/10
                                 </span>
                             </div>
-
-
+                                
+                            
                         </el-form-item>
 
-
+                      
 
                         <div>Người thực hiện:</div>
                         <div class="people-handle" style="display: flex;">
@@ -464,7 +490,7 @@ function showNguoiThucHien(){
                                     <CircleCloseFilled />
                                 </el-icon>
                             </div>
-
+                                
                             <el-icon size="25" class="icon-plus" @click="showNguoiThucHien" ref="buttonRef" v-click-outside="onClickOutside">
                                 <CirclePlusFilled />
                             </el-icon>
@@ -496,7 +522,7 @@ function showNguoiThucHien(){
                                         </div>
                                         <el-icon color="green" class="icon-circle-check" size="25"><CircleCheck /></el-icon>
                                     </div>
-
+                       
                                     <el-button ref="buttonRef3" v-click-outside="onClickOutside3" class="btn-add-user" :icon="Search">Thêm từ team</el-button>
                                         <el-popover
                                             :width="400"
@@ -545,7 +571,7 @@ function showNguoiThucHien(){
                                 <el-icon size="25" class="people-icon-avatar" ref="buttonRef4" v-click-outside="onClickOutside4">
                                     <Avatar />
                                 </el-icon>
-
+                                
                                     <el-popover
                                         :width="250"
                                         ref="popoverRef4"
@@ -554,7 +580,7 @@ function showNguoiThucHien(){
                                         virtual-triggering
                                     >
                                         <div class="info-user info-user-close">
-
+                                          
                                             <img
                                             src="https://newmyxteam.blob.core.windows.net/attach/601007/17894854/202302We024328/view/VTV.jpg"
                                             class="image"
@@ -564,15 +590,15 @@ function showNguoiThucHien(){
                                                 <p class="info-user-item">User.name</p>
                                             </div>
                                             <el-icon class="user-icon-close close" @click="hidePopover4"><CloseBold /></el-icon>
-
+                                            
                                         </div>
-
+                                            
                                     </el-popover>
                                 <el-icon size="15" class="people-icon-remove close">
                                     <CircleCloseFilled />
                                 </el-icon>
                             </div>
-
+                                
                             <el-icon size="25" class="icon-plus" ref="buttonRef2" v-click-outside="onClickOutside2">
                                 <CirclePlusFilled />
                             </el-icon>
@@ -611,7 +637,6 @@ function showNguoiThucHien(){
                                     </div>
                                     <el-button color="green" class="btn-add-user">Cập nhật</el-button>
                                     <el-button style="margin: 6px 0px;" class="btn-add-user" :icon="Search">Thêm từ team</el-button>
-
                             </el-popover>
                         </div>
                         <div  style="width: 100%;">
@@ -629,10 +654,139 @@ function showNguoiThucHien(){
                                 </span>
                             </div>
                         </div>
+                        <el-checkbox v-model="taskForm.is_quickly" id="is_quickly" @change="changeQuicklyStatus(task.id)" label="Việc Khẩn cấp" size="large" />
+                        <el-checkbox v-model="taskForm.is_important" id="is_important" @change="changeImportantStatus(task.id)" label="Việc Quan trọng" size="large" />
+                        <div class="btn-container">
+                            <el-button :icon="DocumentAdd" class="btn-container">Cập nhật vào kế hoạch</el-button>
+                            <el-button :icon="Link" class="btn-container" ref="buttonRef7" v-click-outside="onClickOutside7">Đính kèm tệp tin</el-button>
+                                <el-popover
+                                    :width="300"
+                                    ref="popoverRef7"
+                                    :virtual-ref="buttonRef7"
+                                    trigger="click"
+                                    virtual-triggering
+                                >
+                                    <div class="form-add-user">
+                                            <p>Đính kèm từ tập tin</p>
+                                            <el-icon class="close" @click="hidePopover7"><CloseBold /></el-icon>
+                                    </div>
+                                    <div class="btn-container">
+                                        <el-button :icon="Folder" text class="btn-container1">Máy tính</el-button>
+                                        <el-button :icon="ChromeFilled" text class="btn-container1">Google</el-button>
+                                        <el-button :icon="Box" text class="btn-container1">Dropbox</el-button>
+                                        <el-button :icon="Cloudy" text class="btn-container1">OneDrive</el-button>
+                                    </div>
+                                </el-popover>
 
-                        <task-action :changeQuicklyStatus = "changeQuicklyStatus(task.id)" :changeImportantStatus = "changeImportantStatus(task.id)"
-                            :task="props.task" :task_group_id="props.task_group_id"
-                        />
+                            <el-button :icon="DocumentCopy" class="btn-container">Sao chép việc</el-button>
+                            <el-button :icon="Rank" class="btn-container">Di chuyển việc</el-button>
+                            <el-button :icon="Bell" class="btn-container"  @click="dialogVisible = true">Tạo nhắc việc</el-button>
+                                <el-dialog
+                                    v-model="dialogVisible"
+                                    title="Nhắc việc"
+                                    width="60%"
+                                    :before-close="handleClose"
+                                >
+                                <div >
+                                    <span>Thời gian bắt đầu nhắc việc</span>
+                                    <div>
+                                        <p>Chu kỳ nhắc việc</p>
+                                        <div style="width: 100%;">
+                                            <el-select style="width: 100%; margin-left: -8px;" v-model="value" class="m-2" placeholder="Select">
+                                                <el-option
+                                                v-for="item in options"
+                                                :key="item.value"
+                                                :label="item.label"
+                                                :value="item.value"
+                                                />
+                                            </el-select>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <p>Chu kỳ nhắc việc</p>
+                                        <div>
+                                            <el-checkbox v-model="checked1" label="Option 1" size="large" />
+                                        </div>
+                                        <div>
+                                            <el-checkbox v-model="checked2" label="Option 2" size="large" />
+                                        </div>
+                                    </div>
+                                    <p style="color: green;">Nhắc việc hàng ngày lúc 10:00</p>
+                                </div>
+                                    <template #footer>
+                                        <span class="dialog-footer">
+                                            <el-button type="success" @click="dialogVisible = false">
+                                                Cài đặt
+                                            </el-button>
+                                            <el-button @click="dialogVisible = false"  style="margin-left: 8px;">Đóng</el-button>
+                                        </span>
+                                    </template>
+                                </el-dialog>
+                            <el-button :icon="Finished" class="btn-container">Đánh giá hoàn thành</el-button>
+                            <el-button :icon="Lock" class="btn-container" ref="buttonRef8" v-click-outside="onClickOutside8">Khoá việc</el-button>
+                                <el-popover
+                                        :width="350"
+                                        ref="popoverRef8"
+                                        :virtual-ref="buttonRef8"
+                                        trigger="click"
+                                        virtual-triggering
+                                    >
+                                        <div class="form-add-user">
+                                                <p>Khóa việc</p>
+                                                <el-icon class="close" @click="hidePopover8"><CloseBold /></el-icon>
+                                        </div>
+                                        <p>
+                                            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Incidunt inventore 
+                                            nostrum laudantium consequuntur doloremque accusantium autem nam sit culpa 
+                                            odit eligendi exercitationem provident error, dignissimos pariatur fugit id facere? Quae.
+                                        </p>
+                                        <el-button style="width: 100%; margin-top: 12px;" type="danger">Xác nhận</el-button>
+                                </el-popover>
+                            <el-button :icon="TakeawayBox" class="btn-container" ref="buttonRef9" v-click-outside="onClickOutside9">Lưu trữ việc</el-button>
+                                <el-popover
+                                    :width="350"
+                                    ref="popoverRef9"
+                                    :virtual-ref="buttonRef9"
+                                    trigger="click"
+                                    virtual-triggering
+                                >
+                                    <div class="form-add-user">
+                                            <p>Lưu trữ</p>
+                                            <el-icon class="close" @click="hidePopover9"><CloseBold /></el-icon>
+                                    </div>
+                                    <p>
+                                        Bạn có chắc là lưu trữ công việc này không?
+                                    </p>
+                                    <p style="color: red;">
+                                        Bạn có thể phục hồi lại khi cần.
+                                    </p>
+                                    <el-button style="width: 100%; margin-top: 12px;" type="danger">Xác nhận</el-button>
+                                </el-popover>
+                            <el-button :icon="Close" class="btn-container" ref="buttonRef10" v-click-outside="onClickOutside10">Xoá việc</el-button>
+                                <el-popover
+                                    :width="350"
+                                    ref="popoverRef10"
+                                    :virtual-ref="buttonRef10"
+                                    trigger="click"
+                                    virtual-triggering
+                                >
+                                    <div class="form-add-user">
+                                        <p>Xóa công việc</p>
+                                        <el-icon class="close" @click="hidePopover10"><CloseBold /></el-icon>
+                                    </div>
+                                    <p>
+                                        Bạn có chắc là xoá công việc này không?
+                                    </p>
+                                    <p>
+                                        Vui lòng nhập số 0 vào ô bên dưới để xác nhận xóa
+                                    </p>
+                                    <p style="color: red;">
+                                        Nếu xoá bạn sẽ không thể phục hồi lại.
+                                    </p>
+                                    <el-input v-model="input" placeholder="Please input" />
+                                    <el-button style="width: 100%; margin-top: 12px;" type="danger">Xóa</el-button>
+                                </el-popover>
+                        </div>
                     </el-col>
                 </el-row>
             </el-form>
@@ -657,7 +811,6 @@ function showNguoiThucHien(){
                 </div>
             </el-backtop>
         </form>
-
         </Modal>
     </section>
 </template>
@@ -804,13 +957,13 @@ function showNguoiThucHien(){
     padding-left: 0;
 }
 .date {
-    position: relative;
+    position: relative; 
 }
 
 .date-icon {
-    position: absolute;
-    left: 0px;
-    bottom: 10px;
+    position: absolute; 
+    left: 0px; 
+    bottom: 10px; 
     display: none;
 }
 .date:hover .date-icon{
@@ -843,12 +996,12 @@ function showNguoiThucHien(){
 }
 .people-icon:hover .people-icon-remove{
     display: block;
-    left: 50%;
-    bottom: 70%;
+    left: 50%; 
+    bottom: 70%; 
 }
 .people-icon-remove{
     display: none;
-    position: absolute;
+    position: absolute; 
     color: red;
 }
 .info-user-icon{

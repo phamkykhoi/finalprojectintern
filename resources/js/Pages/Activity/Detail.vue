@@ -49,8 +49,8 @@ async function getGroupsTask() {
         taskGroups.value = res.data.result.taskGroups
     })
 }
-provide('getGroupsTask', getGroupsTask)
 
+provide('getGroupsTask', getGroupsTask)
 
 const createTaskForm = (currentTask) => {
     showFormTask.value = true;
