@@ -10,4 +10,14 @@ class DepartmentRepository extends BaseRepository
     {
         $this->model = $model;
     }
+
+    public function getDepartments (array $withRelation = null) {
+        $query = $this->model->join('user_departments', 'user_departments.department_id', 'departments.id')
+        ->select("departments.*")
+        ->where('user_departments.user_id',auth()->user()->id);
+        if ($withRelation) {
+            $query->with($withRelation);
+        }
+        return $query->get();
+    }
 }

@@ -18,7 +18,7 @@ class DashboardController extends Controller
     public function index()
     {
         return Inertia::render('Dashboard', [
-            'departments' => $this->departmentRepo->getAll(['activities'])
+            'departments' => $this->departmentRepo->getDepartments(['activities'])
         ]);
     }
 }
