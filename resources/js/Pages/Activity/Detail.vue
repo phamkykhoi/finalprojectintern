@@ -7,7 +7,6 @@ import TaskList from '@/Pages/Task/Index.vue';
 import TaskGroupInfo from '@/Pages/TaskGroup/TaskGroupInfo.vue';
 import SortTaskGroup from '@/Pages/TaskGroup/SortTaskGroup.vue';
 import ActionTaskGroup from '@/Pages/TaskGroup/ActionTaskGroup.vue';
-import MoveTaskGroupForm from '@/Pages/TaskGroup/MoveForm.vue';
 import { reactive, ref, onBeforeMount, watch, unref, markRaw, provide } from 'vue';
 import {
     InfoFilled, DCaret, MoreFilled, Plus, EditPen, Files,
@@ -26,7 +25,6 @@ const props = defineProps({
 });
 
 const showFormTask = ref(false);
-const showFormMoveTaskGroup=ref(false);
 
 const state  = reactive({
     activityId: props.activityId,
@@ -35,7 +33,6 @@ const state  = reactive({
         description: "",
         task_group_id: ""
     },
-    moveTaskGroupId:0,
 })
 
 const taskGroups = ref([]);
@@ -57,10 +54,6 @@ const createTaskForm = (currentTask) => {
 
 const closeFormTask = (value) => {
     showFormTask.value = value;
-}
-
-const closeFormMoveTaskGroup = (value) => {
-    showFormMoveTaskGroup.value = value;
 }
 
 const popoverRef = ref([])
@@ -147,7 +140,7 @@ const hideParentPopover = () => {
 
 //Handle TaskGroup
 function createTaskGroup(){
-    axios.post('/taskgroup/', taskGroupForm).then(res => {
+    request.post('/taskgroup/', taskGroupForm).then(res => {
                 ElMessage({
                     showClose: true,
                     message: 'Add taskgroup successfully',
@@ -161,6 +154,7 @@ function createTaskGroup(){
                     type: 'error',
                 })
             })
+            getTaskGroups(state.activityId);
 }
 
 function getTaskGroups(id)
@@ -414,7 +408,6 @@ function closePopoverAction() {
         </AuthenticatedLayout>
     </div>
     <TaskForm v-if="showFormTask" :task="state.task" :isShowModal="showFormTask" v-on:closeModal="closeFormTask" />
-    <MoveTaskGroupForm v-if="showFormMoveTaskGroup" :getTaskGroups="getTaskGroups" :activityId="activityId" :moveTaskGroupId="state.moveTaskGroupId" :taskGroups="taskGroups" :isShowModal="showFormMoveTaskGroup" v-on:closeModal="closeFormMoveTaskGroup" />
 </template>
 
 <style scoped>
