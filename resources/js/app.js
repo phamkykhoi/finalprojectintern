@@ -9,6 +9,7 @@ import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { ZiggyVue } from '../../vendor/tightenco/ziggy/dist/vue.m';
 import ElementPlus from 'element-plus'
 import 'element-plus/dist/index.css'
+import vi from 'element-plus/dist/locale/vi.mjs'
 
 const appName = window.document.getElementsByTagName('title')[0]?.innerText || 'Laravel';
 
@@ -18,7 +19,7 @@ createInertiaApp({
     setup({ el, app, props, plugin }) {
         const appInstance = createApp({ render: () => h(app, props) })
             .use(plugin)
-            .use(ElementPlus, { locale: 'en' })
+            .use(ElementPlus, { locale: vi })
             .use(ZiggyVue, Ziggy);
 
         return appInstance.mount(el);
