@@ -11,13 +11,18 @@ class DepartmentRepository extends BaseRepository
         $this->model = $model;
     }
 
-    public function getDepartments (array $withRelation = null, array $user_id = ['id' => null]) {
-        $query = $this->model->join('user_departments', 'user_departments.department_id', 'departments.id')
-        ->select("departments.*")
-        ->where('user_departments.user_id',$user_id);
+    public function getDepartments (array $withRelation = null, $userId = null)
+    {
+        $query = $this->model->select("departments.*")->join('user_departments', 'user_departments.department_id', 'departments.id');
+
+        if ($userId) {
+            $query->where('user_departments.user_id', $userId);
+        }
+
         if ($withRelation) {
             $query->with($withRelation);
         }
+
         return $query->get();
     }
 }
