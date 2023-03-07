@@ -371,15 +371,14 @@ function showNguoiThucHien(){
                                     <el-checkbox label="" size="large" />
                                     </el-checkbox-group>
                                 </div>
-                            <div v-if="!checkAll" style="display: flex; justify-content: flex-end; margin-right: 8px;">
-                                <el-button type="primary">Tải tất cả</el-button>
-                                <el-button style="margin-left: 8px;">Chọn tất cả</el-button>
-                            </div>
-
- </el-row>
+                                <div v-if="!checkAll" style="display: flex; justify-content: flex-end; margin-right: 8px;">
+                                    <el-button type="primary">Tải tất cả</el-button>
+                                    <el-button style="margin-left: 8px;">Chọn tất cả</el-button>
+                                </div>
+                            </el-row>
                         <FileManagerOfTask :taskId="task.id"></FileManagerOfTask>
                         <TaskCommentSection :taskId="task.id"></TaskCommentSection>
-                        <TaskActivity/>
+                        <TaskActivity :taskId="task.id"></TaskActivity>
                     <el-col :span="5" class="ml-2">
                         <el-checkbox v-model="checked2" label="Hoàn thành việc" size="large" />
                         <span>Ngày thực hiện</span>
