@@ -34,54 +34,74 @@ let participants = ref([
 ]);
 
 const isPopoverVisible = ref(false);
-const buttonRef = ref();
-const buttonRef2 = ref();
-const popoverRef = ref();
-const popoverRef2 = ref();
-const popoverRef3 = ref();
-const popoverRef4 = ref();
-const input3 = ref("");
+const buttonSearchParticipants = ref();
+const buttonInviteParticipants = ref();
+const buttonSearchFollowers = ref();
+const buttonListFollowers = ref();
+const popoverSearchParticipants = ref();
+const popoverSearchFollowers = ref();
+const popoverInviteParticipants = ref();
+const popoverListFollowers = ref();
+const popoverInviteFollowers = ref();
+const buttonInviteFollowers = ref();
+const inputSearchParticipant = ref("");
+const inputInviteParticipant = ref("");
+const inputSearchFollowers = ref("");
+const inputInviteFollowers = ref("");
+const checkAllowFollowers = ref(false);
+const checkAllSearchFollowers = ref(false);
+const checkAllowParticipants = ref(false);
 
-function showNguoiThucHien() {
+function showParticipants() {
     isPopoverVisible.value = !isPopoverVisible.value;
-    popoverRef.value.show();
+    popoverSearchParticipants.value.show();
 }
 
 const onClickOutside = () => {
-    unref(popoverRef).popperRef?.delayHide?.();
+    unref(popoverSearchParticipants).popoverSearchParticipants?.delayHide?.();
 };
 
 const hidePopover = () => {
     isPopoverVisible.value = false;
-    popoverRef.value.hide();
+    popoverSearchParticipants.value.hide();
 };
 
 const onClickOutside2 = () => {
-    unref(popoverRef2).popperRef2?.delayHide?.();
+    unref(popoverSearchFollowers).popoverSearchFollowers?.delayHide?.();
 };
 
 const hidePopover2 = () => {
-    popoverRef2.value.hide();
+    popoverSearchFollowers.value.hide();
 };
 
 const onClickOutside3 = () => {
-    unref(popoverRef3).popperRef3?.delayHide?.();
+    unref(popoverInviteParticipants).popoverInviteParticipants?.delayHide?.();
 };
 
 const hidePopover3 = () => {
-    popoverRef3.value.hide();
+    popoverInviteParticipants.value.hide();
 };
 
 const onClickOutside4 = () => {
-    unref(popoverRef4).popperRef4?.delayHide?.();
+    unref(popoverListFollowers).popoverListFollowers?.delayHide?.();
 };
 
 const hidePopover4 = () => {
-    popoverRef4.value.hide();
+    popoverListFollowers.value.hide();
 };
-const buttonRef4 = ref();
-const buttonRef3 = ref();
-const checked1 = ref(false);
+
+const onClickOutside5 = () => {
+    unref(popoverInviteFollowers).popoverInviteFollowers?.delayHide?.();
+};
+
+const hidePopover5 = () => {
+    popoverInviteFollowers.value.hide();
+};
+
+const handleUpdate = () =>{
+    hidePopover2();
+}
+
 </script>
 <template>
     <div>Người thực hiện:</div>
@@ -98,16 +118,16 @@ const checked1 = ref(false);
         <el-icon
             size="25"
             class="icon-plus"
-            @click="showNguoiThucHien"
-            ref="buttonRef"
+            @click="showParticipants"
+            ref="buttonSearchParticipants"
             v-click-outside="onClickOutside"
         >
             <CirclePlusFilled />
         </el-icon>
         <el-popover
             :width="400"
-            ref="popoverRef"
-            :virtual-ref="buttonRef"
+            ref="popoverSearchParticipants"
+            :virtual-ref="buttonSearchParticipants"
             :trigger="'click'"
             virtual-triggering
             :visible="isPopoverVisible"
@@ -122,13 +142,13 @@ const checked1 = ref(false);
                 /></el-icon>
             </div>
             <el-input
-                v-model="input3"
+                v-model="inputSearchParticipant"
                 placeholder="Please Input"
                 :suffix-icon="Search"
             />
-            <p style="margin-top: 16px">THÀNH VIÊN TRONG KẾ HOẠCH</p>
+            <p class="mt-4 sub-title">THÀNH VIÊN TRONG KẾ HOẠCH</p>
             <div class="info" v-for="participant in participants">
-                <div class="info-user w-[100%] mb-4">
+                <div class="info-user w-[100%]">
                     <img class="user-avt-small" :src="participant.attachment"/>
                     <div>
                         <p class="info-user-item">{{ participant.email }}</p>
@@ -141,7 +161,7 @@ const checked1 = ref(false);
             </div>
 
             <el-button
-                ref="buttonRef3"
+                ref="buttonInviteParticipants"
                 v-click-outside="onClickOutside3"
                 class="btn-add-user"
                 :icon="Search"
@@ -149,8 +169,8 @@ const checked1 = ref(false);
             >
             <el-popover
                 :width="400"
-                ref="popoverRef3"
-                :virtual-ref="buttonRef3"
+                ref="popoverInviteParticipants"
+                :virtual-ref="buttonInviteParticipants"
                 trigger="click"
                 virtual-triggering
                 placement="right-start"
@@ -166,7 +186,7 @@ const checked1 = ref(false);
                         /></el-icon>
                     </div>
                     <el-input
-                        v-model="input3"
+                        v-model="inputInviteParticipant"
                         placeholder="Please Input"
                         :suffix-icon="Search"
                     />
@@ -181,12 +201,12 @@ const checked1 = ref(false);
                     </div>
                     <div class="user-add">
                         <img
-                            src="https://newmyxteam.blob.core.windows.net/attach/601007/17894854/202302We024328/view/VTV.jpg"
+                            src="https://workdone.myxteam.com/img/member-invite.864af677.png"
                             class="image"
                         />
                         <div>
                             <el-checkbox
-                                v-model="checked1"
+                                v-model="checkAllowParticipants"
                                 label="Cho phép theo dõi công việc đã có?"
                                 size="large"
                             />
@@ -211,7 +231,7 @@ const checked1 = ref(false);
             <el-icon
                 size="25"
                 class="people-icon-avatar"
-                ref="buttonRef4"
+                ref="buttonListFollowers"
                 v-click-outside="onClickOutside4"
             >
                 <Avatar />
@@ -219,8 +239,8 @@ const checked1 = ref(false);
 
             <el-popover
                 :width="300"
-                ref="popoverRef4"
-                :virtual-ref="buttonRef4"
+                ref="popoverListFollowers"
+                :virtual-ref="buttonListFollowers"
                 trigger="click"
                 virtual-triggering
             >
@@ -229,7 +249,7 @@ const checked1 = ref(false);
                         @click="hidePopover4"
                         ><CloseBold
                     /></el-icon>
-                <div class="info-user info-user-close mb-2"  v-for="participant in participants">
+                <div class="info-user info-user-close"  v-for="participant in participants">
                     <img
                         :src="participant.attachment"
                         class="user-avt"
@@ -250,15 +270,15 @@ const checked1 = ref(false);
         <el-icon
             size="25"
             class="icon-plus"
-            ref="buttonRef2"
+            ref="buttonSearchFollowers"
             v-click-outside="onClickOutside2"
         >
             <CirclePlusFilled />
         </el-icon>
         <el-popover
             :width="400"
-            ref="popoverRef2"
-            :virtual-ref="buttonRef2"
+            ref="popoverSearchFollowers"
+            :virtual-ref="buttonSearchFollowers"
             trigger="click"
             virtual-triggering
         >
@@ -272,22 +292,22 @@ const checked1 = ref(false);
                 /></el-icon>
             </div>
             <el-input
-                v-model="input3"
+                v-model="inputSearchFollowers"
                 placeholder="Please Input"
                 :suffix-icon="Search"
             />
             <div
                 class="flex mt-4 justify-between align-items-center flex"
             >
-                <p>THÀNH VIÊN TRONG KẾ HOẠCH</p>
+                <p class="mt-4 sub-title">THÀNH VIÊN TRONG KẾ HOẠCH</p>
                 <el-checkbox
-                    v-model="checked1"
+                    v-model="checkAllSearchFollowers"
                     label="Chọn tất cả"
                     size="large"
                 />
             </div>
             <div class="info" v-for="participant in participants">
-                <div class="info-user">
+                <div class="info-user w-[100%]">
                     <div class="info-user-icon">
                         <img
                         :src="participant.attachment"
@@ -301,20 +321,75 @@ const checked1 = ref(false);
                         <p class="info-user-item">{{ participant.email }}</p>
                         <p class="info-user-item">{{ participant.name }}</p>
                     </div>
-                </div>
-                <el-icon color="orange" class="icon-circle-check" size="25"
+                    <el-icon color="green" class="icon-circle-check " size="25"
                     ><CircleCheck
                 /></el-icon>
+                </div>
             </div>
-            <el-button color="green" class="btn-add-user">Cập nhật</el-button>
+            <el-button color="green" class="btn-add-user" @click="handleUpdate">Cập nhật</el-button>
             <el-button
                 style="margin: 6px 0px"
-                ref="buttonRef3"
-                v-click-outside="onClickOutside3"
+                ref="buttonInviteFollowers"
+                v-click-outside="onClickOutside5"
                 class="btn-add-user"
                 :icon="Search"
                 >Thêm từ team</el-button
             >
+            <el-popover
+                :width="400"
+                ref="popoverInviteFollowers"
+                :virtual-ref="buttonInviteFollowers"
+                trigger="click"
+                virtual-triggering
+                placement="right-start"
+            >
+                <div>
+                    <div class="form-add-user flex">
+                        <span>Mời thành viên</span>
+                        <el-icon
+                            class="close ml-auto mb-2"
+                            size="large"
+                            @click="hidePopover5"
+                            ><CloseBold
+                        /></el-icon>
+                    </div>
+                    <el-input
+                        v-model="inputInviteFollowers"
+                        placeholder="Please Input"
+                        :suffix-icon="Search"
+                    />
+                    <div class="flex user-team">
+                        <p>THÀNH VIÊN TEAM</p>
+                        <span>
+                            <el-button size="small">Bỏ chọn tất cả</el-button>
+                            <el-button size="small" color="green"
+                                >Chọn tất cả</el-button
+                            >
+                        </span>
+                    </div>
+                    <div class="user-add">
+                        <img
+                            src="https://workdone.myxteam.com/img/member-invite.864af677.png"
+                            class="image"
+                        />
+                        <div>
+                            <el-checkbox
+                                v-model="checkAllowFollowers"
+                                label="Cho phép theo dõi công việc đã có?"
+                                size="large"
+                            />
+                            <el-button color="green" class="btn-add-user"
+                                >Cập nhật</el-button
+                            >
+                        </div>
+                    </div>
+                    <span style="color: red"
+                        >* Nếu thành viên chưa có trong Team, vui lòng vào Quản
+                        lý thành viên kế hoạch hoặc Quản lý thành viên team mời
+                        vào trước</span
+                    >
+                </div>
+            </el-popover>
         </el-popover>
     </div>
 </template>
@@ -341,7 +416,7 @@ const checked1 = ref(false);
 
 .icon-circle-check{
     position: absolute;
-    right:10px;
+    right:20px;
 }
 
 .info {
@@ -353,6 +428,12 @@ const checked1 = ref(false);
 .info-user {
     display: flex;
     align-items: center;
+    padding:10px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+.info-user:hover{
+    background-color:#ccc;
 }
 .people-icon {
     position: relative;
@@ -369,8 +450,8 @@ const checked1 = ref(false);
 }
 .user-icon-star {
     position: absolute;
-    right: 3%;
-    bottom: 3%;
+    right: -5%;
+    bottom: -5%;
 }
 .user-team {
     margin-top: 16px;
@@ -402,5 +483,8 @@ const checked1 = ref(false);
 }
 .user-icon-close{
     float: right;
+}
+.sub-title{
+    line-height: 14px;
 }
 </style>

@@ -257,8 +257,6 @@ const value = ref()
                             </span>
                         </div>
                         <el-row class="mb-2" style="display: block; margin-top: 16px;">
-
-
                             <SubTask :taskId="task.id"></SubTask>
                         </el-row>
                         <FileManagerOfTask :taskId="task.id"></FileManagerOfTask>
