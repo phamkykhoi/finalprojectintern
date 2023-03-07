@@ -5,6 +5,7 @@ import FileManagerOfTask from '@/Components/FileManagerOfTask.vue';
 import Participant from '@/Components/Participant.vue';
 import { reactive, ref, defineEmits, inject, unref  } from 'vue';
 import SubTask from '@/Pages/Task/SubTask.vue';
+import TaskActivity from '@/Pages/Task/TaskActivity.vue';
 import FileUpload from '@/Components/FileUpload.vue';
 import type { FormInstance } from 'element-plus';
 import { ElMessage } from 'element-plus';
@@ -262,37 +263,7 @@ const value = ref()
 
                         <FileManagerOfTask :taskId="task.id"></FileManagerOfTask>
                         <TaskCommentSection :taskId="task.id"></TaskCommentSection>
-                        <el-row class="mt-4" style="display: block; margin-bottom: 0; margin-right: 8px;">
-                            <el-row class="task-child">
-                                <div class="flex">
-                                    <el-icon :size="25"><Clock /></el-icon>
-                                    <el-form-item label="Nhật ký việc:" style="margin-left: 6px;"></el-form-item>
-                                </div>
-                                <div v-if="!showHistory">
-                                    <el-button @click="ShowHistory">Xem chi tiết</el-button>
-                                </div>
-                                <div v-else="!showHistory">
-                                    <el-button @click="CloseHistory">Ẩn chi tiết</el-button>
-                                </div>
-                            </el-row>
-                        </el-row>
-                        <el-form-item label="Thành viên đã xem việc này:" style="display: block; margin-left: 31px; width: 100%;">
-                            <el-icon v-if="!showHistory" :size="25"><Avatar /></el-icon>
-                            <div v-if="showHistory" style="width: 100%;">
-                                <div class="flex" style="padding: 4px 0;">
-                                    <el-icon :size="25"><Avatar /></el-icon>
-                                    <p>Nguyễn Văn A đã sửa ... </p>
-                                </div>
-                                <div class="flex" style="padding: 4px 0;">
-                                    <el-icon :size="25"><Avatar /></el-icon>
-                                    <p>Nguyễn Văn B đã sửa ... </p>
-                                </div>
-                                <div style="text-align: center;">
-                                    <el-link href="#">Xem thêm</el-link>
-                                </div>
-                            </div>
-                        </el-form-item>
-
+                        <TaskActivity :taskId="task.id"></TaskActivity>
                     </el-col>
                     <el-col :span="5" class="ml-2">
                         <el-checkbox v-model="checked2" label="Hoàn thành việc" size="large" />
