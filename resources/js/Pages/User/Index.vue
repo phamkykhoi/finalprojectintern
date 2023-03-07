@@ -1,8 +1,7 @@
 
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Head, Link, useForm } from '@inertiajs/inertia-vue3';
-import DepartenList from '@/Pages/Departen/Index.vue';
+import { Link, useForm } from '@inertiajs/inertia-vue3';
 
 const props = defineProps({
     users: Array,

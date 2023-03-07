@@ -9,16 +9,10 @@ import SortTaskGroup from '@/Pages/TaskGroup/SortTaskGroup.vue';
 import ActionTaskGroup from '@/Pages/TaskGroup/ActionTaskGroup.vue';
 import MoveTaskGroupForm from '@/Pages/TaskGroup/MoveForm.vue';
 import TaskGroupForm from '@/Pages/TaskGroup/Form.vue';
-import { reactive, ref, onBeforeMount, watch, unref, markRaw, provide } from 'vue';
-import { 
-    InfoFilled, DCaret, MoreFilled, Plus, EditPen, Files,
-    CopyDocument, Switch, Rank, TakeawayBox, Delete, Folder,
-    CaretTop, CaretBottom, Select, CircleClose 
-} from '@element-plus/icons-vue';
+import { reactive, ref, onBeforeMount, unref, markRaw, provide } from 'vue';
+import { InfoFilled, DCaret, MoreFilled, Plus, Delete } from '@element-plus/icons-vue';
 import { ClickOutside as vClickOutside, ElMessageBox, ElMessage } from 'element-plus';
-import axios from 'axios';
 import request from '../../utils/request';
-// import { ta } from 'element-plus/es/locale';
 
 const props = defineProps({
     activity: Object,
@@ -278,7 +272,7 @@ function closePopoverAction() {
 <template>
     <div>
         <Head title="Activity"/>
-        
+
         <AuthenticatedLayout>
             <template #departen>
                 <DepartenList :departments="departments" :activityId="activityId" />
@@ -309,7 +303,7 @@ function closePopoverAction() {
                                 </el-row>
                                 <div style="margin: 10px 0" />
                                 <div style="margin: 5px 0 10px 0" />
-                                <el-row> 
+                                <el-row>
                                     <el-button type="success">Lưu</el-button>
                                     <el-button @click="  dialog.editNameTaskGroup[index] = false" style="margin-left: 10px;">x</el-button>
                                 </el-row>
@@ -320,9 +314,9 @@ function closePopoverAction() {
                         <el-button class="button"  @click="createTaskForm(taskGroup)" text>
                             <el-icon><Plus /></el-icon>Thêm mới công việc
                         </el-button>
-                    </el-card> 
-        
-                    <el-popover 
+                    </el-card>
+
+                    <el-popover
                         :ref="ref => popoverRef[index] = ref"
                         title="taskGroup1"
                         virtual-triggering
@@ -350,10 +344,10 @@ function closePopoverAction() {
                         width="300px"
                         trigger="click"
                     >
-                        <ActionTaskGroup :idTaskGroup="index" :taskGroup="taskGroup" :visible="dialog.popoverAction" 
-                            :state="state" :popperRef="popoverRef" :popoverRef2="popoverRef2" :editNameTaskGroup="dialog.editNameTaskGroup" 
+                        <ActionTaskGroup :idTaskGroup="index" :taskGroup="taskGroup" :visible="dialog.popoverAction"
+                            :state="state" :popperRef="popoverRef" :popoverRef2="popoverRef2" :editNameTaskGroup="dialog.editNameTaskGroup"
                             @open-dialog-add-task-group="openDialogAddTaskGroup" @open-dialog-add-task="openDialogAddTask"
-                            @close-popover-action="closePopoverAction" :popoverAction="dialog.popoverAction" 
+                            @close-popover-action="closePopoverAction" :popoverAction="dialog.popoverAction"
                         />
                     </el-popover>
                 </div>
@@ -384,7 +378,7 @@ function closePopoverAction() {
                         <el-col>Mô tả</el-col>
                         <el-input v-model="input" :rows="3" type="textarea" placeholder="Nhập mô tả"/>
                     </el-row>
-                    
+
                     <template #footer>
                     <span class="dialog-footer">
                         <el-button style="margin-right: 10px;" @click="dialog.addNewTask = false">Đóng</el-button>
@@ -393,8 +387,8 @@ function closePopoverAction() {
                     </template>
                 </el-dialog>
 
-                <el-button 
-                    class="add-list-btn btn" 
+                <el-button
+                    class="add-list-btn btn"
                     style="place-content: baseline; background: gainsboro;"
                     @click="dialog.addTaskGroup = true" v-if="!dialog.addTaskGroup"
                 >
@@ -410,7 +404,7 @@ function closePopoverAction() {
                     </el-row>
                     <div style="margin: 10px 0" />
                     <div style="margin: 5px 0 10px 0" />
-                    <el-row> 
+                    <el-row>
                         <el-button type="success">Tạo việc</el-button>
                         <el-button @click="dialog.addTaskGroup = false" style="margin-left: 10px;">x</el-button>
                     </el-row>
@@ -436,7 +430,7 @@ function closePopoverAction() {
 
 .group-icons .icon {
     margin-left: 0.2rem;
-}   
+}
 
 .el-button+.el-button {
     margin: 0;
