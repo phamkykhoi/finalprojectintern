@@ -52,4 +52,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(Discussion::class);
     }
+
+    public function isRoot()
+    {
+        return $this->role === static::ROLES['root'];
+    }
 }
