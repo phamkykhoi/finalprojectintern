@@ -24,9 +24,8 @@ class UpdateDepartmentRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => 'required|unique:departments|max:255',
+            'name' => 'required|max:255|unique:departments,name,'.$this->route('department'),
             'description' => 'required|max:255',
-            'type' => 'required|max:2',
         ];
     }
 }
