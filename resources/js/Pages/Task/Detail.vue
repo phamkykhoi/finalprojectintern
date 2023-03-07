@@ -329,6 +329,7 @@ function showNguoiThucHien(){
                                     >Check all</el-checkbox
                                 >
                             </el-row>
+                            </div>
                                 <div class="option-img flex mt-8 mb-8" style="margin-right: 8px; padding-right: 8px;">
                                     <div class="flex option-img-des" style="align-items: center;">
                                         <img
@@ -374,7 +375,8 @@ function showNguoiThucHien(){
                                 <el-button type="primary">Tải tất cả</el-button>
                                 <el-button style="margin-left: 8px;">Chọn tất cả</el-button>
                             </div>
- </el-row>
+
+
                         <FileManagerOfTask :taskId="task.id"></FileManagerOfTask>
                         <TaskCommentSection :taskId="task.id"></TaskCommentSection>
                         <el-row class="mt-4" style="display: block; margin-bottom: 0; margin-right: 8px;">
@@ -406,9 +408,7 @@ function showNguoiThucHien(){
                                     <el-link href="#">Xem thêm</el-link>
                                 </div>
                             </div>
-                        </el-form-item>
-                        
-                            
+                        </el-form-item> 
                     </el-col>
                     <el-col :span="5" class="ml-2">
                         <el-checkbox v-model="checked2" label="Hoàn thành việc" size="large" />
