@@ -17,8 +17,10 @@ class DashboardController extends Controller
 
     public function index()
     {
+        $user = auth()->user();
+
         return Inertia::render('Dashboard', [
-            'departments' => $this->departmentRepo->getAll(['activities'])
+            'departments' => $this->departmentRepo->getDepartments(['activities'], $user->isRoot() ? null : $user->id)
         ]);
     }
 }

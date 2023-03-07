@@ -29,16 +29,18 @@ class ActivityController extends Controller
 
     public function show($id)
     {
+        $user = auth()->user();
+
         return Inertia::render('Activity/Detail', [
             'activity' => $this->activityRepo->findById($id),
-            'departments' => $this->departmentRepo->getAll(['activities']),
+            'departments' => $this->departmentRepo->getDepartments(['activities'], $user->isRoot() ? null : $user->id),
             'taskGroups' => $this->taskGroupRepo->getByActivityId($id, ['tasks']),
             'activityId' => (int) $id,
         ]);
     }
 
     public function store(StoreActivityRequest $request)
-    {   
+    {
         $this->activityRepo->save($request->all());
         return redirect()->route('dashboard');
     }
