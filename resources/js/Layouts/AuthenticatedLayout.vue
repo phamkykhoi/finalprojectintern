@@ -28,7 +28,7 @@ const showingNavigationDropdown = ref(false);
                             </div> -->
 
                             <!-- Navigation Links -->
-                            <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
+                            <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex" style="margin-left:-100px">
                                 <!-- :active="route().current('dashboard')" -->
                                 <NavLink :href="route('dashboard')">
                                     Lịch công tác
@@ -113,8 +113,8 @@ const showingNavigationDropdown = ref(false);
                         </div>
 
                         <div class="mt-3 space-y-1">
-                            <ResponsiveNavLink :href="route('profile.edit')"> 
-                                Profile 
+                            <ResponsiveNavLink :href="route('profile.edit')">
+                                Profile
                             </ResponsiveNavLink>
                             <ResponsiveNavLink :href="route('logout')" method="post" as="button">
                                 Log Out
