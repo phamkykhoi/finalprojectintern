@@ -114,6 +114,10 @@ const dialog = reactive({
         input:'',
 });
 
+const temp = reactive({
+    editTaskGroupName: "",
+})
+
 const taskGroupForm = reactive({
     name: '',
     description:'abc',
@@ -146,6 +150,7 @@ function createTaskGroup(){
                     type: 'success',
                 })
                 dialog.addTaskGroup = false;
+                taskGroupForm.name = "";
             }).catch(err => {
                 ElMessage({
                     showClose: true,
@@ -171,9 +176,9 @@ function getTaskGroups(id)
             loading.value=false;
 }
 
-async function editTaskGroup(id){
+async function editTaskGroup(id, newTaskGroupName, index){
     loading.value=true;
-     await request.patch(`/taskgroup/${id}`,{'name':event.target.innerText}).then(res => {
+     await request.put(`/taskgroup/${id}`,{'name':newTaskGroupName}).then(res => {
         if (res.data.status) {
             ElMessage({
                 showClose: true,
@@ -181,6 +186,7 @@ async function editTaskGroup(id){
                 type: 'success',
             })
         }
+        dialog.editNameTaskGroup[index] = false;
     }).catch(err => {
         ElMessage({
             showClose: true,
@@ -271,7 +277,8 @@ const openPopoverAction = (index) => {
 function closePopoverAction() {
     popoverVisible.value = false
 }
- function clickEditNameTaskGroup(index) {
+ function clickEditNameTaskGroup(index, taskGroupName) {
+    temp.editTaskGroupName = taskGroupName;
     dialog.editNameTaskGroup[index] = true
 };
 </script>
@@ -290,7 +297,7 @@ function closePopoverAction() {
                         <template #header>
                             <div class="card-header" v-if="!dialog.editNameTaskGroup[index]">
                                 <el-col>
-                                    <span @click="clickEditNameTaskGroup(index)">
+                                    <span @click="clickEditNameTaskGroup(index, taskGroup.name)">
                                         {{ taskGroup.name }}
                                     </span>
                                     <div class="group-icons">
@@ -304,15 +311,15 @@ function closePopoverAction() {
                             <el-form v-if="dialog.editNameTaskGroup[index]">
                                 <el-row>
                                     <el-input autosize
-                                    v-model="taskGroup.name"
+                                    v-model="temp.editTaskGroupName"
                                     type="textarea"
                                     />
                                 </el-row>
                                 <div style="margin: 10px 0" />
                                 <div style="margin: 5px 0 10px 0" />
                                 <el-row>
-                                    <el-button type="success">Lưu</el-button>
-                                    <el-button @click="  dialog.editNameTaskGroup[index] = false" style="margin-left: 10px;">x</el-button>
+                                    <el-button type="success" @click="editTaskGroup(taskGroup.id, temp.editTaskGroupName, index)">Lưu</el-button>
+                                    <el-button @click="  dialog.editNameTaskGroup[index] = false; temp.editTaskGroupName = taskGroup.name" style="margin-left: 10px;">x</el-button>
                                 </el-row>
                             </el-form>
                         </template>
