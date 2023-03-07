@@ -1,11 +1,9 @@
 <script lang="ts" setup>
 import Modal from '@/Components/Modal.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
-import { useForm, usePage, Link } from '@inertiajs/inertia-vue3';
-import { ref, defineEmits, reactive, onMounted, onBeforeMount } from 'vue';
+import { ref, defineEmits, reactive, onBeforeMount } from 'vue';
 import type { FormInstance } from 'element-plus'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import {ArrowDown, Delete, Edit} from '@element-plus/icons-vue'
 import axios from 'axios'
 
 const props = defineProps({
@@ -218,7 +216,7 @@ const state = reactive({
                             </el-button>
                         </el-col>
                     </el-row>
-                </el-form>  
+                </el-form>
 
                 <div>
                     <h5 class="text-xl font-medium leading-normal text-gray-800" id="exampleModalScrollableLabel">
