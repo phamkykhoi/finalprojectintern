@@ -13,10 +13,9 @@ import {
     CopyDocument, Switch, Rank, TakeawayBox, Delete, Folder,
     CaretTop, CaretBottom, Select, CircleClose
 } from '@element-plus/icons-vue';
+
 import { ClickOutside as vClickOutside, ElMessageBox, ElMessage } from 'element-plus';
-import axios from 'axios';
 import request from '../../utils/request';
-// import { ta } from 'element-plus/es/locale';
 
 const props = defineProps({
     activity: Object,
