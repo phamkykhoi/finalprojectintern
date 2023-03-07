@@ -259,6 +259,7 @@ const value = ref()
                         <el-row class="mb-2" style="display: block; margin-top: 16px;">
                             <SubTask :taskId="task.id"></SubTask>
                         </el-row>
+
                         <FileManagerOfTask :taskId="task.id"></FileManagerOfTask>
                         <TaskCommentSection :taskId="task.id"></TaskCommentSection>
                         <el-row class="mt-4" style="display: block; margin-bottom: 0; margin-right: 8px;">
@@ -291,6 +292,7 @@ const value = ref()
                                 </div>
                             </div>
                         </el-form-item>
+
                     </el-col>
                     <el-col :span="5" class="ml-2">
                         <el-checkbox v-model="checked2" label="Hoàn thành việc" size="large" />
