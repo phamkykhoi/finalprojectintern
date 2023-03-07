@@ -122,16 +122,6 @@ onBeforeMount(async () => {
                     <h5 class="text-xl font-medium leading-normal text-gray-800" id="exampleModalScrollableLabel">
                         Tạo công việc
                     </h5>
-
-                    <el-row class="mb-4">
-                        <el-button :icon="Search" circle />
-                        <el-button type="primary" :icon="Edit" circle />
-                        <el-button type="success" :icon="Check" circle />
-                        <el-button type="info" :icon="Message" circle />
-                        <el-button type="warning" :icon="Star" circle />
-                        <el-button type="danger" :icon="Delete" circle />
-                    </el-row>
-
                 </div>
 
                 <div class="modal-body relative p-4">
@@ -144,41 +134,55 @@ onBeforeMount(async () => {
                                 clearable />
                         </el-form-item>
                         <el-form-item label="Tệp đính kèm">
-                          <FileUpload></FileUpload>
+                            <FileUpload></FileUpload>
                         </el-form-item>
-                        <div style="display: flex;">
-                            <el-form-item prop="user_id">
-                                <el-select v-model="taskForm.user_id" class="m-2" placeholder="Thành viên">
+                        <el-row>
+                            <el-col :span="12">
+                                <span style="font-size: 14px;">Người thực hiện</span>
+                                <el-select v-model="taskForm.user_id" placeholder="Thành viên">
                                     <el-option
                                         v-for="user in users"
                                         :key="user.id"
                                         :label="user.name"
                                         :value="user.id"/>
                                 </el-select>
-                            </el-form-item>
-                        
-                            <el-form-item prop="role_id">
+                            </el-col>
+                            <el-col :span="12">
+                                <span style="font-size: 14px;">Quyền hạn</span>
                                 <el-select v-model="taskForm.role_id" placeholder="Quyền hạn">
                                     <el-option
                                         v-for="role in roles"
                                         :key="role.id"
                                         :label="role.role"
                                         :value="role.id" />
-                                    </el-select>
-                            </el-form-item>
-                        </div>
+                                </el-select>
+                            </el-col>
+                        </el-row>
+                            
                         <el-row>
                             <el-col :span="12">
-                                <p>Ngày bắt đầu</p>
-                                <el-input v-model="taskForm.start_date" class="mb-2 mt-2" placeholder="Chọn ngày bắt đầu" />
+                                <span style="font-size: 14px;">Ngày bắt đầu</span>
+                                <el-date-picker
+                                    v-model="taskForm.start_date"
+                                    type="date"
+                                    placeholder="Chọn"
+                                    clearable
+                                    style="display: block; width: 100%;"
+                                />
                                 <el-checkbox v-model="taskForm.is_important" label="Xác định là khẩn cấp" />
                                 <el-checkbox v-model="taskForm.is_quickly" label="Xác định là quan trọng" />
                                 <el-checkbox label="Đánh dấu tập huấn hội nghị" />
                                 <el-checkbox label="Cập nhật vào kế hoạch" />
                             </el-col>
                             <el-col :span="12">
-                                <p>Ngày kết thúc</p>
-                                <el-input v-model="taskForm.end_date" class="m-2" placeholder="Chọn ngày kết thúc" />
+                                <span style="font-size: 14px;">Ngày kết thúc</span>
+                                <el-date-picker
+                                    v-model="taskForm.end_date"
+                                    type="date"
+                                    placeholder="Chọn"
+                                    clearable
+                                    style="display: block; width: 100%;"
+                                />
                             </el-col>
                         </el-row>
                     </el-form>
@@ -204,5 +208,11 @@ onBeforeMount(async () => {
 .el-form-item {
     display: flex;
     flex-direction: column;
+}
+.el-select{
+    width: 100%;
+}
+::v-deep .el-input__wrapper{
+    width: 100%;
 }
 </style>
