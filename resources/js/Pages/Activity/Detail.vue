@@ -8,12 +8,11 @@ import TaskGroupInfo from '@/Pages/TaskGroup/TaskGroupInfo.vue';
 import SortTaskGroup from '@/Pages/TaskGroup/SortTaskGroup.vue';
 import ActionTaskGroup from '@/Pages/TaskGroup/ActionTaskGroup.vue';
 import MoveTaskGroupForm from '@/Pages/TaskGroup/MoveForm.vue';
-import TaskGroupForm from '@/Pages/TaskGroup/Form.vue';
 import { reactive, ref, onBeforeMount, watch, unref, markRaw, provide } from 'vue';
-import { 
+import {
     InfoFilled, DCaret, MoreFilled, Plus, EditPen, Files,
     CopyDocument, Switch, Rank, TakeawayBox, Delete, Folder,
-    CaretTop, CaretBottom, Select, CircleClose 
+    CaretTop, CaretBottom, Select, CircleClose
 } from '@element-plus/icons-vue';
 import { ClickOutside as vClickOutside, ElMessageBox, ElMessage } from 'element-plus';
 import axios from 'axios';
@@ -27,7 +26,6 @@ const props = defineProps({
 });
 
 const showFormTask = ref(false);
-const showFormTaskGroup = ref(false);
 const showFormMoveTaskGroup=ref(false);
 
 const state  = reactive({
@@ -59,20 +57,6 @@ const createTaskForm = (currentTask) => {
 
 const closeFormTask = (value) => {
     showFormTask.value = value;
-}
-
-const createTaskGroupForm = (currentActivityId) => {
-    showFormTaskGroup.value = true;
-    state.activityId = currentActivityId;
-}
-const closeFormTaskGroup = (value) => {
-    showFormTaskGroup.value = value;
-}
-
-const createMoveTaskGroupForm = (currentActivityId,moveTaskGroupId) => {
-    showFormMoveTaskGroup.value = true;
-    state.activityId = currentActivityId;
-    state.moveTaskGroupId = moveTaskGroupId;
 }
 
 const closeFormMoveTaskGroup = (value) => {
@@ -138,6 +122,13 @@ const dialog = reactive({
         input:'',
 });
 
+const taskGroupForm = reactive({
+    name: '',
+    description:'abc',
+    activity_id: props.activityId,
+    type:1,
+})
+
 const toggleChildPopover = () => {
     copyJobGroup.value = !copyJobGroup.value;
 };
@@ -155,6 +146,23 @@ const hideParentPopover = () => {
 };
 
 //Handle TaskGroup
+function createTaskGroup(){
+    axios.post('/taskgroup/', taskGroupForm).then(res => {
+                ElMessage({
+                    showClose: true,
+                    message: 'Add taskgroup successfully',
+                    type: 'success',
+                })
+                dialog.addTaskGroup = false;
+            }).catch(err => {
+                ElMessage({
+                    showClose: true,
+                    message: err.response.data.message,
+                    type: 'error',
+                })
+            })
+}
+
 function getTaskGroups(id)
 {
     request.get(`/taskgroup/list/${id}`)
@@ -278,7 +286,7 @@ function closePopoverAction() {
 <template>
     <div>
         <Head title="Activity"/>
-        
+
         <AuthenticatedLayout>
             <template #departen>
                 <DepartenList :departments="departments" :activityId="activityId" />
@@ -309,7 +317,7 @@ function closePopoverAction() {
                                 </el-row>
                                 <div style="margin: 10px 0" />
                                 <div style="margin: 5px 0 10px 0" />
-                                <el-row> 
+                                <el-row>
                                     <el-button type="success">Lưu</el-button>
                                     <el-button @click="  dialog.editNameTaskGroup[index] = false" style="margin-left: 10px;">x</el-button>
                                 </el-row>
@@ -320,9 +328,9 @@ function closePopoverAction() {
                         <el-button class="button"  @click="createTaskForm(taskGroup)" text>
                             <el-icon><Plus /></el-icon>Thêm mới công việc
                         </el-button>
-                    </el-card> 
-        
-                    <el-popover 
+                    </el-card>
+
+                    <el-popover
                         :ref="ref => popoverRef[index] = ref"
                         title="taskGroup1"
                         virtual-triggering
@@ -350,26 +358,13 @@ function closePopoverAction() {
                         width="300px"
                         trigger="click"
                     >
-                        <ActionTaskGroup :idTaskGroup="index" :taskGroup="taskGroup" :visible="dialog.popoverAction" 
-                            :state="state" :popperRef="popoverRef" :popoverRef2="popoverRef2" :editNameTaskGroup="dialog.editNameTaskGroup" 
+                        <ActionTaskGroup :idTaskGroup="index" :taskGroup="taskGroup" :visible="dialog.popoverAction"
+                            :state="state" :popperRef="popoverRef" :popoverRef2="popoverRef2" :editNameTaskGroup="dialog.editNameTaskGroup"
                             @open-dialog-add-task-group="openDialogAddTaskGroup" @open-dialog-add-task="openDialogAddTask"
-                            @close-popover-action="closePopoverAction" :popoverAction="dialog.popoverAction" 
+                            @close-popover-action="closePopoverAction" :popoverAction="dialog.popoverAction"
                         />
                     </el-popover>
                 </div>
-                <el-dialog
-                    v-model="dialog.addTaskGroup"
-                    title="Tạo nhóm công việc"
-                    width="30%"
-                >
-                    <input type="text" name="" placeholder="Nhập tên nhóm công việc" style="width: 100%; border-radius: 8px;">
-                    <template #footer>
-                    <span class="dialog-footer">
-                        <el-button style="margin-right: 10px;" @click="dialog.addTaskGroup = false">Đóng</el-button>
-                        <el-button type="primary" @click="dialog.addTaskGroup = false">Lưu</el-button>
-                    </span>
-                    </template>
-                </el-dialog>
 
                 <el-dialog
                     v-model="dialog.addNewTask"
@@ -384,7 +379,7 @@ function closePopoverAction() {
                         <el-col>Mô tả</el-col>
                         <el-input v-model="input" :rows="3" type="textarea" placeholder="Nhập mô tả"/>
                     </el-row>
-                    
+
                     <template #footer>
                     <span class="dialog-footer">
                         <el-button style="margin-right: 10px;" @click="dialog.addNewTask = false">Đóng</el-button>
@@ -393,8 +388,8 @@ function closePopoverAction() {
                     </template>
                 </el-dialog>
 
-                <el-button 
-                    class="add-list-btn btn" 
+                <el-button
+                    class="add-list-btn btn"
                     style="place-content: baseline; background: gainsboro;"
                     @click="dialog.addTaskGroup = true" v-if="!dialog.addTaskGroup"
                 >
@@ -403,15 +398,15 @@ function closePopoverAction() {
                 <el-form v-if="dialog.addTaskGroup">
                     <el-row>
                         <el-input autosize
-                        v-model="input"
+                        v-model="taskGroupForm.name"
                         type="textarea"
                         placeholder="Tạo nhóm công việc"
                         />
                     </el-row>
                     <div style="margin: 10px 0" />
                     <div style="margin: 5px 0 10px 0" />
-                    <el-row> 
-                        <el-button type="success">Tạo việc</el-button>
+                    <el-row>
+                        <el-button type="success" @click="createTaskGroup">Tạo việc</el-button>
                         <el-button @click="dialog.addTaskGroup = false" style="margin-left: 10px;">x</el-button>
                     </el-row>
                 </el-form>
@@ -419,7 +414,6 @@ function closePopoverAction() {
         </AuthenticatedLayout>
     </div>
     <TaskForm v-if="showFormTask" :task="state.task" :isShowModal="showFormTask" v-on:closeModal="closeFormTask" />
-    <TaskGroupForm  v-if="showFormTaskGroup" :getTaskGroups="getTaskGroups" :activityId="activityId" :isShowModal="showFormTaskGroup" v-on:closeModal="closeFormTaskGroup" />
     <MoveTaskGroupForm v-if="showFormMoveTaskGroup" :getTaskGroups="getTaskGroups" :activityId="activityId" :moveTaskGroupId="state.moveTaskGroupId" :taskGroups="taskGroups" :isShowModal="showFormMoveTaskGroup" v-on:closeModal="closeFormMoveTaskGroup" />
 </template>
 
@@ -436,7 +430,7 @@ function closePopoverAction() {
 
 .group-icons .icon {
     margin-left: 0.2rem;
-}   
+}
 
 .el-button+.el-button {
     margin: 0;
