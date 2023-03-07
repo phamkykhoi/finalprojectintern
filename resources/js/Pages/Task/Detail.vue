@@ -2,6 +2,7 @@
 import Modal from '@/Components/Modal.vue';
 import TaskCommentSection from '@/Components/TaskCommentSection.vue';
 import FileManagerOfTask from '@/Components/FileManagerOfTask.vue';
+import Participant from '@/Components/Participant.vue';
 import { reactive, ref, defineEmits, inject, unref  } from 'vue';
 import SubTask from '@/Pages/Task/SubTask.vue';
 import FileUpload from '@/Components/FileUpload.vue';
@@ -11,17 +12,17 @@ import axios from 'axios';
 import request from '../../utils/request';
 import { ClickOutside as vClickOutside } from 'element-plus'
 import { ElMessageBox } from 'element-plus'
-import { 
-ArrowDown, Document, EditPen, 
+import {
+ArrowDown, Document, EditPen,
 List, Comment , Avatar, Clock,
 Delete, CloseBold, Search, CircleCheck,
 CirclePlusFilled, CircleCloseFilled,
 StarFilled, Calendar, MoreFilled,
 DocumentCopy, Rank, Bell, Share,
-Pointer, Finished, Lock, TakeawayBox, 
-Close, DocumentAdd, Link, ChromeFilled, 
+Pointer, Finished, Lock, TakeawayBox,
+Close, DocumentAdd, Link, ChromeFilled,
 Box, Cloudy, Folder, ArrowUpBold
-} 
+}
 from '@element-plus/icons-vue';
 
 const ruleFormRef = ref<FormInstance>()
@@ -87,7 +88,7 @@ const saveTask = (formEl: FormInstance | undefined) => {
                     })
                     closeModal()
                     getGroupsTask();
-                   
+
                 }
             })
         }
@@ -152,43 +153,6 @@ function closeEdit() {
     showInputEdit.value = false
 }
 
-const buttonRef = ref()
-const popoverRef = ref()
-const onClickOutside = () => {
-    unref(popoverRef).popperRef?.delayHide?.()
-}
-const hidePopover = () => {
-    isPopoverVisible.value = false;
-    popoverRef.value.hide()
-}
-
-const buttonRef2 = ref()
-const popoverRef2 = ref()
-const onClickOutside2 = () => {
-  unref(popoverRef2).popperRef2?.delayHide?.()
-}
-const hidePopover2 = () => {
-    popoverRef2.value.hide()
-}
-
-const buttonRef3 = ref()
-const popoverRef3 = ref()
-const onClickOutside3 = () => {
-  unref(popoverRef3).popperRef3?.delayHide?.()
-}
-const hidePopover3 = () => {
-    popoverRef3.value.hide()
-}
-
-const buttonRef4 = ref()
-const popoverRef4 = ref()
-const onClickOutside4 = () => {
-  unref(popoverRef4).popperRef4?.delayHide?.()
-}
-const hidePopover4 = () => {
-    popoverRef4.value.hide()
-}
-
 const buttonRef7 = ref()
 const popoverRef7 = ref()
 const onClickOutside7 = () => {
@@ -242,11 +206,6 @@ const handlecheckedFilesChange = (value: string[]) => {
 const checked1 = ref(false)
 const value = ref()
 
-const isPopoverVisible = ref(false)
-function showNguoiThucHien(){
-    isPopoverVisible.value = !isPopoverVisible.value;
-    popoverRef.value.show();
-}
 </script>
 
 <template>
@@ -273,7 +232,7 @@ function showNguoiThucHien(){
                                     </el-icon>
                                 </el-col>
                                 <el-col :span="22">
-                                    <el-input v-model="taskForm.name" :value="taskForm.name" 
+                                    <el-input v-model="taskForm.name" :value="taskForm.name"
                                     type="textarea" :rows="2" autocomplete="off" placeholder="Mô tả công việc" clearable style="display: inline-block;" />
                                     <span class="name-btn">
                                         <el-button color="green" style="margin-right: 8px;">Cập nhật</el-button>
@@ -290,7 +249,7 @@ function showNguoiThucHien(){
                         </div>
                         <span class="ml-31" v-if="!showInputDescription" @click="ShowInputDes">{{ taskForm.description }}</span>
                         <div v-if="showInputDescription" style="margin: 16px 0;">
-                            <el-input v-model="taskForm.description" :value="taskForm.description" 
+                            <el-input v-model="taskForm.description" :value="taskForm.description"
                             type="textarea" :rows="2" autocomplete="off" placeholder="Mô tả công việc" clearable style="display: inline-block;" />
                             <span class="description-btn">
                                 <el-button color="green" style="margin-right: 8px;">Cập nhật</el-button>
@@ -298,83 +257,8 @@ function showNguoiThucHien(){
                             </span>
                         </div>
                         <el-row class="mb-2" style="display: block; margin-top: 16px;">
-                            
-                            
                             <SubTask :taskId="task.id"></SubTask>
                         </el-row>
-                        
-                        <div>
-                            <el-row style="margin: 16px 0;">
-                                <el-form-item label="Tệp đính kèm:"></el-form-item>
-                                <FileUpload></FileUpload>
-                                <el-dropdown>
-                                    <el-button class="ml-2 mr-2">
-                                        Sắp xếp theo <el-icon class="el-icon--right">
-                                            <ArrowDown />
-                                        </el-icon>
-                                    </el-button>
-                                    <template #dropdown>
-                                        <el-dropdown-menu>
-                                            <el-dropdown-item>Tên tập tin</el-dropdown-item>
-                                            <el-dropdown-item>Ngày tạo</el-dropdown-item>
-                                            <el-dropdown-item>Loại tập tin</el-dropdown-item>
-                                            <el-dropdown-item>Kích thước</el-dropdown-item>
-                                        </el-dropdown-menu>
-                                    </template>
-                                </el-dropdown>
-                                <el-checkbox
-                                    v-model="checkAll"
-                                    :indeterminate="isIndeterminate"
-                                    @change="handleCheckAllChange"
-                                    >Check all</el-checkbox
-                                >
-                            </el-row>
-                                <div class="option-img flex mt-8 mb-8" style="margin-right: 8px; padding-right: 8px;">
-                                    <div class="flex option-img-des" style="align-items: center;">
-                                        <img
-                                            src="https://newmyxteam.blob.core.windows.net/attach/601007/17894854/202302We024328/view/VTV.jpg"
-                                            class="image"
-                                        />
-                                        <div class="info-img ml-8">
-                                            <span class="info-img-item">Tên tệp .jpg</span>
-                                            <span class="flex info-img-item">
-                                                <h6 style="margin-right: 8px;">Mazir</h6>
-                                                <span>  Đã thêm hôm nay 16:00</span>
-                                            </span>
-                                            <span v-if="!showInputEdit" @click="handleShowEdit" class="info-edit">Bấm để cập nhật mô tả
-                                                <el-icon class="info-edit-icon"><EditPen /></el-icon>
-                                            </span>
-                                            <span v-if="showInputEdit">
-                                                <el-input v-model="taskForm.name" :value="taskForm.name" 
-                                                type="textarea" :rows="2" autocomplete="off" placeholder="Mô tả công việc" clearable style="display: inline-block; padding-right: 8px;" />
-                                                <span class="name-btn">
-                                                    <el-button color="green" style="margin-right: 8px;">Cập nhật</el-button>
-                                                    <el-icon @click="closeEdit" class="name-icon-close close"><CloseBold /></el-icon>
-                                                </span>
-                                            </span>
-                                            
-
-                                            <div>
-                                                <el-link href="#">Bình luận</el-link>
-                                                <el-link href="#">Tải về</el-link>
-                                                <el-link href="#">Lấy link</el-link>
-                                                <el-link href="#">Bỏ ảnh bìa</el-link>
-                                                <el-link href="#">Xóa</el-link>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <el-checkbox-group
-                                        v-model="checkedFiles"
-                                        @change="handlecheckedFilesChange"
-                                    >
-                                    <el-checkbox label="" size="large" />
-                                    </el-checkbox-group>
-                                </div>
-                            <div v-if="!checkAll" style="display: flex; justify-content: flex-end; margin-right: 8px;">
-                                <el-button type="primary">Tải tất cả</el-button>
-                                <el-button style="margin-left: 8px;">Chọn tất cả</el-button>
-                            </div>
- </el-row>
                         <FileManagerOfTask :taskId="task.id"></FileManagerOfTask>
                         <TaskCommentSection :taskId="task.id"></TaskCommentSection>
                         <el-row class="mt-4" style="display: block; margin-bottom: 0; margin-right: 8px;">
@@ -407,8 +291,6 @@ function showNguoiThucHien(){
                                 </div>
                             </div>
                         </el-form-item>
-                        
-                            
                     </el-col>
                     <el-col :span="5" class="ml-2">
                         <el-checkbox v-model="checked2" label="Hoàn thành việc" size="large" />
@@ -421,171 +303,10 @@ function showNguoiThucHien(){
                                 <span class="date-finish" style="display: inline-block; color: red;">31/10 - 31/10
                                 </span>
                             </div>
-                                
-                            
+
+
                         </el-form-item>
-
-                      
-
-                        <div>Người thực hiện:</div>
-                        <div class="people-handle" style="display: flex;">
-                            <div class="people-icon">
-                                <el-icon size="25" class="people-icon-avatar">
-                                    <Avatar />
-                                </el-icon>
-                                <el-icon size="15" class="people-icon-remove close" >
-                                    <CircleCloseFilled />
-                                </el-icon>
-                            </div>
-                                
-                            <el-icon size="25" class="icon-plus" @click="showNguoiThucHien" ref="buttonRef" v-click-outside="onClickOutside">
-                                <CirclePlusFilled />
-                            </el-icon>
-                            <el-popover
-                                :width="400"
-                                ref="popoverRef"
-                                :virtual-ref="buttonRef"
-                                :trigger="'click'"
-                                virtual-triggering
-                                :visible="isPopoverVisible"
-                            >
-                                <div class="form-add-user">
-                                        <p>Chọn người thực hiện</p>
-                                        <el-icon class="close" @click="hidePopover"><CloseBold /></el-icon>
-                                </div>
-                                    <el-input
-                                    v-model="input3"
-                                    placeholder="Please Input"
-                                    :suffix-icon="Search"
-                                    />
-                                    <p style="margin-top: 16px;">THÀNH VIÊN TRONG KẾ HOẠCH</p>
-                                    <div class="info">
-                                        <div class="info-user">
-                                            <el-icon :size="25"><Avatar /></el-icon>
-                                            <div>
-                                                <p class="info-user-item">User.email</p>
-                                                <p class="info-user-item">User.name</p>
-                                            </div>
-                                        </div>
-                                        <el-icon color="green" class="icon-circle-check" size="25"><CircleCheck /></el-icon>
-                                    </div>
-                       
-                                    <el-button ref="buttonRef3" v-click-outside="onClickOutside3" class="btn-add-user" :icon="Search">Thêm từ team</el-button>
-                                        <el-popover
-                                            :width="400"
-                                            ref="popoverRef3"
-                                            :virtual-ref="buttonRef3"
-                                            trigger="click"
-                                            virtual-triggering
-                                            placement="right-start"
-                                        >
-                                        <div>
-                                            <div class="form-add-user">
-                                                    <p>Mời thành viên</p>
-                                                    <el-icon class="close" @click="hidePopover3"><CloseBold /></el-icon>
-                                            </div>
-                                                <el-input
-                                                v-model="input3"
-                                                placeholder="Please Input"
-                                                :suffix-icon="Search"
-                                                />
-                                                <div class="flex user-team">
-                                                    <p>THÀNH VIÊN TEAM</p>
-                                                    <span>
-                                                        <el-button size="small">Bỏ chọn tất cả</el-button>
-                                                        <el-button size="small" color="green">Chọn tất cả</el-button>
-                                                    </span>
-                                                </div>
-                                                <div class="user-add">
-                                                    <img
-                                                        src="https://newmyxteam.blob.core.windows.net/attach/601007/17894854/202302We024328/view/VTV.jpg"
-                                                        class="image"
-                                                    />
-                                                    <div>
-                                                        <el-checkbox v-model="checked1" label="Cho phép theo dõi công việc đã có?" size="large" />
-                                                        <el-button color="green" class="btn-add-user">Cập nhật</el-button>
-                                                    </div>
-                                                </div>
-                                                <span style="color:red;">* Nếu thành viên chưa có trong Team, vui lòng vào Quản lý thành viên kế hoạch hoặc Quản lý thành viên team mời vào trước</span>
-                                        </div>
-                                        </el-popover>
-                            </el-popover>
-                        </div>
-
-                        <div>Người theo dõi (1):</div>
-                        <div class="people-handle" style="display: flex;">
-                            <div class="people-icon">
-                                <el-icon size="25" class="people-icon-avatar" ref="buttonRef4" v-click-outside="onClickOutside4">
-                                    <Avatar />
-                                </el-icon>
-                                
-                                    <el-popover
-                                        :width="250"
-                                        ref="popoverRef4"
-                                        :virtual-ref="buttonRef4"
-                                        trigger="click"
-                                        virtual-triggering
-                                    >
-                                        <div class="info-user info-user-close">
-                                          
-                                            <img
-                                            src="https://newmyxteam.blob.core.windows.net/attach/601007/17894854/202302We024328/view/VTV.jpg"
-                                            class="image"
-                                            />
-                                            <div>
-                                                <p class="info-user-item">User.email</p>
-                                                <p class="info-user-item">User.name</p>
-                                            </div>
-                                            <el-icon class="user-icon-close close" @click="hidePopover4"><CloseBold /></el-icon>
-                                            
-                                        </div>
-                                            
-                                    </el-popover>
-                                <el-icon size="15" class="people-icon-remove close">
-                                    <CircleCloseFilled />
-                                </el-icon>
-                            </div>
-                                
-                            <el-icon size="25" class="icon-plus" ref="buttonRef2" v-click-outside="onClickOutside2">
-                                <CirclePlusFilled />
-                            </el-icon>
-                            <el-popover
-                                :width="400"
-                                ref="popoverRef2"
-                                :virtual-ref="buttonRef2"
-                                trigger="click"
-                                virtual-triggering
-                            >
-                                <div class="form-add-user">
-                                        <p>Chọn người theo dõi</p>
-                                        <el-icon class="close" @click="hidePopover2"><CloseBold /></el-icon>
-                                </div>
-                                    <el-input
-                                    v-model="input3"
-                                    placeholder="Please Input"
-                                    :suffix-icon="Search"
-                                    />
-                                    <div class="flex" style="margin-top: 16px; align-items: center; justify-content: space-between;">
-                                        <p>THÀNH VIÊN TRONG KẾ HOẠCH</p>
-                                        <el-checkbox v-model="checked1" label="Chọn tất cả" size="large" />
-                                    </div>
-                                    <div class="info">
-                                        <div class="info-user">
-                                            <div class="info-user-icon">
-                                                <el-icon class="user-icon-avatar" :size="25"><Avatar /></el-icon>
-                                                <el-icon class="user-icon-star" :size="18" color="blue"><StarFilled /></el-icon>
-                                            </div>
-                                            <div>
-                                                <p class="info-user-item">User.email</p>
-                                                <p class="info-user-item">User.name</p>
-                                            </div>
-                                        </div>
-                                        <el-icon color="orange" class="icon-circle-check" size="25"><CircleCheck /></el-icon>
-                                    </div>
-                                    <el-button color="green" class="btn-add-user">Cập nhật</el-button>
-                                    <el-button style="margin: 6px 0px;" class="btn-add-user" :icon="Search">Thêm từ team</el-button>
-                            </el-popover>
-                        </div>
+                        <Participant :taskId="task.id"></Participant>
                         <div  style="width: 100%;">
                             <p>Đánh giá</p>
                             <div class="flex rate">
@@ -683,8 +404,8 @@ function showNguoiThucHien(){
                                                 <el-icon class="close" @click="hidePopover8"><CloseBold /></el-icon>
                                         </div>
                                         <p>
-                                            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Incidunt inventore 
-                                            nostrum laudantium consequuntur doloremque accusantium autem nam sit culpa 
+                                            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Incidunt inventore
+                                            nostrum laudantium consequuntur doloremque accusantium autem nam sit culpa
                                             odit eligendi exercitationem provident error, dignissimos pariatur fugit id facere? Quae.
                                         </p>
                                         <el-button style="width: 100%; margin-top: 12px;" type="danger">Xác nhận</el-button>
@@ -783,9 +504,6 @@ function showNguoiThucHien(){
 .btn-container1 {
     justify-content: flex-start;
     width: 99%;
-}
-.btn-add-user{
-    width: 100%;
 }
 .demo-image{
     display: flex;
@@ -904,13 +622,13 @@ function showNguoiThucHien(){
     padding-left: 0;
 }
 .date {
-    position: relative; 
+    position: relative;
 }
 
 .date-icon {
-    position: absolute; 
-    left: 0px; 
-    bottom: 10px; 
+    position: absolute;
+    left: 0px;
+    bottom: 10px;
     display: none;
 }
 .date:hover .date-icon{
@@ -921,60 +639,6 @@ function showNguoiThucHien(){
     margin-left: 16px;
 }
 
-.info{
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-top: 3px;
-}
-.info-user{
-    display: flex;
-    align-items: center;
-}
-.info-user-item{
-    margin-left: 6px;
-}
-.people-icon:hover,
-.icon-plus {
-    cursor: pointer;
-}
-.people-icon{
-    position: relative;
-}
-.people-icon:hover .people-icon-remove{
-    display: block;
-    left: 50%; 
-    bottom: 70%; 
-}
-.people-icon-remove{
-    display: none;
-    position: absolute; 
-    color: red;
-}
-.info-user-icon{
-    position: relative;
-}
-.user-icon-star{
-    position: absolute;
-    left: 50%;
-    bottom: 18%;
-}
-.user-team{
-    margin-top: 16px;
-    align-items: center;
-    justify-content: space-between;
-}
-.user-add{
-    display: flex;
-    margin: 16px 0;
-}
-.user-add img{
-    border-radius: 50%;
-    margin-right: 8px;
-}
-.info-user-close{
-    position: relative;
-}
 .user-icon-close{
     position: absolute;
     top: 0;
