@@ -32,17 +32,17 @@ const props = defineProps({
 });
 
 const taskForm = reactive({
-    name: "",
-    description: "",
+    name: '',
+    description: '',
     task_group_id: props.task.id,
     is_quickly: 0,
     is_important: 0,
     file: null,
     fileList: [],
-    user_id: "",
-    role_id: "",
-    start_date: "",
-    end_date: "",
+    user_id: '',
+    role_id: '',
+    start_date: '',
+    end_date: '',
 });
 
 const roles = ref([
@@ -54,7 +54,7 @@ const roles = ref([
     { id: 6, role: "Chủ task" },
 ]);
 
-const emit = defineEmits(["closeModal", "unClose"]);
+const emit = defineEmits(['closeModal', 'unClose']);
 
 confirmingTaskDeletion.value = props.isShowModal;
 
@@ -66,20 +66,20 @@ const closeModal = () => {
 const checkStartDate = (rule: any, value: any, callback: any) => {
     if(new Date(value).getTime()< todayTime && new Date(value).getTime()!=0) {
         callback(new Error("You cannot choose a date in the past"))
-    }
-
-    if(new Date(value).getTime()> new Date(taskForm.end_date).getTime()) {
+    }else if(new Date(value).getTime()> new Date(taskForm.end_date).getTime()){
         callback(new Error("You cannot choose the start date greater than the end date"))
+    }else{
+        callback()
     }
 };
 
 const checkEndDate = (rule: any, value: any, callback: any) => {
     if(new Date(value).getTime()< todayTime && new Date(value).getTime()!=0) {
         callback(new Error("You cannot choose a date in the past"))
-    }
-
-    if(new Date(value).getTime()< new Date(taskForm.start_date).getTime()) {
+    }else if(new Date(value).getTime()< new Date(taskForm.start_date).getTime()){
         callback(new Error("You cannot choose the end date less than the start date"))
+    }else{
+        callback();
     }
 };
 
@@ -88,15 +88,15 @@ const rules = {
     description: [{ required: true, message: "description is required" }],
     user_id: [{ required: true, message: "choose user is required" }],
     role_id: [{ required: true, message: "role is required" }],
-    start_date: [{ validator: checkStartDate, trigger: "blur" },{ required: true, message: "start date is required" }],
-    end_date: [{ validator: checkEndDate, trigger: "blur" },{ required: true, message: "end date is required" }],
+    start_date: [{ validator: checkStartDate, trigger: "blur" }],
+    end_date: [{ validator: checkEndDate, trigger: "blur" }],
 };
 
 const addTask = (formEl: FormInstance | undefined) => {
     if (!formEl) return;
     formEl.validate((valid) => {
         if (valid) {
-            request.post("/task", taskForm).then((res) => {
+            request.post('/task', taskForm).then((res) => {
                 if (res.data.status) {
                     ElMessage({
                         showClose: true,
