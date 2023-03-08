@@ -45,7 +45,7 @@ const state  = reactive({
     },
     moveTaskGroupId:0,
 })
-
+console.log(state.activityId)
 const taskGroups = ref([]);
 
 const loading = ref(true);
@@ -180,6 +180,7 @@ function createTaskGroup(){
                     message: 'Add taskgroup successfully',
                     type: 'success',
                 })
+                getTaskGroups(state.activityId);
                 dialog.addTaskGroup = false;
                 taskGroupForm.name = "";
             }).catch(err => {
@@ -189,7 +190,6 @@ function createTaskGroup(){
                     type: 'error',
                 })
             })
-            getTaskGroups(state.activityId);
 }
 
 function getTaskGroups(id)
@@ -392,15 +392,15 @@ function closePopoverAction() {
                 <el-form v-if="dialog.addTaskGroup">
                     <el-row>
                         <el-input autosize
-                        v-model="temp.addTaskGroup"
+                        v-model="taskGroupForm.name"
                         type="textarea"
                         placeholder="Tạo nhóm công việc"
                         />
                     </el-row>
                     <div style="margin: 10px 0" />
                     <div style="margin: 5px 0 10px 0" />
-                    <el-row> 
-                        <el-button type="success">Tạo việc</el-button>
+                    <el-row>
+                        <el-button type="success" @click="createTaskGroup">Tạo việc</el-button>
                         <el-button @click="dialog.addTaskGroup = false" style="margin-left: 10px;">x</el-button>
                     </el-row>
                 </el-form>
