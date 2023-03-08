@@ -66,21 +66,28 @@ const closeModal = () => {
 const checkStartDate = (rule: any, value: any, callback: any) => {
     if(new Date(value).getTime()< todayTime && new Date(value).getTime()!=0) {
         callback(new Error("You cannot choose a date in the past"))
-    }else if(new Date(value).getTime()> new Date(taskForm.end_date).getTime()){
-        callback(new Error("You cannot choose the start date greater than the end date"))
-    }else{
-        callback()
+        return
     }
+
+    if(new Date(value).getTime()> new Date(taskForm.end_date).getTime()){
+            callback(new Error("You cannot choose the start date greater than the end date"))
+            return
+    }
+
+    callback();
 };
 
 const checkEndDate = (rule: any, value: any, callback: any) => {
     if(new Date(value).getTime()< todayTime && new Date(value).getTime()!=0) {
         callback(new Error("You cannot choose a date in the past"))
-    }else if(new Date(value).getTime()< new Date(taskForm.start_date).getTime()){
-        callback(new Error("You cannot choose the end date less than the start date"))
-    }else{
-        callback();
+    return
     }
+
+    if(new Date(value).getTime()< new Date(taskForm.start_date).getTime()){
+        callback(new Error("You cannot choose the end date less than the start date"))
+        return;
+    }
+    callback();
 };
 
 const rules = {
