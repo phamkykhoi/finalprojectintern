@@ -17,14 +17,18 @@ class DiscussionController extends Controller
 
     public function getDiscussion($id)
     {
-        return $this->success([
-            'discussions' => $this->discussionRepo->getByTaskId($id)
-        ]);
+        try {
+            return $this->success([
+                'discussions' => $this->discussionRepo->getByTaskId($id)
+            ]);
+        } catch (\Exception $e) {
+            return $this->error($e->getMessage(), $e->getCode());
+        }
     }
 
     public function destroy($discussionId)
     {
-         try {
+        try {
             $this->discussionRepo->deleteById($discussionId);
             return $this->success();
         } catch (\Exception $e) {
@@ -34,8 +38,12 @@ class DiscussionController extends Controller
 
     public function store(Request $request)
     {
+        $user = auth()->user();
+        $inputs = $request->all();
+        $inputs['user_id'] = $user->id;
+
         try {
-            $this->discussionRepo->save($request->all());
+            $this->discussionRepo->save($inputs);
             return $this->success();
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());

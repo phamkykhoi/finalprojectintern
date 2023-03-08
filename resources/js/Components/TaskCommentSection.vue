@@ -1,32 +1,34 @@
 <script lang="ts" setup>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import { ElMessage, ElMessageBox } from "element-plus";
+import request from '../utils/request';
+import type { FormInstance } from 'element-plus';
+import { useForm } from '@inertiajs/inertia-vue3'
 
-defineProps({
+const ruleFormRef = ref<FormInstance>()
+
+const props = defineProps({
     taskId: {
         type: Number,
     },
 });
 
-const currentCmt = ref("");
-let listComments = ref([
-    {
-        id: 1,
-        user: "Admin",
-        description: "Hãy xóa task này đi nhé",
-        created_at: "16:00:00",
-        attachment:
-            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcShN0nuLT7HIpIANuDi6wbMKpeuCgZsl2PtAA&usqp=CAU",
-    },
-    {
-        id: 2,
-        user: "John",
-        description: "Ok admin",
-        created_at: "16:20:00",
-        attachment:
-            "https://i.bloganchoi.com/bloganchoi.com/wp-content/uploads/2022/09/avatar-buon-2022-20-696x728.jpg?fit=700%2C20000&quality=95&ssl=1",
-    },
-]);
+const form = useForm({
+    description: '',
+    task_id: props.taskId,
+});
+
+const listComments = ref([]);
+
+const limit = ref(3)
+
+async function getComments() {
+    await request.post(`/get-discussion-by-task-id/${props.taskId}`).then((res) => {
+        listComments.value = res.data.result.discussions.reverse();
+    })
+}
+
+getComments()
 
 const showEditCmt = ref(new Array(listComments.value.length).fill(false));
 
@@ -36,11 +38,15 @@ document.addEventListener("keydown", function (event) {
     }
 });
 
+const oldComment = ref([])
+
 function handleShowEditCmt(index) {
     showEditCmt.value[index] = true;
+    oldComment.value[index] = listComments.value[index].description
 }
 
 function closeEditCmt(index) {
+    listComments.value[index].description = oldComment.value[index]
     showEditCmt.value[index] = false;
 }
 
@@ -68,41 +74,27 @@ function handleDeleteCmt(commentId) {
 }
 
 const handleSendComment = () => {
-
-    if (!currentCmt.value) {
-        ElMessage({
-            showClose: true,
-            message: "Bạn không thể để trống comment",
-            type: "error",
-        });
-    }else{
-        listComments.value.push({
-        id: Math.floor(Math.random() * 10),
-        user: "Admin",
-        description: currentCmt.value,
-        created_at: "21:00:30",
-        attachment:
-            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcShN0nuLT7HIpIANuDi6wbMKpeuCgZsl2PtAA&usqp=CAU",
-    });
-        showEditCmt.value.push(false);
-        ElMessage({
-        showClose: true,
-        message: "Bạn đã đăng comment thành công!",
-        type: "success",
-    });
-    }
-
-    currentCmt.value = "";
-};
-
-const handleSaveEdit = (index) => {
-    closeEditCmt(index);
-    ElMessage({
-            showClose: true,
-            message: "Bạn đã sửa comment thành công!!",
-            type: "success",
-        });
+    if (!form.description) return
+    request.post(`/discussion`, form).then(res => {
+        form.description = "";
+        getComments()
+    })
 }
+
+const handleSaveEdit = (discussionId, comment, index) => {
+    request.put(`/discussion/${discussionId}`, comment).then(res => {
+        showEditCmt.value[index] = false;
+    })
+}
+
+function showMore(){
+    limit.value+=2
+}
+
+function hideComments(){
+    limit.value = 3
+}
+
 </script>
 
 <template>
@@ -111,83 +103,93 @@ const handleSaveEdit = (index) => {
             <h2>Comment</h2>
             <div v-if="listComments.length>0" class="comment-quantity">{{ listComments.length }}</div>
         </div>
+        
         <div class="flex comment mr-2">
-            <el-form-item class="w-[100%]">
-                <div class="flex w-[100%]">
-                    <!-- Current user avt -->
-                    <img
+            <el-form ref="ruleFormRef" :model="form" class="demo-ruleForm w-[100%]">
+                <el-form-item class="w-[100%]">
+                    <div class="flex w-[100%]">
+                        <!-- Current user avt -->
+                        <img
                         class="comment-img"
                         src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcShN0nuLT7HIpIANuDi6wbMKpeuCgZsl2PtAA&usqp=CAU"
-                    />
-                    <el-input
-                        v-model="currentCmt"
+                        />
+                        <el-input
+                        v-model="form.description"
                         type="textarea"
                         :rows="2"
                         autocomplete="off"
                         placeholder="Nhấn Shift + Enter để gửi"
                         clearable
                         class="inline-block"
-                    />
-                </div>
-
-                <el-button class="mt-2 ml-auto" type="success" @click="handleSendComment"
+                        />
+                    </div>
+                    
+                    <el-button class="mt-2 ml-auto" type="success" @click="handleSendComment"
                     >Gửi bình luận</el-button
-                >
-            </el-form-item>
+                    >
+                </el-form-item>
+            </el-form>
         </div>
     </div>
 
-    <div v-for="(comment,index) in listComments" class="flex mr-2 mt-1">
-        <img class="comment-img" :src="comment.attachment" />
-        <div class="w-[100%]">
-            <span>{{ comment.user }}</span>
-            <el-form-item class="d-block w-[100%]">
-                <el-input
-                    v-if="showEditCmt[index]"
-                    v-model="comment.description"
-                    type="textarea"
-                    :rows="2"
-                    autocomplete="off"
-                    class="d-inline-block w-[100%] cursor-pointer"
-                />
-                <div
-                    class="border w-[100%] h-[60%] bg-white"
-                    v-if="!showEditCmt[index]"
-                >
-                    <span class="mt-4 mx-3">{{ comment.description }}</span>
-                </div>
-                <div class="flex w-[100%] mt-1">
-                    <div class="w-[50%]">
-                        <el-link class="mr-2" href="#">Thích</el-link>
-                        <el-link class="mr-2" href="#">Trả lời</el-link>
-                        <el-link class="mr-2" @click="handleShowEditCmt(index)"
-                            >Sửa</el-link
-                        >
-                        <el-link
-                            class="mr-2"
-                            @click="handleDeleteCmt(comment.id)"
-                            >Xóa</el-link
-                        >
-                        <el-link class="mr-2" href="#">{{
-                            comment.created_at
-                        }}</el-link>
-                    </div>
-
-                    <div
+    <template v-for="(comment,index) in listComments" :key="index" >
+        <div v-if="index < limit" class="flex mr-2 mt-1">
+            <img class="comment-img" :src="comment.attachment" />
+            <div class="w-[100%]">
+                <span>{{ comment.user }}</span>
+                <el-form-item class="d-block w-[100%]">
+                    <el-input
                         v-if="showEditCmt[index]"
-                        class="flex justify-content-between align-items-center ml-auto"
+                        v-model="listComments[index].description"
+                        type="textarea"
+                        :rows="2"
+                        autocomplete="off"
+                        class="d-inline-block w-[100%] cursor-pointer"
+                    />
+                    <div
+                        class="border w-[100%] h-[60%] bg-white"
+                        v-if="!showEditCmt[index]"
                     >
-                        <div>
-                            <el-button type="success" @click="handleSaveEdit(index)">Cập nhật</el-button>
-                            <el-button type="danger" @click="closeEditCmt(index)"
-                                >Hủy</el-button
+                        <span class="mt-4 mx-3">{{ comment.description }}</span>
+                    </div>
+                    <div class="flex w-[100%] mt-1">
+                        <div class="w-[70%]">
+                            <el-link class="mr-2" href="#">Thích</el-link>
+                            <el-link class="mr-2" href="#">Trả lời</el-link>
+                            <el-link class="mr-2" @click="handleShowEditCmt(index)"
+                                >Sửa</el-link
                             >
+                            <el-link
+                                class="mr-2"
+                                @click="handleDeleteCmt(comment.id)"
+                                >Xóa</el-link
+                            >
+                            <el-link class="mr-2" href="#">{{
+                                comment.created_at
+                            }}</el-link>
+                        </div>
+
+                        <div
+                            v-if="showEditCmt[index]"
+                            class="flex justify-content-between align-items-center ml-auto"
+                        >
+                            <div>
+                                <el-button type="success" @click="handleSaveEdit(comment.id, comment, index)">Cập nhật</el-button>
+                                <el-button type="danger" @click="closeEditCmt(index)"
+                                    >Hủy</el-button
+                                >
+                            </div>
                         </div>
                     </div>
-                </div>
-            </el-form-item>
+                </el-form-item>
+            </div>
         </div>
-    </div>
+    </template>
+        <div style="text-align: center;">
+            <el-link v-if="limit < listComments.length" @click="showMore">Xem thêm</el-link>
+            <el-link v-else @click="hideComments">Ẩn bớt</el-link>
+        </div>
+        
 </template>
 <style>
 .comment-img {

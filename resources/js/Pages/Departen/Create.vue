@@ -6,9 +6,9 @@ import TextInput from '@/Components/TextInput.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import InputError from '@/Components/InputError.vue';
 import { ref, inject } from 'vue';
-import type { FormInstance } from 'element-plus';
 import request from '../../utils/request';
 import { ElMessage } from 'element-plus';
+import type { FormInstance } from 'element-plus';
 
 const ruleFormRef = ref<FormInstance>()
 
