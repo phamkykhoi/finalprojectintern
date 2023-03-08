@@ -43,6 +43,7 @@ Route::middleware(['auth', 'verified'])->group(function() {
     Route::post('/upload-file', [AttachmentController::class,'upload']);
     Route::post('get-attachments-by-task/{taskId}', [AttachmentController::class, 'getAttachments']);
     Route::post('/get-discussion-by-task-id/{taskId}',[DiscussionController::class,'getDiscussion']);
+    Route::post('/update_attachments',[AttachmentController::class,'updateAttachmentInfor']);
     Route::resource('discussion', DiscussionController::class);
 });
 

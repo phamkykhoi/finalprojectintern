@@ -99,6 +99,11 @@ const rules = {
     end_date: [{ validator: checkEndDate, trigger: "blur" }],
 };
 
+const updateAttachableInfor = (taskId)=>{
+    request.post(`/update_attachments`, {'attachable_id':taskId,'attachable_type':'task','listAttachments':listAttachments}).then((res) => {
+            console.log(res.data.status);njk;l.p
+            });
+}
 const addTask = (formEl: FormInstance | undefined) => {
     if (!formEl) return;
     formEl.validate((valid) => {
@@ -110,6 +115,7 @@ const addTask = (formEl: FormInstance | undefined) => {
                         message: "Thêm task thành công",
                         type: "success",
                     });
+                    updateAttachableInfor(res.data.result.id);
                     closeModal();
                     props.getGroupsTask();
                 }
@@ -121,7 +127,7 @@ const addTask = (formEl: FormInstance | undefined) => {
 const users = ref([]);
 
 const handleLoadData = (data)=>{
-    listAttachments.push(data.id);  
+    listAttachments.push(data.id);
 }
 
 onBeforeMount(async () => {
