@@ -1,12 +1,9 @@
 <script lang="ts" setup>
 import Modal from "@/Components/Modal.vue";
-import { useForm, usePage, Link } from "@inertiajs/inertia-vue3";
 import {
     reactive,
-    nextTick,
     ref,
     defineEmits,
-    watch,
     onBeforeMount,
 } from "vue";
 import type { FormInstance, FormRules } from "element-plus";
@@ -14,19 +11,12 @@ import { ElMessage } from "element-plus";
 import FileUpload from "@/Components/FileUpload.vue";
 import axios from "axios";
 import request from "../../utils/request";
-import {
-    Check,
-    Delete,
-    Edit,
-    Message,
-    Search,
-    Star,
-} from "@element-plus/icons-vue";
 
 const ruleFormRef = ref<FormInstance>();
 
 const confirmingTaskDeletion = ref(false);
-const currentDate = new Date();
+const today = new Date();
+const todayTime = new Date(today.getFullYear(), today.getMonth(), today.getDate()).getTime();
 const props = defineProps({
     task: {
         type: Object,
@@ -64,8 +54,6 @@ const roles = ref([
     { id: 6, role: "Chủ task" },
 ]);
 
-const uploadRef = ref();
-
 const emit = defineEmits(["closeModal", "unClose"]);
 
 confirmingTaskDeletion.value = props.isShowModal;
@@ -76,7 +64,7 @@ const closeModal = () => {
 };
 
 const checkStartDate = (rule: any, value: any, callback: any) => {
-    if(new Date(value).getTime()< new Date().getTime()&&new Date(value).getTime()!=0) {
+    if(new Date(value).getTime()< todayTime && new Date(value).getTime()!=0) {
         callback(new Error("You cannot choose a date in the past"))
     }
 
@@ -86,7 +74,7 @@ const checkStartDate = (rule: any, value: any, callback: any) => {
 };
 
 const checkEndDate = (rule: any, value: any, callback: any) => {
-    if(new Date(value).getTime()< new Date().getTime()&&new Date(value).getTime()!=0) {
+    if(new Date(value).getTime()< todayTime && new Date(value).getTime()!=0) {
         callback(new Error("You cannot choose a date in the past"))
     }
 
@@ -101,7 +89,7 @@ const rules = {
     user_id: [{ required: true, message: "choose user is required" }],
     role_id: [{ required: true, message: "role is required" }],
     start_date: [{ validator: checkStartDate, trigger: "blur" },{ required: true, message: "start date is required" }],
-    end_date: [{ validator: checkEndDate, trigger: "blur" }],
+    end_date: [{ validator: checkEndDate, trigger: "blur" },{ required: true, message: "end date is required" }],
 };
 
 const addTask = (formEl: FormInstance | undefined) => {
