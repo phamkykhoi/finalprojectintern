@@ -95,8 +95,8 @@ const title = reactive({
 .el-col{
     padding-left: 0;
 }
-
 .el-button+.el-button{
+    place-content: center;
     margin-left: 0;
 }
 

@@ -37,6 +37,6 @@ const hidePopover9 = () => {
         <p style="color: red;">
             Bạn có thể phục hồi lại khi cần.
         </p>
-        <el-button style="width: 100%; margin-top: 12px;" type="danger">Xác nhận</el-button>
+        <el-button style="width: 100%; margin-top: 12px; place-content: center;" type="danger">Xác nhận</el-button>
     </el-popover>
 </template>

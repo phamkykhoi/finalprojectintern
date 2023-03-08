@@ -36,6 +36,6 @@ const hidePopover8 = () => {
             nostrum laudantium consequuntur doloremque accusantium autem nam sit culpa
             odit eligendi exercitationem provident error, dignissimos pariatur fugit id facere? Quae.
         </p>
-        <el-button style="width: 100%; margin-top: 12px;" type="danger">Xác nhận</el-button>
+        <el-button style="width: 100%; margin-top: 12px; place-content: center;" type="danger">Xác nhận</el-button>
     </el-popover>
 </template>

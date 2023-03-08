@@ -41,6 +41,6 @@ const hidePopover10 = () => {
             Nếu xoá bạn sẽ không thể phục hồi lại.
         </p>
         <el-input v-model="input" placeholder="Please input" />
-        <el-button style="width: 100%; margin-top: 12px;" type="danger">Xóa</el-button>
+        <el-button style="width: 100%; margin-top: 12px; place-content: center;" type="danger">Xóa</el-button>
     </el-popover>
 </template>

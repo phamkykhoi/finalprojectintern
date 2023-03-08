@@ -1,6 +1,7 @@
 <script setup>
 
 import DepartenUserForm from '@/Pages/Departen/User.vue';
+import EditDepartmentForm from '@/Pages/Departen/Edit.vue';
 import SettingIcon from '@/Components/Icons/SettingIcon.vue';
 import Dropdown from '@/Components/Dropdown.vue';
 import { Link } from '@inertiajs/inertia-vue3';
@@ -27,13 +28,15 @@ const closeFormActivity = (value) => {
 }
 const showFormDepartment = ref(false);
 
+const showFormEditDepartment = ref(false);
+
 const editDepartmentForm = (currentDepartment) => {
-    showFormDepartment.value = true;
+    showFormEditDepartment.value = true;
     state.department = currentDepartment
 }
 
-const closeFormDepartment = (value) => {
-    showFormDepartment.value = value;
+const closeFormEditDepartment = (value) => {
+    showFormEditDepartment.value = value;
 }
 
 const showFormDepartmentUser = ref(false);
@@ -81,9 +84,12 @@ const closeFormDepartmentUser = (value) => {
                                         <a @click="createActivityForm(department)"
                                             class="block w-full px-4 py-2 text-left text-sm leading-5 text-gray-700 hover:bg-gray-100 transition duration-150 ease-in-out"><i
                                                 class="bi bi-plus-lg"></i>Tạo hoạt động</a>
-                                        <a @click="createDepartmentUserForm(department)"
+                                        <div class="flex" style="align-items: center;">
+                                            <a @click="createDepartmentUserForm(department)"
                                             class="block w-full px-4 py-2 text-left text-sm leading-5 text-gray-700 hover:bg-gray-100 transition duration-150 ease-in-out"><i
                                                 class="bi bi-plus-lg"></i>Quản lý thành viên</a>
+                                                <SettingIcon @click="editDepartmentForm(department)" style="margin-right: 8px;"/>
+                                        </div>
                                     </template>
                                 </Dropdown>
                             </span>
@@ -113,5 +119,7 @@ const closeFormDepartmentUser = (value) => {
 
         <DepartenUserForm v-if="showFormDepartmentUser" :department="state.department"
             :isShowModal="showFormDepartmentUser" v-on:closeModal="closeFormDepartmentUser" />
+        <EditDepartmentForm v-if="showFormEditDepartment" :department="state.department"
+        :isShowModal="showFormEditDepartment" v-on:closeModal="closeFormEditDepartment" />
     </div>
 </template>
