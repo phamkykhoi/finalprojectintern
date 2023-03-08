@@ -145,7 +145,8 @@ const dialog = reactive({
 });
 
 const temp = reactive({
-    editTaskGroupName: "",
+    editTaskGroupName:[''],
+    addTaskGroup:'',
 })
 
 const taskGroupForm = reactive({
@@ -300,7 +301,7 @@ function closePopoverAction() {
     popoverVisible.value = false
 }
  function clickEditNameTaskGroup(index, taskGroupName) {
-    temp.editTaskGroupName = taskGroupName;
+    temp.editTaskGroupName[index] = taskGroupName;
     dialog.editNameTaskGroup[index] = true
 };
 
@@ -334,14 +335,14 @@ function closePopoverAction() {
                             <el-form v-if="dialog.editNameTaskGroup[index]">
                                 <el-row>
                                     <el-input autosize
-                                    v-model="temp.editTaskGroupName"
+                                    v-model="temp.editTaskGroupName[index] "
                                     type="textarea"
                                     />
                                 </el-row>
                                 <div style="margin: 10px 0" />
                                 <div style="margin: 5px 0 10px 0" />
                                 <el-row>
-                                    <el-button type="success" @click="editTaskGroup(taskGroup.id, temp.editTaskGroupName, index)">Lưu</el-button>
+                                    <el-button type="success" @click="editTaskGroup(taskGroup.id, temp.editTaskGroupName[index], index)">Lưu</el-button>
                                     <el-button @click="  dialog.editNameTaskGroup[index] = false; temp.editTaskGroupName = taskGroup.name" style="margin-left: 10px;">x</el-button>
 
                                 </el-row>
@@ -374,20 +375,11 @@ function closePopoverAction() {
                     >
                         <SortTaskGroup />
                     </el-popover>
-                    <!-- <el-popover
-                        :ref="ref => popoverRef2[index] = ref"
-                        :visible="popoverVisible[index]"
-                        virtual-triggering
-                        persistent
-                        width="300px"
-                        trigger="click"
-                    > -->
                         <ActionTaskGroup :idTaskGroup="index" :taskGroup="taskGroup" :visible="dialog.popoverAction" 
                             :state="state" :popperRef="popoverRef" :popoverRef2="popoverRef2" :editNameTaskGroup="dialog.editNameTaskGroup" 
                             @open-dialog-add-task-group="openDialogAddTaskGroup" @open-dialog-add-task="openDialogAddTask"
                             @close-popover-action="closePopoverAction" :popoverAction="dialog.popoverAction" 
                         />
-                    <!-- </el-popover> -->
                 </div>
 
                 <el-button 
@@ -400,7 +392,7 @@ function closePopoverAction() {
                 <el-form v-if="dialog.addTaskGroup">
                     <el-row>
                         <el-input autosize
-                        v-model="input"
+                        v-model="temp.addTaskGroup"
                         type="textarea"
                         placeholder="Tạo nhóm công việc"
                         />
