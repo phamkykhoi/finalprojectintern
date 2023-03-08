@@ -101,9 +101,9 @@ function changeImportantStatus(taskId) {
     is_important: taskForm.is_important,
     change_status_type: 'important',
 })
-        .then(res => {
-            getGroupsTask();
-        })
+    .then(res => {
+        getGroupsTask();
+    })
 }
 
 function changeQuicklyStatus(taskId) {

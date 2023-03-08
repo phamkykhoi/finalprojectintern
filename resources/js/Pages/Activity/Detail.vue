@@ -19,9 +19,18 @@ import request from '../../utils/request';
 
 const props = defineProps({
     activity: Object,
-    departments: Array,
     activityId: Number,
 });
+
+const departments = ref([]);
+
+async function getDepartment() {
+    await request.get(`/api/department`).then((res) => {
+        departments.value = res.data.result.departments
+    })
+}
+
+getDepartment()
 
 const showFormTask = ref(false);
 
@@ -45,6 +54,7 @@ async function getGroupsTask() {
 }
 
 provide('getGroupsTask', getGroupsTask)
+provide('getDepartment', getDepartment)
 
 const createTaskForm = (currentTask) => {
     showFormTask.value = true;
