@@ -31,7 +31,8 @@ class TaskController extends Controller
     public function store(CreateTaskRequest $request)
     {
         try {
-            DB::transaction(function () use ($request) {
+            $taskId="";
+            DB::transaction(function () use ($request, &$taskId) {
                 $inputs = $request->all();
                 $task = $this->taskRepo->save($inputs);
                 $userTask = [
@@ -39,10 +40,11 @@ class TaskController extends Controller
                     'task_id' => $task['id'],
                     'role_task' => $inputs['role_id'],
                 ];
-
+                $taskId = $task['id'];
                 $this->userTaskRepo->save($userTask);
             });
-            return $this->success();
+            return $this->success(['id' => $taskId]);
+
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
         }

@@ -37,8 +37,6 @@ const taskForm = reactive({
     task_group_id: props.task.id,
     is_quickly: 0,
     is_important: 0,
-    file: null,
-    fileList: [],
     user_id: '',
     role_id: '',
     start_date: '',
@@ -53,6 +51,8 @@ const roles = ref([
     { id: 5, role: "Người theo dõi" },
     { id: 6, role: "Chủ task" },
 ]);
+
+const listAttachments = [];
 
 const emit = defineEmits(['closeModal', 'unClose']);
 
@@ -120,6 +120,10 @@ const addTask = (formEl: FormInstance | undefined) => {
 
 const users = ref([]);
 
+const handleLoadData = (data)=>{
+    listAttachments.push(data.id);  
+}
+
 onBeforeMount(async () => {
     await axios.get(`/user/list`).then((res) => {
         users.value = res.data.users;
@@ -172,7 +176,7 @@ onBeforeMount(async () => {
                             />
                         </el-form-item>
                         <el-form-item label="Tệp đính kèm">
-                            <FileUpload></FileUpload>
+                            <FileUpload @data="handleLoadData"></FileUpload>
                         </el-form-item>
                         <el-row>
                             <el-col :span="12">
