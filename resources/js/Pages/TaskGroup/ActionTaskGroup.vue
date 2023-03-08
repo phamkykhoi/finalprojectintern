@@ -31,11 +31,6 @@ const props = defineProps({
 
 });
 
-// const emit = defineEmits([
-//     'openDialogAddTask', 
-//     'openDialogAddTaskGroup', 
-// ]);
-
 const indexTaskGroup = props.idTaskGroup
 const dialogVisible = ref(false)
 const poppveraddNewTask = ref()
@@ -88,10 +83,6 @@ function visibleAction(idTaskGroup) {
     popoverVisible.value[idTaskGroup] = true;
    
 }
-
-// function closePopoverAction() {
-//     popoverVisible.value = false
-// }
 
 async function deleteTaskGroup(id)
 {
