@@ -1,17 +1,23 @@
 
-<script setup>
+<script lang="ts" setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { useForm } from '@inertiajs/inertia-vue3';
 import TextInput from '@/Components/TextInput.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import InputError from '@/Components/InputError.vue';
-import PrimaryButton from '@/Components/PrimaryButton.vue';
-import SecondaryButton from '@/Components/SecondaryButton.vue';
+import { ref, inject } from 'vue';
+import type { FormInstance } from 'element-plus';
+import request from '../../utils/request';
+import { ElMessage } from 'element-plus';
+
+const ruleFormRef = ref<FormInstance>()
 
 const props = defineProps({
     department: Object,
     pageTitle: String,
 });
+
+const getDepartment = inject('getDepartment');
 
 const form = useForm({
     name: props.department ? props.department.name : null,
@@ -19,21 +25,26 @@ const form = useForm({
     type: props.department ? props.department.type : null,
 });
 
-const saveDepartment = () => {
-    if (!props.department) {
-        form.post(route('department.store'), {
-            preserveScroll: true,
-            onSuccess: () => { },
-            onError: () => { },
-            onFinish: () => { },
-        })
-        return;
-    }
-
-    form.patch(route('department.update', {department: props.department.id}))
+const saveDepartment = (formEl: FormInstance | undefined) => {
+    if (!formEl) return
+    formEl.validate((valid) => {
+        if (valid) {
+            request.put(`/department/${props.department.id}`, form).then(res => {
+                if (res.data.status) {
+                    ElMessage({
+                        showClose: true,
+                        message: 'Sửa department thành công',
+                        type: 'success',
+                    })
+                    closeModal()
+                }
+            })
+        }
+    })
 }
-
-
+const closeModal = () => {
+    window.history.go(-1);
+};
 </script>
 
 <template>
@@ -43,33 +54,41 @@ const saveDepartment = () => {
                 <header>
                     <h3>{{ pageTitle }}</h3>
                 </header>
-                <form @submit.prevent="saveDepartment()" class="mt-6 space-y-6">
-                    <div>
-                        <InputLabel for="name" value="Tên Phòng ban" />
-                        <TextInput id="name" type="text" class="mt-1 block w-full" v-model="form.name"
-                            autofocus />
+                <form class="mt-6 space-y-6">
+                    <el-form ref="ruleFormRef" :model="form" class="demo-ruleForm" :rules="rules">
+                        <div>
+                            <InputLabel for="name" value="Tên Phòng ban" />
+                            <TextInput id="name" type="text" class="mt-1 block w-full" v-model="form.name"
+                                autofocus />
 
-                        <InputError class="mt-2" :message="form.errors.name" />
-                    </div>
+                            <InputError class="mt-2" :message="form.errors.name" />
+                        </div>
 
-                    <div>
-                        <InputLabel for="name" value="Mô tả phòng ban" />
-                        <TextInput id="description" type="text" class="mt-1 block w-full" v-model="form.description"
-                            autofocus />
+                        <div>
+                            <InputLabel for="name" value="Mô tả phòng ban" />
+                            <TextInput id="description" type="text" class="mt-1 block w-full" v-model="form.description"
+                                autofocus />
 
-                        <InputError class="mt-2" :message="form.errors.description" />
-                    </div>
+                            <InputError class="mt-2" :message="form.errors.description" />
+                        </div>
 
-                    <div>
-                        <InputLabel for="name" value="Type" />
-                        <TextInput id="type" type="number" class="mt-1 block w-full" v-model="form.type" />
+                        <div>
+                            <InputLabel for="name" value="Type" />
+                            <TextInput id="type" type="number" class="mt-1 block w-full" v-model="form.type" />
 
-                        <InputError class="mt-2" :message="form.errors.type" />
-                    </div>
+                            <InputError class="mt-2" :message="form.errors.type" />
+                        </div>
+                    </el-form>
 
-                    <div>
-                        <SecondaryButton> Đóng </SecondaryButton>
-                        <PrimaryButton class="ml-3">Lưu lại</PrimaryButton>
+                    <div class="modal-footer flex flex-shrink-0 flex-wrap items-center justify-end p-4 border-t border-gray-200 rounded-b-md">
+                        <div>
+                            <el-button type="primary" @click="closeModal">
+                                Đóng
+                            </el-button>
+                            <el-button type="primary" @click="saveDepartment(ruleFormRef)">
+                                Lưu lại
+                            </el-button>
+                        </div>
                     </div>
                 </form>
             </div>

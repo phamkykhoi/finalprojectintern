@@ -2,13 +2,24 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Link, useForm } from '@inertiajs/inertia-vue3';
+import { ref } from 'vue';
+import request from '../../utils/request';
 
 const props = defineProps({
-    departments: Array,
     meta: Object,
 });
 
 const form = useForm({ })
+
+const departments = ref([]);
+
+async function getDepartment() {
+    await request.get(`/api/department`).then((res) => {
+        departments.value = res.data.result.departments
+    })
+}
+
+getDepartment()
 
 const deleteDepartment = (departmentId) => {
 
@@ -18,7 +29,6 @@ const deleteDepartment = (departmentId) => {
 
     form.delete(route('department.destroy', {department: departmentId}));
 }
-
 
 </script>
 

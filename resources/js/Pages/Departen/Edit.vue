@@ -3,8 +3,8 @@ import Modal from '@/Components/Modal.vue';
 import { useForm } from '@inertiajs/inertia-vue3'
 import { ref, defineEmits, inject } from 'vue';
 import request from '../../utils/request';
-import type { FormInstance } from 'element-plus';
 import { ElMessage } from 'element-plus';
+import type { FormInstance } from 'element-plus';
 
 const ruleFormRef = ref<FormInstance>()
 
@@ -53,8 +53,8 @@ const saveDepartment = (formEl: FormInstance | undefined) => {
                         message: 'Sửa department thành công',
                         type: 'success',
                     })
-                    closeModal()
-                    getDepartment()
+                    closeModal();
+                    getDepartment();
                 }
             })
         }
