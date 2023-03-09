@@ -73,6 +73,24 @@ function createSubTask()
         })
 }
 
+function deleteSubTask(id)
+{
+    request.delete(`/subtask/${id}`).then((res)=>{
+        ElMessage({
+            showClose: true,
+            message: 'Delete subtask successfully',
+            type: 'success',
+        })
+        getSubTask(props.taskId)
+    }).catch(err => {
+        ElMessage({
+            showClose: true,
+            message: err.response.data.message,
+            type: 'error',
+            })
+        })
+}
+
 function resetForm() {
     dataSubTask.name='',
     dataSubTask.description=''
@@ -93,12 +111,6 @@ function editSubTask(item){
 }
 
 const checkedSubTask = ref(Array(subTasks.value.length).fill(false));
-
-function deleteSubTask(idSubTask){
-    subTasks.value.splice(idSubTask, 1);
-    checkedSubTask.value.splice(idSubTask, 1);
-    popoverRef.value[idSubTask].hide()
-}
 
 const showAddTask = ref(false)
 
@@ -223,7 +235,7 @@ const rules = {
                     <el-button class="activity-icon" size="medium" :icon="Rank" style="width: 100%; border: none">Di chuyển</el-button>
                     <el-button class="activity-icon" size="medium" :icon="Bell" style="width: 100%; border: none">Nhắc việc</el-button>
                     <el-button class="activity-icon" size="medium" :icon="Share" style="width: 100%; border: none">Lấy link chia sẻ</el-button>
-                    <el-button class="activity-icon" size="medium" :icon="CloseBold" @click="deleteSubTask(index)" style="width: 100%; border: none">Xóa</el-button>
+                    <el-button class="activity-icon" size="medium" :icon="CloseBold" @click="deleteSubTask(item.id)" style="width: 100%; border: none">Xóa</el-button>
                 </el-popover>
             </el-col>
         </el-row>
