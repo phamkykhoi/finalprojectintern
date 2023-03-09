@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { ref, unref, onBeforeMount, reactive } from 'vue';
+import { ref, unref, onBeforeMount, reactive,toRefs, useForm } from 'vue';
 import { ClickOutside as vClickOutside } from 'element-plus'
 import { EditPen, CloseBold, CirclePlusFilled, Calendar, MoreFilled, DocumentCopy, Rank, Bell, Share, List } from '@element-plus/icons-vue';
 import { ElMessage } from 'element-plus';
@@ -14,7 +14,7 @@ const props = defineProps({
 
 const ruleFormRef = ref<FormInstance>()
 
-const loading = ref(true)
+const loading = ref(false)
 
 const checked = ref([false])
 
@@ -28,17 +28,19 @@ const subTasks = ref([])
 
 function getSubTask(id)
 {
+    loading.value=true
     request.get(`/api/subtask/${id}`)
         .then((res) => {
             subTasks.value = res.data.result.subtask;
+            loading.value=false;
         }).catch(err => {
             ElMessage({
                 showClose: true,
                 message: err.response.data.message,
                 type: 'error',
-                })
             })
             loading.value=false;
+        })      
 }
 
 onBeforeMount(async () => {
@@ -61,7 +63,7 @@ function createSubTask()
             type: 'success',
         })
         getSubTask(props.taskId)
-        
+        resetForm()
     }).catch(err => {
         ElMessage({
             showClose: true,
@@ -69,10 +71,12 @@ function createSubTask()
             type: 'error',
             })
         })
-        loading.value=false;
 }
-console.log(dataSubTask)
 
+function resetForm() {
+    dataSubTask.name='',
+    dataSubTask.description=''
+}
 const hidePopoverSubTask = (index) => {
     popoverRef.value[index].hide()
 }
@@ -175,14 +179,10 @@ const rules = {
             <el-col :span="1" style="text-align: right;">
             </el-col>
             <el-col :span="23" style="text-align: right;">
-                <el-form-item prop="name">
-                    <el-input v-model="dataSubTask.name" type="textarea" :rows="1" autocomplete="off" placeholder="Tạo mới tên việc"
+                <el-input v-model="dataSubTask.name" type="textarea" :rows="1" autocomplete="off" placeholder="Tạo mới tên việc"
                     clearable style="display: block;" />
-                </el-form-item>
-                <el-form-item prop="description">
                 <el-input v-model="dataSubTask.description" type="textarea" :rows="1" autocomplete="off" placeholder="tạo mới mô tả"
                     clearable style="display: block; margin-top: 8px;" />
-                </el-form-item>
                     <span class="task-btn">
                     <el-button color="green" style="margin-right: 8px;" @click="createSubTask()">Tạo việc</el-button>
                     <el-icon @click="closeAddTask" class="task-icon-close close"><CloseBold /></el-icon>
