@@ -131,7 +131,7 @@ const addTask = (formEl: FormInstance | undefined) => {
 const users = ref([]);
 
 const handleLoadData = (data)=>{
-    listAttachments.push(data.id);
+    listAttachments.push(data.attachment.id);
 }
 
 onBeforeMount(async () => {

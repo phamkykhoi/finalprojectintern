@@ -33,7 +33,7 @@ class AttachmentController extends Controller
         ]);
 
         return $this->success([
-            'id' => $attachment['id'],
+            'attachment' => $attachment,
             'file_url' => url('/storage/attachments', ['file' => $fileName])
         ]);
     }
