@@ -1,5 +1,14 @@
 <script lang="ts" setup>
 import TaskForm from '@/Pages/Task/Form.vue';
+import AddTask from '@/Components/TaskGroupAction/AddTask.vue';
+import EditName from '@/Components/TaskGroupAction/EditName.vue';
+import AddGroup from '@/Components/TaskGroupAction/AddGroup.vue';
+import Copy from '@/Components/TaskGroupAction/Copy.vue';
+import DeleteTaskGroup from '@/Components/TaskGroupAction/Delete.vue';
+import Move from '@/Components/TaskGroupAction/Move.vue';
+import MoveAll from '@/Components/TaskGroupAction/MoveAll.vue';
+import Save from '@/Components/TaskGroupAction/Save.vue';
+import SaveAll from '@/Components/TaskGroupAction/SaveAll.vue';
 import { reactive, ref, unref, defineProps } from 'vue';
 import { Plus, EditPen, CopyDocument, Switch, Rank, TakeawayBox, Delete} from '@element-plus/icons-vue';
 import { ClickOutside as vClickOutside, ElMessageBox, ElMessage } from 'element-plus';
@@ -9,6 +18,7 @@ const props = defineProps({
     idTaskGroup: Number,
     state: Object,
     taskGroup: Object,
+    taskGroups: Object,
     editNameTaskGroup: Array,
     popoverAction: Array,
     dialogAddTaskGroup: Boolean,
@@ -18,44 +28,14 @@ const props = defineProps({
     },
     visible: Boolean,
     popoverRef2: Object,
-});
 
-const emit = defineEmits([
-    'openDialogAddTask', 
-    'openDialogAddTaskGroup', 
-    'closePopoverAction',
-]);
+});
 
 const indexTaskGroup = props.idTaskGroup
 const dialogVisible = ref(false)
 const poppveraddNewTask = ref()
 const popoveraddNewTask = () => {
   unref(poppveraddNewTask).popperRef?.delayHide?.()
-}
-
-const copyJobGroup = ref()
-const popoverCopy = () => {
-  unref(copyJobGroup).popperRef?.delayHide?.()
-}
-
-const moveJobGroup = ref()
-const popoverMove= () => {
-  unref(moveJobGroup).popperRef?.delayHide?.()
-}
-
-const moveAllTheWork = ref()
-const popoverMoveAll= () => {
-  unref(moveAllTheWork).popperRef?.delayHide?.()
-}
-
-const storeTaskGroup = ref()
-const popoverstoreTaskGroup= () => {
-  unref(popoverstoreTaskGroup).popperRef?.delayHide?.()
-}
-
-const storeAllWorkInGroup = ref()
-const popoverstoreAllWorkInGroup= () => {
-  unref(popoverstoreAllWorkInGroup).popperRef?.delayHide?.()
 }
 
 const dialog = reactive({
@@ -67,10 +47,21 @@ const dialog = reactive({
     dialogStore: false,
     dialogStoreAllWork: false,
     dialogDelete: false,
-    // addNewTask: false,
-    addTaskGroup: props.dialogAddTaskGroup,
-    editNameTaskGroup: [false],
+    addTaskGroup: false,
+    addNewTask: false,
     input:'',
+});
+
+const title = reactive({
+    addTask: 'Thêm mới công việc',
+    editName: 'Hiệu chỉnh nhóm việc',
+    addTaskGroup: 'Tạo nhóm công việc',
+    copy: 'Sao chép nhóm công việc',
+    move: 'Di chuyển nhóm công việc',
+    moveAll: 'Di chuyển toàn bộ công việc trong nhóm',
+    save: 'Lưu trữ nhóm việc',
+    saveAll: 'Lưu trữ toàn bộ việc trong nhóm',
+    delete: 'Xóa nhóm việc',
 });
 
 const showFormTask = ref(false);
@@ -83,7 +74,15 @@ const createTaskForm = (currentTask) => {
     props.state.task = currentTask
 }
 
-const popoverOption = props.visible;
+const popoverVisible = ref(false);
+const openPopoverAction = (index) => {
+    popoverVisible.value[index] = !popoverVisible.value[index];
+};
+
+function visibleAction(idTaskGroup) {
+    popoverVisible.value[idTaskGroup] = true;
+   
+}
 
 async function deleteTaskGroup(id)
 {
@@ -124,275 +123,84 @@ async function deleteTaskGroup(id)
     })
 }
 
-const openDialogAddTask = () => {
-    emit('openDialogAddTask');
-};
-
-const openDialogAddTaskGroup = () => {
-    emit('openDialogAddTaskGroup');
-};
-
-function editNameTaskGroup(index) {
-    props.editNameTaskGroup[indexTaskGroup] = !props.editNameTaskGroup[indexTaskGroup]
+function openDialogAddTask() {
+    dialog.addNewTask = true
 }
 
+function openDialogAddTaskGroup() {
+    dialog.addTaskGroup = true
+}
+
+function openAction() {
+    dialog.addNewTask = true
+}
+
+function showParentPopover() {
+    popoverVisible.value = true
+    console.log(popoverVisible.value)
+}
 </script>
 <template>
-        <el-button @click="openDialogAddTask" v-popover="poppveraddNewTask"
-            v-click-outside="false" :icon="Plus" circle > 
-            Thêm mới công việc
-        </el-button>
-        <el-button @click="editNameTaskGroup(indexTaskGroup)" :icon="EditPen" circle>
-            Hiệu chỉnh nhóm công việc
-        </el-button>
+    <el-popover
+        :ref="ref => popoverRef2[props.idTaskGroup] = ref"
+        visible="popoverVisible"
+        virtual-triggering
+        persistent
+        width="320px"
+        trigger="click"
+    >
+        <AddTask :icon="Plus" :title="title.addTask"  @open-dialog-add-task="openDialogAddTask"/>
+        <EditName :icon="EditPen" :title="title.editName" :editNameTaskGroup="props.editNameTaskGroup" :idTaskGroup="props.idTaskGroup"/>
         <hr>
-        <el-button @click="openDialogAddTaskGroup"
-            :icon="Plus" circle>
-            Tạo nhóm công việc
-        </el-button>
-        <el-button  v-popover="copyJobGroup" @click="dialog.dialogCopy = true" 
-            :icon="CopyDocument" circle >
-            Sao chép nhóm công việc
-        </el-button>
-        <el-button v-popover="moveJobGroup" @click="dialog.dialogMove = true"
-            :icon="Switch" circle>
-            Di chuyển nhóm công việc
-        </el-button>
-        <el-button  v-popover="moveAllTheWork" @click="dialog.dialogMoveAll = true"
-            :icon="Rank" circle>
-            Di chuyển toàn bộ công việc trong nhóm
-        </el-button>
-        <hr>
-        <el-button v-popover="storeTaskGroup"  @click="dialog.dialogStore = true"
-            :icon="TakeawayBox" circle>
-            Lưu trữ nhóm việc
-        </el-button>
-        <el-button v-popover="storeAllWorkInGroup" @click="dialog.dialogStoreAllWork = true"
-            :icon="TakeawayBox" circle>
-            Lưu trữ toàn bộ việc trong nhóm
-        </el-button>
-        <hr>
-        <el-button v-popover="deleteTaskGroup" @click="dialog.dialogDelete = true"
-            :icon="Delete" circle>
-            Xóa nhóm việc
-        </el-button>
+        <AddGroup :icon="Plus" :title="title.addTaskGroup" @open-dialog-add-task-group="openDialogAddTaskGroup"/>
+        <Copy :icon="CopyDocument" :title="title.copy" @show-parent-popover="showParentPopover"/>
+        <Move :icon="Switch" :title="title.move"/>
+        <MoveAll :icon="Rank" :title="title.moveAll"/>
+        <hr/>
+        <Save :icon="TakeawayBox" :title="title.save"/>
+        <SaveAll :icon="TakeawayBox" :title="title.saveAll"/>
+        <hr/>
+        <DeleteTaskGroup :icon="Delete" :title="title.delete"/>
 
-        <!-- sub popover -->
-        <el-popover
-            :visible="dialog.dialogCopy"
-            ref="copyJobGroup"
-            trigger="click"
-            virtual-triggering
-            width="300px"
-            persistent
-        >
-            <el-row class="title-dialog">
-                <el-col :span="18" class="title">
-                    <el-form-item label="Sao chép nhóm việc"></el-form-item>
-                </el-col>
-                <el-col :span="2">
-                    <el-button class="close" @click="dialog.dialogCopy = false">x</el-button>
-                </el-col>
-            </el-row>
-            <div class="select">
-                <p>Team</p>
-                <el-select v-model="value" placeholder="Chọn">
-                    <el-option key="" label="" value="Team 1"
-                    />
-                </el-select>        
-            </div>
-            <div class="select">
-                <p>Kế hoạch</p>
-                <el-select v-model="value" placeholder="Chọn">
-                    <el-option key="" label="Kế hoạch" value=""
-                    />
-                </el-select>
-            </div>
-            <div class="select">
-                <el-button type="success" @click="copyTaskGroup(taskGroup.id)">Sao chép</el-button>
-            </div>
-        </el-popover>
-
-        <el-popover
-            :visible="dialog.dialogMove"
-            ref="moveJobGroup"
-            trigger="click"
-            virtual-triggering
-            width="300px"
-            persistent
-        >
-            <el-row class="title-dialog">
-                <el-col :span="18" class="title">
-                    <el-form-item label="Di chuyển nhóm việc"></el-form-item>
-                </el-col>
-                <el-col :span="2">
-                    <el-button class="close" @click="dialog.dialogMove = false">x</el-button>
-                </el-col>
-            </el-row>
-            <div class="select">
-                <p>Team</p>
-                <el-select v-model="value" placeholder="Chọn">
-                    <el-option key="" label="" value="Team 1"
-                    />
-                </el-select>        
-            </div>
-            <div class="select">
-                <p>Kế hoạch</p>
-                <el-select v-model="value" placeholder="Chọn">
-                    <el-option key="" label="Kế hoạch" value=""
-                    />
-                </el-select>
-            </div>
-            <div class="select">
-                <el-button type="success">Sao chép</el-button>
-            </div>
-        </el-popover>
-
-        <el-popover
-            :visible="dialog.dialogMoveAll"
-            ref="moveAllTheWork"
-            trigger="click"
-            virtual-triggering
-            width="350px"
-            persistent
-        >
-            <el-row class="title-dialog">
-                <el-col :span="17" class="title">
-                    <p>Di chuyển toàn bộ công việc trong nhóm việc</p>
-                </el-col>
-                <el-col :span="5">
-                    <el-button class="close" @click="dialog.dialogMoveAll = false">x</el-button>
-                </el-col>
-            </el-row>
-            <el-row>
-                <el-col>
-                    <div>Team</div>
-                    <el-select v-model="value" placeholder="Chọn" style="width: 315px;">
-                        <el-option key="" label="Team 1" value="Team 1"
-                        />
-                    </el-select>  
-                </el-col>
-            </el-row>
-            <el-row>
-                <el-col>
-                    <div>Kế hoạch</div>
-                    <el-select v-model="value" placeholder="Chọn" style="width: 315px;">
-                        <el-option key="" label="Kế hoạch" value="Kế hoạch"
-                        />
-                    </el-select>  
-                </el-col>
-            </el-row>
-            <el-row>
-                <el-col>
-                    <div>Nhóm việc</div>
-                    <el-select v-model="value" placeholder="Chọn" style="width: 315px;">
-                        <el-option key="" label="Nhóm việc" value="Nhóm việc"
-                        />
-                    </el-select>  
-                </el-col>
-            </el-row>
-            <el-row>
-                <el-col>Thành viên theo dõi công việc</el-col>
-            </el-row>
-            <el-row>
-                <el-checkbox v-model="checked" size="large" label="Mời thành viên theo dõi công việc vào kế hoạch , nếu chưa được mời" />
-            </el-row>
-            <div class="select">
-                <el-button type="success">Sao chép</el-button>
-            </div>
-        </el-popover>
-
-        <el-popover
-            :visible="dialog.dialogStore"
-            ref="storeTaskGroup"
-            trigger="click"
-            virtual-triggering
-            width="303px"
-            persistent
-        >
-            <el-row class="title-dialog">
-                <el-col :span="18" class="title">
-                    <el-form-item label="Lưu trữ Nhóm việc"></el-form-item>
-                </el-col>
-                <el-col :span="2">
-                    <el-button class="close" @click="dialog.dialogStore = false">x</el-button>
-                </el-col>
-            </el-row>
-            <el-row>
-                <p style="white-space: pre-line;">Thao tác này sẽ chuyển Nhóm công việc vào lưu trữ.
-                    Bạn có thể vào danh sách công việc lưu trữ để phục hồi lại.
-                    Bạn có muốn tiếp tục không?
-                </p>
-            </el-row>
-            <el-row>
-                <el-col :span="10"></el-col>
-                <el-col :span="8"><el-button type="success" round>Xác nhận</el-button></el-col>
-                <el-col :span="6"><el-button type="info" round @click="dialog.dialogStore = false">Hủy</el-button></el-col>
-            </el-row>
-        </el-popover>
-
-        <el-popover
-            :visible="dialog.dialogStoreAllWork"
-            ref="storeAllWorkInGroup"
-            trigger="click"
-            virtual-triggering
-            width="444px"
-            persistent
-        >
-            <el-row class="title-dialog">
-                <el-col :span="18" class="title">
-                    <el-form-item label="Lưu trữ toàn bộ việc trong nhóm"></el-form-item>
-                </el-col>
-                <el-col :span="2">
-                    <el-button class="close" @click="dialog.dialogStoreAllWork = false">x</el-button>
-                </el-col>
-            </el-row>
-            <el-row>
-                <p style="white-space: pre-line;">Thao tác này sẽ chuyển toàn bộ Công việc trong Nhóm vào lưu trữ. 
-                    Bạn có thể vào danh sách công việc lưu trữ để phục hồi lại. 
-                    Bạn có muốn tiếp tục không?
-                </p>
-            </el-row>
-            <el-row>
-                <el-col :span="3"></el-col>
-                <el-col :span="6"><el-button type="success" round>Lưu tất cả</el-button></el-col>
-                <el-col :span="11"><el-button type="primary">Lưu việc đã hoàn thành</el-button></el-col>
-                <el-col :span="4"><el-button type="info" round @click="dialog.dialogStoreAllWork = false">Đóng</el-button></el-col>
-            </el-row>
-        </el-popover>
-
-        <el-popover
-            :visible="dialog.dialogDelete"
-            ref="deleteTaskGroup"
-            trigger="click"
-            virtual-triggering
-            width="350px"
-            persistent
-        >
-            <el-row class="title-dialog">
-                <el-col :span="18" class="title">
-                    <el-form-item label="Xóa nhóm việc"></el-form-item>
-                </el-col>
-                <el-col :span="2"> 
-                    <el-button class="close" @click="dialog.dialogDelete = false">x</el-button>
-                </el-col>
-            </el-row>
-            <el-row>
-                <p style="white-space: pre-line;">Bạn có chắc là xoá nhóm việc này không?
-                    Vui lòng nhập số <b>5</b> vào ô bên dưới để xác nhận
-                    <b style="color: red;">Nếu xoá bạn sẽ không thể phục hồi lại.</b>
-                </p>
-            </el-row>
-            <el-row>
-                <el-input v-model="input" placeholder="5" />
-            </el-row>
-            <el-row>
-                <el-col><el-button style="place-content: center;" type="danger" round>Xóa</el-button></el-col>
-            </el-row>
-        </el-popover>
         <TaskForm v-if="showFormTask" :task="state.task" :isShowModal="showFormTask" v-on:closeModal="closeFormTask" />
+    </el-popover>
+
+    <el-dialog
+        v-model="dialog.addTaskGroup"
+        title="Tạo nhóm công việc"
+        width="30%"
+    >
+        <input type="text" name="" placeholder="Nhập tên nhóm công việc" style="width: 100%; border-radius: 8px;">
+        <template #footer>
+        <span class="dialog-footer">
+            <el-button style="margin-right: 10px;" @click="dialog.addTaskGroup = false">Đóng</el-button>
+            <el-button type="primary" @click="dialog.addTaskGroup = false">Lưu</el-button>
+        </span>
+        </template>
+    </el-dialog>
+    <el-dialog
+        v-model="dialog.addNewTask"
+        title="Thêm mới công việc"
+        width="50%"
+    >
+        <el-row>
+            <el-col>Tên công việc</el-col>
+            <el-input v-model="input" placeholder="Nhập tên công việc" />
+        </el-row>
+        <el-row>
+            <el-col>Mô tả</el-col>
+            <el-input v-model="input" :rows="3" type="textarea" placeholder="Nhập mô tả"/>
+        </el-row>
+        
+        <template #footer>
+        <span class="dialog-footer">
+            <el-button style="margin-right: 10px;" @click="dialog.addNewTask = false">Đóng</el-button>
+            <el-button type="primary" @click="dialog.addNewTask = false">Lưu</el-button>
+        </span>
+        </template>
+    </el-dialog>
 </template>
-<style scoped>
+<style>
 .card-header {
    position: relative;
 }

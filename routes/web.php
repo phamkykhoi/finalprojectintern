@@ -30,9 +30,11 @@ Route::middleware(['auth', 'verified'])->group(function() {
     Route::resource('activity', ActivityController::class);
     Route::resource('task', TaskController::class);
     Route::resource('subtask', SubTaskController::class);
+    Route::get('api/subtask/{id}', [SubTaskController::class, 'getSubTask']);
     Route::get('user/list', [UserController::class, 'indexJson']);
     Route::resource('user', UserController::class);
     Route::resource('department', DepartmentController::class);
+    Route::get('api/department', [DepartmentController::class, 'indexJson']);
     Route::post('department/assign-member', [DepartmentController::class, 'assignMember'])->name('department.assign.member');
     Route::resource('taskgroup', TaskGroupController::class);
     Route::get('department/{departmentId}/members', [DepartmentController::class, 'getMembers'])->name('department.members');

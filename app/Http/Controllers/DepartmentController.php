@@ -108,9 +108,13 @@ class DepartmentController extends Controller
      */
     public function update($id, UpdateDepartmentRequest $request)
     {
-        $inputs = $request->all();
-        $this->departmentRepo->save($inputs, ['id' => $id]);
-        return redirect()->route('department.index');
+        try {
+            $inputs = $request->all();
+            $this->departmentRepo->save($inputs, ['id' => $id]);
+            return $this->success();
+        } catch (\Exception $e) {
+            return $this->error($e->getMessage(), $e->getCode());
+        }
     }
 
     /**
@@ -173,5 +177,14 @@ class DepartmentController extends Controller
                 'message' => $e->getMessage(),
             ]);
         }
+    }
+
+    public function indexJson()
+    {
+        $user = auth()->user();
+
+        return $this->success([
+            'departments' => $this->departmentRepo->getDepartments(['activities'], $user->isRoot() ? null : $user->id),
+        ]);
     }
 }
