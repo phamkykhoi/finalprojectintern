@@ -1,5 +1,5 @@
 <script setup>
-
+import { ref} from 'vue'
 const dialogVisible = ref(false)
 const props = defineProps({
     icon: String,
@@ -52,3 +52,11 @@ const props = defineProps({
         </template>
     </el-dialog>
 </template>
+
+<style scoped>
+.btn-container {
+    justify-content: flex-start;
+    width: 105%;
+    margin: 2px 0;
+}
+</style>

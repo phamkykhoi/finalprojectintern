@@ -1,10 +1,13 @@
 <script lang="ts" setup>
-import { ref, unref } from 'vue';
+import { ref, unref, onBeforeMount } from 'vue';
 import { ClickOutside as vClickOutside } from 'element-plus'
 import { EditPen, CloseBold, CirclePlusFilled, Calendar, MoreFilled, DocumentCopy, Rank, Bell, Share, List } from '@element-plus/icons-vue';
+import { ElMessage } from 'element-plus';
+import request from '../../utils/request';
 
 const props = defineProps({
-    taskId: Number
+    taskId: Number,
+    subTasks: Array
 })
 
 const checked = ref([false])
@@ -14,6 +17,28 @@ const popoverRef  = ref([])
 const onClickOutside = () => {
     unref(popoverRef).popperRef?.delayHide?.()
 }
+
+const subTasks = ref([])
+
+function getSubTask(id)
+{
+    request.get(`/api/subtask/${id}`)
+        .then((res) => {
+            subTasks.value = res.data.result.subtask;
+        }).catch(err => {
+            ElMessage({
+                showClose: true,
+                message: err.response.data.message,
+                type: 'error',
+                })
+            })
+            loading.value=false;
+}
+
+// console.log(subTasks)
+onBeforeMount(async () => {
+    getSubTask(props.taskId);
+});
 
 const hidePopoverSubTask = (index) => {
     popoverRef.value[index].hide()
@@ -30,17 +55,17 @@ function editSubTask(item){
     CloseInputTask()
 }
 
-const subTasks = ref([
-    { id: 1,
-    name: 'Việc con 1',
-    description: 'Mô tả thành phần' },
-    { id: 2,
-    name: 'Việc con 2',
-    description: 'Mô tả thành phần' },
-    { id: 3,
-    name: 'Việc con 3',
-    description: 'Mô tả thành phần' }
-])
+// const subTasks = ref([
+//     { id: 1,
+//     name: 'Việc con 1',
+//     description: 'Mô tả thành phần' },
+//     { id: 2,
+//     name: 'Việc con 2',
+//     description: 'Mô tả thành phần' },
+//     { id: 3,
+//     name: 'Việc con 3',
+//     description: 'Mô tả thành phần' }
+// ])
 
 const checkedSubTask = ref(Array(subTasks.value.length).fill(false));
 
@@ -145,12 +170,12 @@ function clonedItems(index){
             <el-checkbox style="margin-right: 16px;" v-model="checkedSubTask[index]" size="large"/>
         </div>
 
-        <div class="task-option" v-if="!checked[index]">
-            <div  @click="checked = [false]; checked[index] = true">
-                <span style=" font-size: 14px;" v-if="!checked[index]">{{ item.name }}</span>
+        <el-row class="task-option" v-if="!checked[index]" :span="24">
+            <el-col  @click="checked = [false]; checked[index] = true" :span="20">
+                <span style=" font-size: 14px; font-weight: bold;" v-if="!checked[index]">{{ item.name }}</span>
                 <p style="font-size: 14px;">{{ item.description }}</p>
-            </div>
-            <div class="task-option-icon">
+            </el-col>
+            <el-col class="task-option-icon" :span="4">
                 <span>
                     <el-icon style="margin: 0 2px;" size="20"><Calendar /></el-icon>
                     <el-icon style="margin: 0 2px;" size="20"><CirclePlusFilled /></el-icon>
@@ -174,8 +199,8 @@ function clonedItems(index){
                     <el-button class="activity-icon" size="medium" :icon="Share" style="width: 100%; border: none">Lấy link chia sẻ</el-button>
                     <el-button class="activity-icon" size="medium" :icon="CloseBold" @click="deleteSubTask(index)" style="width: 100%; border: none">Xóa</el-button>
                 </el-popover>
-            </div>
-        </div>
+            </el-col>
+        </el-row>
 
         <div v-if="checked[index]" style="display: flex; align-items: center; width: 110%;">
             <el-col :span="23" style="text-align: right;">

@@ -3,10 +3,18 @@ import Modal from '@/Components/Modal.vue';
 import TaskCommentSection from '@/Components/TaskCommentSection.vue';
 import FileManagerOfTask from '@/Components/FileManagerOfTask.vue';
 import Participant from '@/Components/Participant.vue';
-import { reactive, ref, defineEmits, inject, unref  } from 'vue';
 import SubTask from '@/Pages/Task/SubTask.vue';
 import TaskActivity from '@/Pages/Task/TaskActivity.vue';
 import FileUpload from '@/Components/FileUpload.vue';
+import AttachFile from '@/Components/TaskAction/AttachFile.vue';
+import Copy from '@/Components/TaskAction/Copy.vue';
+import Move from '@/Components/TaskAction/Move.vue';
+import DeleteTask from '@/Components/TaskAction/Delete.vue';
+import Save from '@/Components/TaskAction/Save.vue';
+import Evaluation from '@/Components/TaskAction/Evaluation.vue';
+import JobLock from '@/Components/TaskAction/JobLock.vue';
+import CreateReminder from '@/Components/TaskAction/CreateReminder.vue';
+import UpdateThePlan from '@/Components/TaskAction/UpdateThePlan.vue';
 import type { FormInstance } from 'element-plus';
 import { ElMessage } from 'element-plus';
 import axios from 'axios';
@@ -25,6 +33,7 @@ Close, DocumentAdd, Link, ChromeFilled,
 Box, Cloudy, Folder, ArrowUpBold
 }
 from '@element-plus/icons-vue';
+import { reactive, ref, defineEmits, inject, unref, onBeforeMount } from 'vue';
 
 const ruleFormRef = ref<FormInstance>()
 
@@ -57,6 +66,19 @@ const taskForm = reactive({
     is_important: props.task.is_important,
     is_quickly: props.task.is_quickly
 })
+
+const title = reactive({
+    updateThePlan: 'Cập nhật vào kế hoạch',
+    attachFile: 'Đính kèm tệp tin',
+    copy: 'Sao chép việc',
+    move: 'Di chuyển việc',
+    reminder: 'Tạo nhắc việc',
+    evaluation: 'Đánh giá hoàn thành',
+    lock: 'Khoá việc',
+    save: 'Lưu trữ việc',
+    delete: 'Xóa việc',
+});
+
 const emit = defineEmits(['closeModal', 'unClose'])
 
 confirmingTaskDeletion.value = props.isShowModal;
@@ -154,42 +176,6 @@ function closeEdit() {
     showInputEdit.value = false
 }
 
-const buttonRef7 = ref()
-const popoverRef7 = ref()
-const onClickOutside7 = () => {
-  unref(popoverRef7).popperRef7?.delayHide?.()
-}
-const hidePopover7 = () => {
-    popoverRef7.value.hide()
-}
-
-const buttonRef8 = ref()
-const popoverRef8 = ref()
-const onClickOutside8 = () => {
-  unref(popoverRef8).popperRef8?.delayHide?.()
-}
-const hidePopover8 = () => {
-    popoverRef8.value.hide()
-}
-
-const buttonRef9 = ref()
-const popoverRef9 = ref()
-const onClickOutside9 = () => {
-  unref(popoverRef9).popperRef9?.delayHide?.()
-}
-const hidePopover9 = () => {
-    popoverRef9.value.hide()
-}
-
-const buttonRef10 = ref()
-const popoverRef10 = ref()
-const onClickOutside10 = () => {
-  unref(popoverRef10).popperRef10?.delayHide?.()
-}
-const hidePopover10 = () => {
-    popoverRef10.value.hide()
-}
-
 const checkAll = ref(false)
 const isIndeterminate = ref(true)
 const checkedFiles = ref([])
@@ -206,6 +192,40 @@ const handlecheckedFilesChange = (value: string[]) => {
 
 const checked1 = ref(false)
 const value = ref()
+const checked = ref([false])
+const completedAt =ref();
+if(props.task.completed_at) {
+    completedAt.value = new Date(props.task.completed_at);
+}
+const now = Date.now()
+
+if (completedAt.value) {
+    if(completedAt.value.getTime() < now) {
+        checked.value[props.task.id] = true;
+    }
+}
+
+// const subTasks = ref([]);
+// function getSubTask(id)
+// {
+//     request.get(`/api/subtask/${id}`)
+//         .then((res) => {
+//             subTasks.value = res.data.result.subtask;
+//             // console.log(subTasks.value)
+//         }).catch(err => {
+//             ElMessage({
+//                 showClose: true,
+//                 message: err.response.data.message,
+//                 type: 'error',
+//                 })
+//             })
+//             loading.value=false;
+// }
+
+// // console.log(subTasks)
+// onBeforeMount(async () => {
+//     getSubTask(props.task.id);
+// });
 
 </script>
 
@@ -248,7 +268,7 @@ const value = ref()
                             <el-form-item label="Mô tả:" style="display: block; margin-bottom: 0; margin-left: 6px; ">
                             </el-form-item>
                         </div>
-                        <span class="ml-31" v-if="!showInputDescription" @click="ShowInputDes">{{ taskForm.description }}</span>
+                        <span class="ml-31" v-if="!showInputDescription" @click="ShowInputDes">{{ props.task.description }}</span>
                         <div v-if="showInputDescription" style="margin: 16px 0;">
                             <el-input v-model="taskForm.description" :value="taskForm.description"
                             type="textarea" :rows="2" autocomplete="off" placeholder="Mô tả công việc" clearable style="display: inline-block;" />
@@ -258,7 +278,7 @@ const value = ref()
                             </span>
                         </div>
                         <el-row class="mb-2" style="display: block; margin-top: 16px;">
-                            <SubTask :taskId="task.id"></SubTask>
+                            <SubTask :taskId="task.id" :subTasks="subTasks"></SubTask>
                         </el-row>
 
                         <FileManagerOfTask :taskId="task.id"></FileManagerOfTask>
@@ -266,7 +286,7 @@ const value = ref()
                         <TaskActivity :taskId="task.id"></TaskActivity>
                     </el-col>
                     <el-col :span="5" class="ml-2">
-                        <el-checkbox v-model="checked2" label="Hoàn thành việc" size="large" />
+                        <el-checkbox v-model="checked[props.task.id]" label="Hoàn thành việc" size="large" />
                         <span>Ngày thực hiện</span>
                         <el-form-item style="display: block;">
                             <div class="date">
@@ -280,7 +300,7 @@ const value = ref()
 
                         </el-form-item>
                         <Participant :taskId="task.id"></Participant>
-                        <div  style="width: 100%;">
+                        <div style="width: 100%;">
                             <p>Đánh giá</p>
                             <div class="flex rate">
                                 <el-rate
@@ -297,136 +317,16 @@ const value = ref()
                         </div>
                         <el-checkbox v-model="taskForm.is_quickly" id="is_quickly" @change="changeQuicklyStatus(task.id)" label="Việc Khẩn cấp" size="large" />
                         <el-checkbox v-model="taskForm.is_important" id="is_important" @change="changeImportantStatus(task.id)" label="Việc Quan trọng" size="large" />
-                        <div class="btn-container">
-                            <el-button :icon="DocumentAdd" class="btn-container">Cập nhật vào kế hoạch</el-button>
-                            <el-button :icon="Link" class="btn-container" ref="buttonRef7" v-click-outside="onClickOutside7">Đính kèm tệp tin</el-button>
-                                <el-popover
-                                    :width="300"
-                                    ref="popoverRef7"
-                                    :virtual-ref="buttonRef7"
-                                    trigger="click"
-                                    virtual-triggering
-                                >
-                                    <div class="form-add-user">
-                                            <p>Đính kèm từ tập tin</p>
-                                            <el-icon class="close" @click="hidePopover7"><CloseBold /></el-icon>
-                                    </div>
-                                    <div class="btn-container">
-                                        <el-button :icon="Folder" text class="btn-container1">Máy tính</el-button>
-                                        <el-button :icon="ChromeFilled" text class="btn-container1">Google</el-button>
-                                        <el-button :icon="Box" text class="btn-container1">Dropbox</el-button>
-                                        <el-button :icon="Cloudy" text class="btn-container1">OneDrive</el-button>
-                                    </div>
-                                </el-popover>
-
-                            <el-button :icon="DocumentCopy" class="btn-container">Sao chép việc</el-button>
-                            <el-button :icon="Rank" class="btn-container">Di chuyển việc</el-button>
-                            <el-button :icon="Bell" class="btn-container"  @click="dialogVisible = true">Tạo nhắc việc</el-button>
-                                <el-dialog
-                                    v-model="dialogVisible"
-                                    title="Nhắc việc"
-                                    width="60%"
-                                    :before-close="handleClose"
-                                >
-                                <div >
-                                    <span>Thời gian bắt đầu nhắc việc</span>
-                                    <div>
-                                        <p>Chu kỳ nhắc việc</p>
-                                        <div style="width: 100%;">
-                                            <el-select style="width: 100%; margin-left: -8px;" v-model="value" class="m-2" placeholder="Select">
-                                                <el-option
-                                                v-for="item in options"
-                                                :key="item.value"
-                                                :label="item.label"
-                                                :value="item.value"
-                                                />
-                                            </el-select>
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <p>Chu kỳ nhắc việc</p>
-                                        <div>
-                                            <el-checkbox v-model="checked1" label="Option 1" size="large" />
-                                        </div>
-                                        <div>
-                                            <el-checkbox v-model="checked2" label="Option 2" size="large" />
-                                        </div>
-                                    </div>
-                                    <p style="color: green;">Nhắc việc hàng ngày lúc 10:00</p>
-                                </div>
-                                    <template #footer>
-                                        <span class="dialog-footer">
-                                            <el-button type="success" @click="dialogVisible = false">
-                                                Cài đặt
-                                            </el-button>
-                                            <el-button @click="dialogVisible = false"  style="margin-left: 8px;">Đóng</el-button>
-                                        </span>
-                                    </template>
-                                </el-dialog>
-                            <el-button :icon="Finished" class="btn-container">Đánh giá hoàn thành</el-button>
-                            <el-button :icon="Lock" class="btn-container" ref="buttonRef8" v-click-outside="onClickOutside8">Khoá việc</el-button>
-                                <el-popover
-                                        :width="350"
-                                        ref="popoverRef8"
-                                        :virtual-ref="buttonRef8"
-                                        trigger="click"
-                                        virtual-triggering
-                                    >
-                                        <div class="form-add-user">
-                                                <p>Khóa việc</p>
-                                                <el-icon class="close" @click="hidePopover8"><CloseBold /></el-icon>
-                                        </div>
-                                        <p>
-                                            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Incidunt inventore
-                                            nostrum laudantium consequuntur doloremque accusantium autem nam sit culpa
-                                            odit eligendi exercitationem provident error, dignissimos pariatur fugit id facere? Quae.
-                                        </p>
-                                        <el-button style="width: 100%; margin-top: 12px;" type="danger">Xác nhận</el-button>
-                                </el-popover>
-                            <el-button :icon="TakeawayBox" class="btn-container" ref="buttonRef9" v-click-outside="onClickOutside9">Lưu trữ việc</el-button>
-                                <el-popover
-                                    :width="350"
-                                    ref="popoverRef9"
-                                    :virtual-ref="buttonRef9"
-                                    trigger="click"
-                                    virtual-triggering
-                                >
-                                    <div class="form-add-user">
-                                            <p>Lưu trữ</p>
-                                            <el-icon class="close" @click="hidePopover9"><CloseBold /></el-icon>
-                                    </div>
-                                    <p>
-                                        Bạn có chắc là lưu trữ công việc này không?
-                                    </p>
-                                    <p style="color: red;">
-                                        Bạn có thể phục hồi lại khi cần.
-                                    </p>
-                                    <el-button style="width: 100%; margin-top: 12px;" type="danger">Xác nhận</el-button>
-                                </el-popover>
-                            <el-button :icon="Close" class="btn-container" ref="buttonRef10" v-click-outside="onClickOutside10">Xoá việc</el-button>
-                                <el-popover
-                                    :width="350"
-                                    ref="popoverRef10"
-                                    :virtual-ref="buttonRef10"
-                                    trigger="click"
-                                    virtual-triggering
-                                >
-                                    <div class="form-add-user">
-                                        <p>Xóa công việc</p>
-                                        <el-icon class="close" @click="hidePopover10"><CloseBold /></el-icon>
-                                    </div>
-                                    <p>
-                                        Bạn có chắc là xoá công việc này không?
-                                    </p>
-                                    <p>
-                                        Vui lòng nhập số 0 vào ô bên dưới để xác nhận xóa
-                                    </p>
-                                    <p style="color: red;">
-                                        Nếu xoá bạn sẽ không thể phục hồi lại.
-                                    </p>
-                                    <el-input v-model="input" placeholder="Please input" />
-                                    <el-button style="width: 100%; margin-top: 12px;" type="danger">Xóa</el-button>
-                                </el-popover>
+                        <div>
+                            <UpdateThePlan :icon="DocumentAdd" :title="title.updateThePlan"/>
+                            <AttachFile :icon="DocumentAdd" :title="title.attachFile"/>
+                            <Copy :icon="DocumentCopy" :title="title.copy" />
+                            <Move :icon="Rank" :title="title.move" />
+                            <CreateReminder :icon="Bell" :title="title.reminder"/>
+                            <Evaluation :icon="Finished" :title="title.evaluation" />
+                            <JobLock :icon="Lock" :title="title.lock"/>
+                            <Save :icon="TakeawayBox" :title="title.save"/>
+                            <DeleteTask :icon="Close" :title="title.delete" />
                         </div>
                     </el-col>
                 </el-row>

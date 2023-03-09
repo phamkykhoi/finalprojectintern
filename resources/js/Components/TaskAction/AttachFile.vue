@@ -40,3 +40,21 @@ const hidePopover7 = () => {
         </div>
     </el-popover>
 </template>
+
+<style scoped>
+.form-add-user{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+}
+.btn-container {
+    justify-content: flex-start;
+    width: 105%;
+    margin: 2px 0;
+}
+.btn-container1 {
+    justify-content: flex-start;
+    width: 99%;
+}
+</style>

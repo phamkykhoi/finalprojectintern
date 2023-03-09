@@ -1,5 +1,5 @@
 <script setup>
-
+import { ref, unref } from 'vue'
 const props = defineProps({
     icon: String,
     title: String
@@ -11,3 +11,11 @@ const props = defineProps({
         {{ props.title }}
     </el-button>
 </template>
+
+<style scoped>
+.btn-container {
+    justify-content: flex-start;
+    width: 105%;
+    margin: 2px 0;
+}
+</style>

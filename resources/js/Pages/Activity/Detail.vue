@@ -45,7 +45,7 @@ const state  = reactive({
     },
     moveTaskGroupId:0,
 })
-console.log(state.activityId)
+
 const taskGroups = ref([]);
 
 const loading = ref(true);
@@ -206,7 +206,6 @@ function getTaskGroups(id)
             })
             loading.value=false;
 }
-
 async function editTaskGroup(id, newTaskGroupName, index){
     loading.value=true;
      await request.put(`/taskgroup/${id}`,{'name':newTaskGroupName}).then(res => {
@@ -349,7 +348,7 @@ function closePopoverAction() {
                             </el-form>
                         </template>
 
-                        <TaskList :tasks="taskGroup.tasks" />
+                        <TaskList :tasks="taskGroup.tasks"  :task_group_id="index" :taskGroup="taskGroup" :activity="props.activity"/>
                         <el-button class="button"  @click="createTaskForm(taskGroup)" text>
                             <el-icon><Plus /></el-icon>Thêm mới công việc
                         </el-button>
