@@ -10,4 +10,8 @@ class TaskRepository extends BaseRepository
     {
         $this->model = $model;
     }
+
+    public function getSubTasks($id = null) {
+        return $this->model->select('*')->where('parent_id', $id)->get();
+    }
 }

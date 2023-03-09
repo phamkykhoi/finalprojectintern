@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\Task\CreateSubTaskRequest;
 use App\Http\Requests\Task\UpdateSubTaskRequest;
 use App\Repositories\TaskRepository;
+use Inertia\Inertia;
 
 class SubTaskController extends Controller
 {
@@ -55,5 +56,11 @@ class SubTaskController extends Controller
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
         }
+    }
+
+    public function getSubTask($id) {
+        return $this->success([
+            'subtask' => $this->taskRepo->getSubTasks($id)
+        ]);
     }
 }
