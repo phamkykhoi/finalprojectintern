@@ -1,14 +1,20 @@
 <script lang="ts" setup>
-import { ref, unref, onBeforeMount } from 'vue';
+import { ref, unref, onBeforeMount, reactive,toRefs, useForm } from 'vue';
 import { ClickOutside as vClickOutside } from 'element-plus'
 import { EditPen, CloseBold, CirclePlusFilled, Calendar, MoreFilled, DocumentCopy, Rank, Bell, Share, List } from '@element-plus/icons-vue';
 import { ElMessage } from 'element-plus';
 import request from '../../utils/request';
+import type { FormInstance } from 'element-plus';
 
 const props = defineProps({
     taskId: Number,
+    task_group_id: Number,
     subTasks: Array
 })
+
+const ruleFormRef = ref<FormInstance>()
+
+const loading = ref(false)
 
 const checked = ref([false])
 
@@ -22,24 +28,55 @@ const subTasks = ref([])
 
 function getSubTask(id)
 {
+    loading.value=true
     request.get(`/api/subtask/${id}`)
         .then((res) => {
             subTasks.value = res.data.result.subtask;
+            loading.value=false;
         }).catch(err => {
             ElMessage({
                 showClose: true,
                 message: err.response.data.message,
                 type: 'error',
-                })
             })
             loading.value=false;
+        })      
 }
 
-// console.log(subTasks)
 onBeforeMount(async () => {
     getSubTask(props.taskId);
 });
 
+const dataSubTask = reactive({
+    name:'',
+    description:'',
+    task_group_id: props.task_group_id,
+    parent_id: props.taskId,
+})
+
+function createSubTask()
+{
+    request.post(`/subtask `,dataSubTask).then((res)=>{
+        ElMessage({
+            showClose: true,
+            message: 'Add subtask successfully',
+            type: 'success',
+        })
+        getSubTask(props.taskId)
+        resetForm()
+    }).catch(err => {
+        ElMessage({
+            showClose: true,
+            message: err.response.data.message,
+            type: 'error',
+            })
+        })
+}
+
+function resetForm() {
+    dataSubTask.name='',
+    dataSubTask.description=''
+}
 const hidePopoverSubTask = (index) => {
     popoverRef.value[index].hide()
 }
@@ -73,17 +110,6 @@ function createFormAddTask(){
 const name = ref('')
 const description = ref('')
 const lineThrough = ref('')
-
-function saveSubTask(){
-    subTasks.value.push({
-        name: name.value,
-        description: description.value,
-    })
-    checkedSubTask.value.push('false')
-    name.value = ''
-    description.value = ''
-    showAddTask.value = false
-}
 
 function closeAddTask(){
     showAddTask.value = false
@@ -124,6 +150,16 @@ function clonedItems(index){
     subTaskBackup.value = JSON.parse(JSON.stringify(subTasks.value[index]))
     return JSON.parse(JSON.stringify(subTasks.value[index]))
 }
+
+const rules = {
+    name: [
+        { required: true, message: 'name is required' },
+    ],
+    description: [
+        { required: true, message: 'description is required' },
+    ],
+}
+
 </script>
 
 <template>
@@ -138,20 +174,22 @@ function clonedItems(index){
     <div class="task-progress">
         <el-progress :percentage="(countCheckSubTask()/subTasks.length*100) ? (countCheckSubTask()/subTasks.length*100).toFixed(0) : 0" color="#00FF00"/>
     </div>
-    <el-row v-if="showAddTask">
-        <el-col :span="1" style="text-align: right;">
-        </el-col>
-        <el-col :span="23" style="text-align: right;">
-            <el-input v-model="name" type="textarea" :rows="1" autocomplete="off" placeholder="Tạo mới tên việc"
-                clearable style="display: block;" />
-            <el-input v-model="description" type="textarea" :rows="1" autocomplete="off" placeholder="tạo mới mô tả"
-                clearable style="display: block; margin-top: 8px;" />
-                <span class="task-btn">
-            <el-button color="green" style="margin-right: 8px;" @click="saveSubTask">Tạo việc</el-button>
-            <el-icon @click="closeAddTask" class="task-icon-close close"><CloseBold /></el-icon>
-        </span>
-        </el-col>
-    </el-row>
+    <el-form ref="ruleFormRef" :model="dataSubTask" class="demo-ruleForm" :rules="rules">
+        <el-row v-if="showAddTask">
+            <el-col :span="1" style="text-align: right;">
+            </el-col>
+            <el-col :span="23" style="text-align: right;">
+                <el-input v-model="dataSubTask.name" type="textarea" :rows="1" autocomplete="off" placeholder="Tạo mới tên việc"
+                    clearable style="display: block;" />
+                <el-input v-model="dataSubTask.description" type="textarea" :rows="1" autocomplete="off" placeholder="tạo mới mô tả"
+                    clearable style="display: block; margin-top: 8px;" />
+                    <span class="task-btn">
+                    <el-button color="green" style="margin-right: 8px;" @click="createSubTask()">Tạo việc</el-button>
+                    <el-icon @click="closeAddTask" class="task-icon-close close"><CloseBold /></el-icon>
+                </span>
+            </el-col>
+        </el-row>
+    </el-form>
 <div v-for="(item, index) in subTasks" :key="index">
     <div class="flex" style="margin: 16px 0">
         <div>
@@ -189,7 +227,6 @@ function clonedItems(index){
                 </el-popover>
             </el-col>
         </el-row>
-
         <div v-if="checked[index]" style="display: flex; align-items: center; width: 110%;">
             <el-col :span="23" style="text-align: right;">
                 <el-input @click="clonedItems(index)" v-model="item.name" :value="item.name" type="textarea" :rows="1" autocomplete="off" placeholder="Chỉnh sửa tên việc"
