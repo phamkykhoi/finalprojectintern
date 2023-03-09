@@ -205,28 +205,6 @@ if (completedAt.value) {
     }
 }
 
-// const subTasks = ref([]);
-// function getSubTask(id)
-// {
-//     request.get(`/api/subtask/${id}`)
-//         .then((res) => {
-//             subTasks.value = res.data.result.subtask;
-//             // console.log(subTasks.value)
-//         }).catch(err => {
-//             ElMessage({
-//                 showClose: true,
-//                 message: err.response.data.message,
-//                 type: 'error',
-//                 })
-//             })
-//             loading.value=false;
-// }
-
-// // console.log(subTasks)
-// onBeforeMount(async () => {
-//     getSubTask(props.task.id);
-// });
-
 </script>
 
 <template>

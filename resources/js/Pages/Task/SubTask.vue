@@ -55,18 +55,6 @@ function editSubTask(item){
     CloseInputTask()
 }
 
-// const subTasks = ref([
-//     { id: 1,
-//     name: 'Việc con 1',
-//     description: 'Mô tả thành phần' },
-//     { id: 2,
-//     name: 'Việc con 2',
-//     description: 'Mô tả thành phần' },
-//     { id: 3,
-//     name: 'Việc con 3',
-//     description: 'Mô tả thành phần' }
-// ])
-
 const checkedSubTask = ref(Array(subTasks.value.length).fill(false));
 
 function deleteSubTask(idSubTask){
