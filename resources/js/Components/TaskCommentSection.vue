@@ -4,14 +4,22 @@ import { ElMessage, ElMessageBox } from "element-plus";
 import request from '../utils/request';
 import type { FormInstance } from 'element-plus';
 import { useForm } from '@inertiajs/inertia-vue3'
-
-const ruleFormRef = ref<FormInstance>()
+import TimeAgo from 'javascript-time-ago'
+import vi from 'javascript-time-ago/locale/vi'
 
 const props = defineProps({
     taskId: {
         type: Number,
     },
 });
+
+TimeAgo.addDefaultLocale(vi)
+
+const timeAgo = new TimeAgo('vi')
+
+const ruleFormRef = ref<FormInstance>()
+
+const loading = ref(true)
 
 const form = useForm({
     description: '',
@@ -23,9 +31,12 @@ const listComments = ref([]);
 const meta = ref([])
 
 async function getComments(nextPage) {
+    loading.value = true
+
     await request.post(`/get-discussion-by-task-id/${props.taskId}`, { page: nextPage }).then((res) => {
         listComments.value = res.data.result.discussions.data;
         meta.value = res.data.result.meta 
+        loading.value = false
     })
 }
 
@@ -57,10 +68,10 @@ function handleDeleteCmt(commentId) {
         cancelButtonText: "Cancel",
         type: "warning",
     })
-        .then(() => {
-            listComments.value = listComments.value.filter(
-                (comment) => comment.id != commentId
-            );
+        .then(async () => {
+            await request.delete(`/discussion/${commentId}`).then((res) => {
+                getComments()
+            })
             ElMessage({
                 type: "success",
                 message: "Delete completed",
@@ -72,6 +83,7 @@ function handleDeleteCmt(commentId) {
                 message: "Delete canceled",
             });
         });
+   
 }
 
 const handleSendComment = () => {
@@ -83,6 +95,7 @@ const handleSendComment = () => {
 }
 
 const handleSaveEdit = (discussionId, comment, index) => {
+    if (!listComments.value[index].description) return
     request.put(`/discussion/${discussionId}`, comment).then(res => {
         showEditCmt.value[index] = false;
     })
@@ -128,60 +141,62 @@ const handleCurrentChange = (page: number) => {
             </el-form>
         </div>
     </div>
-
-    <template v-for="(comment,index) in listComments" :key="index" >
-        <div class="flex mr-2 mt-1">
-            <img class="comment-img" :src="comment.attachment" />
-            <div class="w-[100%]">
-                <span>{{ comment.user }}</span>
-                <el-form-item class="d-block w-[100%]">
-                    <el-input
-                        v-if="showEditCmt[index]"
-                        v-model="listComments[index].description"
-                        type="textarea"
-                        :rows="2"
-                        autocomplete="off"
-                        class="d-inline-block w-[100%] cursor-pointer"
-                    />
-                    <div
-                        class="border w-[100%] h-[60%] bg-white"
-                        v-if="!showEditCmt[index]"
-                    >
-                        <span class="mt-4 mx-3">{{ comment.description }}</span>
-                    </div>
-                    <div class="flex w-[100%] mt-1">
-                        <div class="w-[70%]">
-                            <el-link class="mr-2" href="#">Thích</el-link>
-                            <el-link class="mr-2" href="#">Trả lời</el-link>
-                            <el-link class="mr-2" @click="handleShowEditCmt(index)"
-                                >Sửa</el-link
-                            >
-                            <el-link
-                                class="mr-2"
-                                @click="handleDeleteCmt(comment.id)"
-                                >Xóa</el-link
-                            >
-                            <el-link class="mr-2" href="#">{{
-                                comment.created_at
-                            }}</el-link>
-                        </div>
-
-                        <div
+    <div v-loading="loading">
+        <template v-for="(comment,index) in listComments" :key="index" >
+            <div class="flex mr-2 mt-1">
+                <img class="comment-img" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcShN0nuLT7HIpIANuDi6wbMKpeuCgZsl2PtAA&usqp=CAU" />
+                <div class="w-[100%]">
+                    <span>{{ comment.user }}</span>
+                    <el-form-item class="d-block w-[100%]">
+                        <el-input
                             v-if="showEditCmt[index]"
-                            class="flex justify-content-between align-items-center ml-auto"
+                            v-model="listComments[index].description"
+                            type="textarea"
+                            :rows="2"
+                            autocomplete="off"
+                            class="d-inline-block w-[100%] cursor-pointer"
+                        />
+                        <div
+                            class="border w-[100%] h-[60%] bg-white"
+                            v-if="!showEditCmt[index]"
                         >
-                            <div>
-                                <el-button type="success" @click="handleSaveEdit(comment.id, comment, index)">Cập nhật</el-button>
-                                <el-button type="danger" @click="closeEditCmt(index)"
-                                    >Hủy</el-button
+                            <span class="mt-4 mx-3">{{ comment.description }}</span>
+                        </div>
+                        <div class="flex w-[100%] mt-1">
+                            <div class="w-[70%]">
+                                <el-link class="mr-2" href="#">Thích</el-link>
+                                <el-link class="mr-2" href="#">Trả lời</el-link>
+                                <el-link class="mr-2" @click="handleShowEditCmt(index)"
+                                    >Sửa</el-link
                                 >
+                                <el-link
+                                    class="mr-2"
+                                    @click="handleDeleteCmt(comment.id)"
+                                    >Xóa</el-link
+                                >
+                                <el-link class="mr-2" href="#">{{
+                                    timeAgo.format((new Date(comment.created_at)))
+                                }}</el-link>
+                            </div>
+
+                            <div
+                                v-if="showEditCmt[index]"
+                                class="flex justify-content-between align-items-center ml-auto"
+                            >
+                                <div>
+                                    <el-button type="success" @click="handleSaveEdit(comment.id, comment, index)">Cập nhật</el-button>
+                                    <el-button type="danger" @click="closeEditCmt(index)"
+                                        >Hủy</el-button
+                                    >
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </el-form-item>
+                    </el-form-item>
+                </div>
             </div>
-        </div>
-    </template>
+        </template>
+    </div>
+    
         <div style="text-align: center;">
             <div class="example-pagination-block">
                 <el-pagination
