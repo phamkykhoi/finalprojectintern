@@ -22,8 +22,8 @@ const listComments = ref([]);
 
 const meta = ref([])
 
-async function getComments(newPage) {
-    await request.post(`/get-discussion-by-task-id/${props.taskId}`, { page: newPage }).then((res) => {
+async function getComments(nextPage) {
+    await request.post(`/get-discussion-by-task-id/${props.taskId}`, { page: nextPage }).then((res) => {
         listComments.value = res.data.result.discussions.data;
         meta.value = res.data.result.meta 
     })
@@ -88,8 +88,8 @@ const handleSaveEdit = (discussionId, comment, index) => {
     })
 }
 
-const handleCurrentChange = (newPage: number) => {
-    getComments(newPage)
+const handleCurrentChange = (page: number) => {
+    getComments(page)
 }
 
 </script>
@@ -190,6 +190,7 @@ const handleCurrentChange = (newPage: number) => {
                 layout="prev, pager, next" 
                 :total="meta.total" 
                 @current-change="handleCurrentChange"
+                v-if="listComments.length"
                 />
             </div>
         </div>

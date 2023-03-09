@@ -11,12 +11,12 @@ class DiscussionRepository extends BaseRepository
         $this->model = $model;
     }
 
-    public function getByTaskId($taskId)
+    public function getByTaskId($taskId, $limit)
     {
         return $this->model
         ->join('users', 'discussions.user_id', '=', 'users.id')
         ->select('discussions.*', 'users.name')
         ->where('task_id', $taskId)
-        ->latest()->paginate(10);
+        ->latest()->paginate($limit);
     }
 }

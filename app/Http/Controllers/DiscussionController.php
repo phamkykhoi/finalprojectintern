@@ -15,9 +15,9 @@ class DiscussionController extends Controller
         $this->discussionRepo = $discussionRepo;
     }
 
-    public function getDiscussion($id)
+    public function getByTaskId($id)
     {
-        $discussion = $this->discussionRepo->getByTaskId($id);
+        $discussion = $this->discussionRepo->getByTaskId($id, 10);
 
         try {
             return $this->success([
