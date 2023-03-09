@@ -23,16 +23,17 @@ class AttachmentController extends Controller
         $file = $request->file('file');
         $fileName = $file->hashName();
         Storage::disk('local')->putFile('public/attachments', $file);
-        $this->attachmentRepo->save([
+        $attachment = $this->attachmentRepo->save([
             'file_path' => Storage::path($fileName),
             'file_name' => $fileName,
             'extension' => $file->extension(),
             'mime_type'=> $file->getMimeType(),
             'size' => $file->getSize(),
             'title' => $file->getClientOriginalName(),
-        ]); 
+        ]);
 
         return $this->success([
+            'attachment' => $attachment,
             'file_url' => url('/storage/attachments', ['file' => $fileName])
         ]);
     }
@@ -44,4 +45,13 @@ class AttachmentController extends Controller
         ]);
     }
 
+    public function updateAttachmentInfor(Request $request)
+    {
+        try {
+            $this->attachmentRepo->updateAttachment( $request->get('task'), $request->get('listAttachments'));
+            return $this->success();
+        } catch (\Exception $e) {
+            return $this->error($e->getMessage(), $e->getCode());
+        }
+    }
 }

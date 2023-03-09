@@ -5,7 +5,7 @@
         action="#"
         :on-change="handleChange"
         :auto-upload="false"
-        :limit="1"
+        :multiple="true"
     >
         <el-button slot="trigger" type="primary">Select file</el-button>
     </el-upload>
@@ -38,7 +38,7 @@ export default {
                                     type: "success",
                                 });
                             }
-                            console.log(res.data.result);
+                            this.$emit('data',res.data.result);
                         })
                         .catch((err) => {
                             ElMessage({

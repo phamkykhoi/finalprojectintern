@@ -7,6 +7,8 @@ use App\Repositories\TaskGroupRepository;
 use App\Repositories\UserTaskRepository;
 use App\Http\Requests\Task\CreateTaskRequest;
 use App\Http\Requests\Task\UpdateTaskRequest;
+use App\Models\Task;
+use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
 
@@ -31,7 +33,8 @@ class TaskController extends Controller
     public function store(CreateTaskRequest $request)
     {
         try {
-            DB::transaction(function () use ($request) {
+            $task="";
+            DB::transaction(function () use ($request, &$task) {
                 $inputs = $request->all();
                 $task = $this->taskRepo->save($inputs);
                 $userTask = [
@@ -39,10 +42,11 @@ class TaskController extends Controller
                     'task_id' => $task['id'],
                     'role_task' => $inputs['role_id'],
                 ];
-
+                $task['class'] = Task::class;
                 $this->userTaskRepo->save($userTask);
             });
-            return $this->success();
+            return $this->success(['task' => $task]);
+
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
         }
