@@ -17,6 +17,6 @@ class DiscussionRepository extends BaseRepository
         ->join('users', 'discussions.user_id', '=', 'users.id')
         ->select('discussions.*', 'users.name')
         ->where('task_id', $taskId)
-        ->get();
+        ->latest()->paginate(10);
     }
 }

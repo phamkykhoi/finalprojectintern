@@ -17,9 +17,16 @@ class DiscussionController extends Controller
 
     public function getDiscussion($id)
     {
+        $discussion = $this->discussionRepo->getByTaskId($id);
+
         try {
             return $this->success([
-                'discussions' => $this->discussionRepo->getByTaskId($id)
+                'discussions' => $discussion,
+                'meta' => [
+                    'total' => $discussion->total(),
+                    'perPage' => $discussion->perPage(),
+                    'currentPage' => $discussion->currentPage(),
+                ]
             ]);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());

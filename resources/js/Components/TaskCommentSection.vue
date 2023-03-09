@@ -20,11 +20,12 @@ const form = useForm({
 
 const listComments = ref([]);
 
-const limit = ref(3)
+const meta = ref([])
 
-async function getComments() {
-    await request.post(`/get-discussion-by-task-id/${props.taskId}`).then((res) => {
-        listComments.value = res.data.result.discussions.reverse();
+async function getComments(newPage) {
+    await request.post(`/get-discussion-by-task-id/${props.taskId}`, { page: newPage }).then((res) => {
+        listComments.value = res.data.result.discussions.data;
+        meta.value = res.data.result.meta 
     })
 }
 
@@ -87,12 +88,8 @@ const handleSaveEdit = (discussionId, comment, index) => {
     })
 }
 
-function showMore(){
-    limit.value+=2
-}
-
-function hideComments(){
-    limit.value = 3
+const handleCurrentChange = (newPage: number) => {
+    getComments(newPage)
 }
 
 </script>
@@ -101,7 +98,7 @@ function hideComments(){
     <div>
         <div class="flex mb-5">
             <h2>Comment</h2>
-            <div v-if="listComments.length>0" class="comment-quantity">{{ listComments.length }}</div>
+            <div v-if="listComments.length>0" class="comment-quantity">{{ meta.total }}</div>
         </div>
         
         <div class="flex comment mr-2">
@@ -133,7 +130,7 @@ function hideComments(){
     </div>
 
     <template v-for="(comment,index) in listComments" :key="index" >
-        <div v-if="index < limit" class="flex mr-2 mt-1">
+        <div class="flex mr-2 mt-1">
             <img class="comment-img" :src="comment.attachment" />
             <div class="w-[100%]">
                 <span>{{ comment.user }}</span>
@@ -186,8 +183,15 @@ function hideComments(){
         </div>
     </template>
         <div style="text-align: center;">
-            <el-link v-if="limit < listComments.length" @click="showMore">Xem thêm</el-link>
-            <el-link v-else @click="hideComments">Ẩn bớt</el-link>
+            <div class="example-pagination-block">
+                <el-pagination
+                v-model:current-page="meta.currentPage"
+                v-model:page-size="meta.perPage"
+                layout="prev, pager, next" 
+                :total="meta.total" 
+                @current-change="handleCurrentChange"
+                />
+            </div>
         </div>
         
 </template>
