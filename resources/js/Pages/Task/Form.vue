@@ -100,8 +100,13 @@ const rules = {
 };
 
 const updateAttachableInfor = (taskId)=>{
-    request.post(`/update_attachments`, {'attachable_id':taskId,'attachable_type':'task','listAttachments':listAttachments}).then((res) => {
-            console.log(res.data.status);njk;l.p
+    request.post(`/update_attachments`,{data: {
+        attachable_id : taskId,
+        attachable_type: 'task',
+        listAttachments:listAttachments,
+        }}
+            ).then((res) => {
+            console.log(res.data.status);
             });
 }
 const addTask = (formEl: FormInstance | undefined) => {
