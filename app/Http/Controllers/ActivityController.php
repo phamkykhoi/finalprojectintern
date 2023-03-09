@@ -34,7 +34,7 @@ class ActivityController extends Controller
         return Inertia::render('Activity/Detail', [
             'activity' => $this->activityRepo->findById($id),
             'departments' => $this->departmentRepo->getDepartments(['activities'], $user->isRoot() ? null : $user->id),
-            'taskGroups' => $this->taskGroupRepo->getByActivityId($id, ['tasks']),
+            'taskGroups' => $this->taskGroupRepo->getByActivityId($id),
             'activityId' => (int) $id,
         ]);
     }
