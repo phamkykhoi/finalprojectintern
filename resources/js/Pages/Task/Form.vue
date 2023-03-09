@@ -99,12 +99,11 @@ const rules = {
     end_date: [{ validator: checkEndDate, trigger: "blur" }],
 };
 
-const updateAttachableInfor = (taskId)=>{
-    request.post(`/update_attachments`,{data: {
-        attachable_id : taskId,
-        attachable_type: 'task',
+const updateAttachableInfor = (task)=>{
+    request.post(`/update_attachments`,{
+        task : task,
         listAttachments:listAttachments,
-        }}
+        }
             ).then((res) => {
             console.log(res.data.status);
             });
@@ -120,7 +119,7 @@ const addTask = (formEl: FormInstance | undefined) => {
                         message: "Thêm task thành công",
                         type: "success",
                     });
-                    updateAttachableInfor(res.data.result.id);
+                    updateAttachableInfor(res.data.result.task);
                     closeModal();
                     props.getGroupsTask();
                 }

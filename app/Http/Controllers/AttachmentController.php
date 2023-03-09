@@ -48,7 +48,7 @@ class AttachmentController extends Controller
     public function updateAttachmentInfor(Request $request)
     {
         try {
-            $this->attachmentRepo->updateAttachmentByTaskId($request->get('data'));
+            $this->attachmentRepo->updateAttachment( $request->get('task'), $request->get('listAttachments'));
             return $this->success();
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());

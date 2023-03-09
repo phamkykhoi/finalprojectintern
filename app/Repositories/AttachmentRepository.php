@@ -17,10 +17,10 @@ class AttachmentRepository extends BaseRepository
         return Task::find($id)->attachment;
     }
 
-    public function updateAttachmentByTaskId($data)
+    public function updateAttachment($task, $listAttachments)
     {
         $this->model
-        ->whereIn('id', $data['listAttachments'])
-        ->update(['attachable_id' => $data['attachable_id'], 'attachable_type' => $data['attachable_type']]);
+        ->whereIn('id', $listAttachments)
+        ->update(['attachable_id' => $task['id'], 'attachable_type' => $task['class']]);
     }
 }
