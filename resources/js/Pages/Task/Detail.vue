@@ -64,7 +64,10 @@ const taskForm = reactive({
     description: props.task.description,
     task_group_id: props.task_group_id,
     is_important: props.task.is_important,
-    is_quickly: props.task.is_quickly
+    is_quickly: props.task.is_quickly,
+    status: props.task.status === 0 || null ? false : true,
+    start_date: props.task.start_date,
+    end_date: props.task.end_date,
 })
 
 const title = reactive({
@@ -78,7 +81,7 @@ const title = reactive({
     save: 'Lưu trữ việc',
     delete: 'Xóa việc',
 });
-
+const buttonUpdateSchedule = ref();
 const emit = defineEmits(['closeModal', 'unClose'])
 
 confirmingTaskDeletion.value = props.isShowModal;
@@ -207,6 +210,32 @@ const handleUpdateTaskDescription = (taskId) => {
     })
 }
 
+const handleChangeStatus = (taskId) =>{
+    request.put(`/task/${taskId}`, taskForm)
+    .then(res => {
+        console.log(res.status)
+    })
+}
+
+const handleDeleteSchedule = (taskId) =>{
+    taskForm.end_date = taskForm.start_date = null;
+    request.put(`/task/${taskId}`, taskForm)
+    .then(res => {
+        popoverUpdateSchedule.value.hide();
+    })
+}
+
+const handleUpdateSchedule = (taskId) =>{
+    request.put(`/task/${taskId}`, taskForm)
+    .then(res => {
+        popoverUpdateSchedule.value.hide();
+    })
+}
+
+const showUpdateSchedule = () => {
+    isShowUpdateSchedule.value = !isShowUpdateSchedule.value;
+}
+
 const checked1 = ref(false)
 const value = ref()
 const checked = ref([false])
@@ -222,6 +251,46 @@ if (completedAt.value) {
     }
 }
 
+const popoverUpdateSchedule = ref();
+const isShowUpdateSchedule = ref(false);
+
+const hideUpdateSchedule =() => {
+    popoverUpdateSchedule.value.hide();
+};
+
+const checkStartDate = (rule: any, value: any, callback: any) => {
+    if(new Date(value).getTime()< todayTime && new Date(value).getTime()!=0) {
+        callback(new Error("You cannot choose a date in the past"))
+        return
+    }
+
+    if(new Date(value).getTime()> new Date(taskForm.end_date).getTime()){
+            callback(new Error("You cannot choose the start date greater than the end date"))
+            return
+    }
+
+    callback();
+};
+const today = new Date();
+const todayTime = new Date(today.getFullYear(), today.getMonth(), today.getDate()).getTime();
+
+const checkEndDate = (rule: any, value: any, callback: any) => {
+    if(new Date(value).getTime()< todayTime && new Date(value).getTime()!=0) {
+        callback(new Error("You cannot choose a date in the past"))
+    return
+    }
+
+    if(new Date(value).getTime()< new Date(taskForm.start_date).getTime()){
+        callback(new Error("You cannot choose the end date less than the start date"))
+        return;
+    }
+    callback();
+};
+
+const rules = {
+    start_date: [{ validator: checkStartDate, trigger: "blur" }],
+    end_date: [{ validator: checkEndDate, trigger: "blur" }],
+};
 </script>
 
 <template>
@@ -281,17 +350,70 @@ if (completedAt.value) {
                         <TaskActivity :taskId="task.id"></TaskActivity>
                     </el-col>
                     <el-col :span="5" class="ml-2">
-                        <el-checkbox v-model="checked[props.task.id]" label="Hoàn thành việc" size="large" />
+                        <el-checkbox v-model="task.status" label="Hoàn thành việc" size="large" @change="handleChangeStatus(task.id)"/>
                         <span>Ngày thực hiện</span>
                         <el-form-item style="display: block;">
-                            <div class="date">
-                                <el-icon color="orange " class="date-icon">
+                            <div class="date" v-if="taskForm.start_date&&taskForm.end_date">
+                                <span ref="buttonUpdateSchedule"
+                                 @click="showUpdateSchedule"
+                                   class="date-finish cursor-pointer" style="display: inline-block; color: red;" >{{ new Date(taskForm.start_date).toLocaleDateString("vi-VN", {day: "numeric", month: "numeric"}) }} - {{ new Date(taskForm.end_date).toLocaleDateString("vi-VN", {day: "numeric", month: "numeric"}) }}
+                                </span>
+                                <el-icon color="orange " class="date-icon" @click="handleDeleteSchedule(task.id)">
                                 <Delete />
                                 </el-icon>
-                                <span class="date-finish" style="display: inline-block; color: red;">31/10 - 31/10
-                                </span>
+                            </div>
+                            <div v-else>
+                                <el-icon ref="buttonUpdateSchedule"  @click="showUpdateSchedule" color="orange " size="25" class="mt-3 cursor-pointer"><Calendar /></el-icon>
+                            </div>
+                            <el-popover
+                                :width="300"
+                                ref="popoverUpdateSchedule"
+                                :virtual-ref="buttonUpdateSchedule"
+                                trigger="click"
+                                virtual-triggering
+                                :visible="isShowUpdateSchedule"
+                                >
+                            <div>
+                                <el-icon @click="hideUpdateSchedule"><CircleCloseFilled /></el-icon>
+                                <el-form-item prop="start_date" class="mt-6">
+                                    <span>Ngày bắt đầu:</span>
+                                    <el-date-picker
+                                        v-model="taskForm.start_date"
+                                        type="date"
+                                        placeholder="Chọn"
+                                        format="YYYY/MM/DD"
+                                        clearable
+                                        value-format="YYYY-MM-DD"
+                                        style="
+                                            display: block;
+                                            width: 100%;
+                                        "
+                                    />
+                                </el-form-item>
+                                <el-form-item prop="end_date" class="mt-6">
+                                    <span style="font-size: 14px"
+                                        >Ngày kết thúc:</span
+                                    >
+                                    <el-date-picker
+                                        v-model="taskForm.end_date"
+                                        type="date"
+                                        placeholder="Chọn"
+                                        format="YYYY/MM/DD"
+                                        clearable
+                                        value-format="YYYY-MM-DD"
+                                        style="
+                                            display: block;
+                                            width: 100%;
+                                        "
+                                    />
+                                </el-form-item>
+                                    <div class="flex w-[100%] mt-6">
+                                        <el-button type="success" class="button-schedule mr-14 ml-2 text-center" @click="handleUpdateSchedule(task.id)">Cập nhật</el-button>
+                                        <el-button type="danger" class="button-schedule text-center "  @click="handleDeleteSchedule(task.id)">Xóa</el-button>
+                                    </div>
                             </div>
 
+                            </el-popover>
 
                         </el-form-item>
                         <Participant :taskId="task.id"></Participant>
@@ -536,5 +658,12 @@ if (completedAt.value) {
 ::v-deep .el-dialog__body{
     border-top: 1px solid #ccc;
     border-bottom: 1px solid #ccc;
+}
+::v-deep .el-input__wrapper {
+    width: 100%;
+}
+.button-schedule{
+    border-radius: 3px !important;
+    width:100px !important;
 }
 </style>
