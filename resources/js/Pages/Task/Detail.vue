@@ -145,6 +145,7 @@ function ShowInputDes(){
 
 function CloseInputDes(){
     showInputDescription.value = false
+    taskForm.description = props.task.description;
 }
 
 const showTask = ref(false)
@@ -154,7 +155,8 @@ function ShowTaskName(){
 }
 
 function CloseTaskName(){
-    showTask.value = false
+    showTask.value = false;
+    taskForm.name = props.task.name;
 }
 
 const showInputEdit = ref(false)
@@ -179,6 +181,30 @@ const handlecheckedFilesChange = (value: string[]) => {
   const checkedCount = value.length
   checkAll.value = checkedCount === files.length
   isIndeterminate.value = checkedCount > 0 && checkedCount < files.length
+}
+
+const handleUpdateTaskName = (taskId) => {
+    request.put(`/task/${taskId}`, taskForm)
+    .then(res => {
+        ElMessage({
+            showClose: true,
+            message: 'Change task name successfully',
+            type: 'success',
+        })
+        showTask.value = false;
+    })
+}
+
+const handleUpdateTaskDescription = (taskId) => {
+    request.put(`/task/${taskId}`, taskForm)
+    .then(res => {
+        ElMessage({
+            showClose: true,
+            message: 'Change task description successfully',
+            type: 'success',
+        })
+        showInputDescription.value = false;
+    })
 }
 
 const checked1 = ref(false)
@@ -211,7 +237,7 @@ if (completedAt.value) {
                                 <el-icon class="el-icon" :size="25">
                                     <Document />
                                 </el-icon>
-                                <strong @click="ShowTaskName" class="ml-6"> {{ task.name }}</strong>
+                                <strong @click="ShowTaskName" class="ml-6"> {{ taskForm.name }}</strong>
                             </h5>
                         </div>
                         <el-row v-if="showTask" class="mb-2" style="display: block;">
@@ -225,7 +251,7 @@ if (completedAt.value) {
                                     <el-input v-model="taskForm.name" :value="taskForm.name"
                                     type="textarea" :rows="2" autocomplete="off" placeholder="Mô tả công việc" clearable style="display: inline-block;" />
                                     <span class="name-btn">
-                                        <el-button color="green" style="margin-right: 8px;">Cập nhật</el-button>
+                                        <el-button color="green" style="margin-right: 8px;" @click="handleUpdateTaskName(task.id)">Cập nhật</el-button>
                                         <el-icon @click="CloseTaskName" class="name-icon-close close"><CloseBold /></el-icon>
                                     </span>
                                 </el-col>
@@ -237,12 +263,12 @@ if (completedAt.value) {
                             <el-form-item label="Mô tả:" style="display: block; margin-bottom: 0; margin-left: 6px; ">
                             </el-form-item>
                         </div>
-                        <span class="ml-31" v-if="!showInputDescription" @click="ShowInputDes">{{ props.task.description }}</span>
+                        <span class="ml-31" v-if="!showInputDescription" @click="ShowInputDes">{{ taskForm.description }}</span>
                         <div v-if="showInputDescription" style="margin: 16px 0;">
                             <el-input v-model="taskForm.description" :value="taskForm.description"
                             type="textarea" :rows="2" autocomplete="off" placeholder="Mô tả công việc" clearable style="display: inline-block;" />
                             <span class="description-btn">
-                                <el-button color="green" style="margin-right: 8px;">Cập nhật</el-button>
+                                <el-button color="green" style="margin-right: 8px;" @click="handleUpdateTaskDescription(task.id)">Cập nhật</el-button>
                                 <el-icon @click="CloseInputDes" class="description-icon-close close"><CloseBold /></el-icon>
                             </span>
                         </div>
