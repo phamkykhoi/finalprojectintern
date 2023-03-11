@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { ref, unref, onBeforeMount, reactive,toRefs, useForm } from 'vue';
+import { ref, unref, onBeforeMount, reactive,toRefs } from 'vue';
 import { ClickOutside as vClickOutside } from 'element-plus'
 import { EditPen, CloseBold, CirclePlusFilled, Calendar, MoreFilled, DocumentCopy, Rank, Bell, Share, List } from '@element-plus/icons-vue';
 import { ElMessage } from 'element-plus';
@@ -9,7 +9,6 @@ import type { FormInstance } from 'element-plus';
 const props = defineProps({
     taskId: Number,
     task_group_id: Number,
-    subTasks: Array
 })
 
 const ruleFormRef = ref<FormInstance>()
@@ -26,7 +25,7 @@ const onClickOutside = () => {
 
 const subTasks = ref([])
 
-function getSubTask(id)
+function getSubTasks(id)
 {
     loading.value=true
     request.get(`/api/subtask/${id}`)
@@ -44,7 +43,7 @@ function getSubTask(id)
 }
 
 onBeforeMount(async () => {
-    getSubTask(props.taskId);
+    getSubTasks(props.taskId);
 });
 
 const dataSubTask = reactive({
@@ -62,7 +61,7 @@ function createSubTask()
             message: 'Add subtask successfully',
             type: 'success',
         })
-        getSubTask(props.taskId)
+        getSubTasks(props.taskId)
         resetForm()
     }).catch(err => {
         ElMessage({
@@ -81,7 +80,7 @@ function deleteSubTask(id)
             message: 'Delete subtask successfully',
             type: 'success',
         })
-        getSubTask(props.taskId)
+        getSubTasks(props.taskId)
     }).catch(err => {
         ElMessage({
             showClose: true,
@@ -95,19 +94,35 @@ function resetForm() {
     dataSubTask.name='',
     dataSubTask.description=''
 }
+
+function updateSubTask(subTask) {
+    const itemSubTask = reactive({
+        name: subTask.name,
+        description: subTask.description,
+    })
+    request.put(`/subtask/${subTask.id}`, itemSubTask).then((res)=>{
+        ElMessage({
+            showClose: true,
+            message: 'Update subtask successfully',
+            type: 'success',
+        })
+        CloseInputTask()
+        getSubTasks(props.taskId)
+    }).catch(err => {
+        ElMessage({
+            showClose: true,
+            message: err.response.data.message,
+            type: 'error',
+            })
+    })
+}
+
 const hidePopoverSubTask = (index) => {
     popoverRef.value[index].hide()
 }
 
 function CloseInputTask(){
     checked.value = [false]
-}
-
-function editSubTask(item){
-    if (item.name == ''){
-        return;
-    }
-    CloseInputTask()
 }
 
 const checkedSubTask = ref(Array(subTasks.value.length).fill(false));
@@ -246,7 +261,7 @@ const rules = {
                 <el-input v-model="item.description" :value="item.description" type="textarea" :rows="2" autocomplete="off" placeholder="Chỉnh sửa mô tả"
                     clearable style="display: block; margin-top: 8px;" />
                     <span class="task-btn">
-                <el-button color="green" style="margin-right: 8px;" @click="editSubTask(item)">Cập nhật</el-button>
+                <el-button color="green" style="margin-right: 8px;" @click="updateSubTask(item)">Cập nhật</el-button>
                 <el-icon @click="closeFormUpdate(index, item)" class="task-icon-close close"><CloseBold /></el-icon>
             </span>
             </el-col>
