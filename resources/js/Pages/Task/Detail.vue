@@ -126,7 +126,7 @@ function changeQuicklyStatus(taskId) {
     request.put(`/task/${taskId}`, {
         is_quickly: taskForm.is_quickly,
         change_status_type: 'quickly',
-})
+    })
         .then(res => {
             getGroupsTask();
         })
@@ -148,7 +148,9 @@ function ShowInputDes(){
 
 function CloseInputDes(){
     showInputDescription.value = false
-    taskForm.description = props.task.description;
+    request.get(`/task/${props.task.id}`).then(res => {
+         taskForm.description = res.data.result.task.description;
+    })
 }
 
 const showTask = ref(false)
@@ -159,7 +161,9 @@ function ShowTaskName(){
 
 function CloseTaskName(){
     showTask.value = false;
-    taskForm.name = props.task.name;
+    request.get(`/task/${props.task.id}`).then(res => {
+         taskForm.name = res.data.result.task.name;
+    })
 }
 
 const showInputEdit = ref(false)

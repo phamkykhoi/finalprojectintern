@@ -55,6 +55,7 @@ class TaskController extends Controller
     public function show($id)
     {
         return $this->success([
+            'task' => $this->taskRepo->findById($id),
             'taskGroups' => $this->taskGroupRepo->getByActivityId($id, ['tasks']),
         ]);
     }
