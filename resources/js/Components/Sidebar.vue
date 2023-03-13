@@ -6,7 +6,7 @@ import { Link } from '@inertiajs/inertia-vue3';
 
 <template>
     <!-- Component Sidebar -->
-    <aside class='bg-gray-200'>
+    <aside class='bg-gray-200 bg-gri-300'>
             <div class="flex flex-col items-center w-16  overflow-hidden text-gray-700 ">
                 <div class="flex flex-col items-center">
                     <a class="flex items-center justify-center w-12 h-12 mt-2 rounded hover:bg-gray-300" href="#">
@@ -70,7 +70,7 @@ import { Link } from '@inertiajs/inertia-vue3';
                     </svg>
                 </Link>
                 <Link :href="route('department.index')" class="flex items-center justify-center w-16 h-16 mt-auto bg-gray-200 hover:bg-gray-300">
-                    <svg class="h-8 w-8 text-blue-500"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round" 
+                    <svg class="h-8 w-8 text-blue-500"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"
                         stroke-linejoin="round">  <circle cx="12" cy="12" r="10" />  <line x1="12" y1="8" x2="12" y2="16" />  <line x1="8" y1="12" x2="16" y2="12" />
                     </svg>
                 </Link>
@@ -79,3 +79,9 @@ import { Link } from '@inertiajs/inertia-vue3';
         </aside>
         <!-- Component End Sidebar-->
 </template>
+<style>
+    .bg-gri-300 {
+        position:fixed;
+        height:100%;
+    }
+</style>
