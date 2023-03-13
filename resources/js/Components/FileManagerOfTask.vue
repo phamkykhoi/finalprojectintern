@@ -176,7 +176,8 @@ function isImageFormat(fileExtention) {
             <div v-for="file in files" class="w-[100%]">
                 <div class="option-img flex mt-8 mb-8 ">
                 <div class=" flex option-img-des ml-5 align-items-center " >
-                    <img :src="'/storage/attachments/' + file.file_name" class="file-image image rounded"/>
+                    <img v-if="isImageFormat(file.extension)" :src="'/storage/attachments/' + file.file_name" class="file-image image rounded"/>
+                    <img v-else src="https://cdn-icons-png.flaticon.com/512/3767/3767084.png" class="file-image image rounded"/>
                     <div class="image-infor ml-8">
                         <span class="info-img-item image-infor-title">{{ file.title }}</span>
                         <span class="flex">
