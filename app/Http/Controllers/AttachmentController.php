@@ -34,7 +34,7 @@ class AttachmentController extends Controller
             'size' => $file->getSize(),
             'title' => $file->getClientOriginalName(),
         ]); 
-        event(new UploadFileSuccess($attachment, $request['params']));
+        event(new UploadFileSuccess($attachment, json_decode($request['params'], true)));
 
         return $this->success([
             'attachment' => $attachment,

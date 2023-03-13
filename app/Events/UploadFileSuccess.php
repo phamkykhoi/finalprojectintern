@@ -18,24 +18,10 @@ class UploadFileSuccess
     public $attachment;
 
     public $params;
-    /**
-     * Create a new event instance.
-     *
-     * @return void
-     */
-    public function __construct(Attachment $attachment, $params)
+   
+    public function __construct(Attachment $attachment, array $params)
     {
         $this->attachment = $attachment;
         $this->params = $params;
-    }
-
-    /**
-     * Get the channels the event should broadcast on.
-     *
-     * @return \Illuminate\Broadcasting\Channel|array
-     */
-    public function broadcastOn()
-    {
-        return new PrivateChannel('channel-name');
     }
 }

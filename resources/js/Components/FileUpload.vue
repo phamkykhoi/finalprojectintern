@@ -6,6 +6,7 @@
         :on-change="handleChange"
         :auto-upload="false"
         :multiple="true"
+        :show-file-list = "false"
     >
         <el-button slot="trigger" type="primary">Select File</el-button>
     </el-upload>

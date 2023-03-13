@@ -17,16 +17,10 @@ class AssignAttachmentToTask
         //
     }
 
-    /**
-     * Handle the event.
-     *
-     * @param  \App\Events\UploadFileSuccess  $event
-     * @return void
-     */
     public function handle(UploadFileSuccess $event): void
     {
         $event->attachment->attachable_type = Task::class;
-        $event->attachment->attachable_id = json_decode($event->params)->task_id;
-        Attachment::updateOrCreate(['id' => json_decode($event->params)->task_id], $event->attachment->getAttributes());
+        $event->attachment->attachable_id = json_decode($event->params['task_id']);
+        $event->attachment->save();
     }
 }
