@@ -54,7 +54,7 @@ const closeFormDepartmentUser = (value) => {
 <template>
     <div>
         <aside class="flex-shrink-0 hidden w-64 bg-white border-r dark:border-primary-darker dark:bg-darker md:block">
-            <div class="flex flex-col h-full">
+            <div class="flex flex-col h-full flex-hull">
                 <div class="h-16 border-b border-gray-100 hidden space-x-8 sm:flex">
                     <h3
                         class='text-lg font-bold pl-2 inline-flex items-center w-full border-indigo-400 font-medium leading-5 text-gray-900 transition duration-150 ease-in-out'>
@@ -123,3 +123,11 @@ const closeFormDepartmentUser = (value) => {
         :isShowModal="showFormEditDepartment" v-on:closeModal="closeFormEditDepartment" />
     </div>
 </template>
+
+<style>
+    .flex-hull {
+        padding-left: 54px;
+        position: fixed;
+        width:261px;
+    }
+</style>
