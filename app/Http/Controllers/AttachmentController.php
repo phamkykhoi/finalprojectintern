@@ -22,21 +22,19 @@ class AttachmentController extends Controller
 
     public function upload(Request $request)
     {   
-        if (json_decode($request['params'])->task_id) {
-            $file = $request->file('file');
-            $fileName = $file->hashName();
-            Storage::disk('local')->putFile('public/attachments', $file);
-            $attachment = $this->attachmentRepo->save([
-                'attachable_id' => json_decode($request['params'])->task_id,
-                'file_path' => Storage::path($fileName),
-                'file_name' => $fileName,
-                'extension' => $file->extension(),
-                'mime_type'=> $file->getMimeType(),
-                'size' => $file->getSize(),
-                'title' => $file->getClientOriginalName(),
-            ]); 
-            event(new UploadFileSuccess($attachment, $request));
-        }
+        $file = $request->file('file');
+        $fileName = $file->hashName();
+        Storage::disk('local')->putFile('public/attachments', $file);
+
+        $attachment = $this->attachmentRepo->save([
+            'file_path' => Storage::path($fileName),
+            'file_name' => $fileName,
+            'extension' => $file->extension(),
+            'mime_type'=> $file->getMimeType(),
+            'size' => $file->getSize(),
+            'title' => $file->getClientOriginalName(),
+        ]); 
+        event(new UploadFileSuccess($attachment, $request['params']));
 
         return $this->success([
             'attachment' => $attachment,

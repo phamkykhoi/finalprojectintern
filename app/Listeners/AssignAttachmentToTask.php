@@ -10,11 +10,8 @@ use App\Models\Task;
 
 class AssignAttachmentToTask
 {
-    /**
-     * Create the event listener.
-     *
-     * @return void
-     */
+    protected $params;
+
     public function __construct()
     {
         //
@@ -28,8 +25,8 @@ class AssignAttachmentToTask
      */
     public function handle(UploadFileSuccess $event): void
     {
-        $inputs = Attachment::find($event->attachment['id'])->getAttributes();
-        $inputs['attachable_type'] = Task::class;
-        Attachment::updateOrCreate(['id' => $inputs['id']], $inputs);
+        $event->attachment->attachable_type = Task::class;
+        $event->attachment->attachable_id = json_decode($event->params)->task_id;
+        Attachment::updateOrCreate(['id' => json_decode($event->params)->task_id], $event->attachment->getAttributes());
     }
 }

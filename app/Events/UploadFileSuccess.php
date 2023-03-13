@@ -17,16 +17,16 @@ class UploadFileSuccess
 
     public $attachment;
 
-    public $request;
+    public $params;
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct(Attachment $attachment, $request)
+    public function __construct(Attachment $attachment, $params)
     {
         $this->attachment = $attachment;
-        $this->request = $request;
+        $this->params = $params;
     }
 
     /**
