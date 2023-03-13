@@ -16,4 +16,11 @@ class AttachmentRepository extends BaseRepository
     {
         return Task::find($id)->attachment;
     }
+
+    public function updateAttachment($task, $listAttachments)
+    {
+        $this->model
+        ->whereIn('id', $listAttachments)
+        ->update(['attachable_id' => $task['id'], 'attachable_type' => $task['class']]);
+    }
 }

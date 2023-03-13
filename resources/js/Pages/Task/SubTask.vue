@@ -1,14 +1,19 @@
 <script lang="ts" setup>
-import { ref, unref, onBeforeMount } from 'vue';
+import { ref, unref, onBeforeMount, reactive,toRefs } from 'vue';
 import { ClickOutside as vClickOutside } from 'element-plus'
 import { EditPen, CloseBold, CirclePlusFilled, Calendar, MoreFilled, DocumentCopy, Rank, Bell, Share, List } from '@element-plus/icons-vue';
 import { ElMessage } from 'element-plus';
 import request from '../../utils/request';
+import type { FormInstance } from 'element-plus';
 
 const props = defineProps({
     taskId: Number,
-    subTasks: Array
+    task_group_id: Number,
 })
+
+const ruleFormRef = ref<FormInstance>()
+
+const loading = ref(false)
 
 const checked = ref([false])
 
@@ -20,25 +25,97 @@ const onClickOutside = () => {
 
 const subTasks = ref([])
 
-function getSubTask(id)
+function getSubTasks(id)
 {
+    loading.value=true
     request.get(`/api/subtask/${id}`)
         .then((res) => {
             subTasks.value = res.data.result.subtask;
+            loading.value=false;
         }).catch(err => {
             ElMessage({
                 showClose: true,
                 message: err.response.data.message,
                 type: 'error',
-                })
             })
             loading.value=false;
+        })      
 }
 
-// console.log(subTasks)
 onBeforeMount(async () => {
-    getSubTask(props.taskId);
+    getSubTasks(props.taskId);
 });
+
+const dataSubTask = reactive({
+    name:'',
+    description:'',
+    task_group_id: props.task_group_id,
+    parent_id: props.taskId,
+})
+
+function createSubTask()
+{
+    request.post(`/subtask `,dataSubTask).then((res)=>{
+        ElMessage({
+            showClose: true,
+            message: 'Add subtask successfully',
+            type: 'success',
+        })
+        getSubTasks(props.taskId)
+        resetForm()
+    }).catch(err => {
+        ElMessage({
+            showClose: true,
+            message: err.response.data.message,
+            type: 'error',
+            })
+        })
+}
+
+function deleteSubTask(id)
+{
+    request.delete(`/subtask/${id}`).then((res)=>{
+        ElMessage({
+            showClose: true,
+            message: 'Delete subtask successfully',
+            type: 'success',
+        })
+        getSubTasks(props.taskId)
+    }).catch(err => {
+        ElMessage({
+            showClose: true,
+            message: err.response.data.message,
+            type: 'error',
+            })
+        })
+}
+
+function resetForm() {
+    dataSubTask.name='',
+    dataSubTask.description=''
+}
+
+function updateSubTask(subTask) {
+    const itemSubTask = reactive({
+        name: subTask.name,
+        description: subTask.description,
+    })
+    request.put(`/subtask/${subTask.id}`, itemSubTask).then((res)=>{
+        ElMessage({
+            showClose: true,
+            message: 'Update subtask successfully',
+            type: 'success',
+        })
+        CloseInputTask()
+        getSubTasks(props.taskId)
+    }).catch(err => {
+        ElMessage({
+            showClose: true,
+            message: err.response.data.message,
+            type: 'error',
+            })
+    })
+}
 
 const hidePopoverSubTask = (index) => {
     popoverRef.value[index].hide()
@@ -48,20 +125,7 @@ function CloseInputTask(){
     checked.value = [false]
 }
 
-function editSubTask(item){
-    if (item.name == ''){
-        return;
-    }
-    CloseInputTask()
-}
-
 const checkedSubTask = ref(Array(subTasks.value.length).fill(false));
-
-function deleteSubTask(idSubTask){
-    subTasks.value.splice(idSubTask, 1);
-    checkedSubTask.value.splice(idSubTask, 1);
-    popoverRef.value[idSubTask].hide()
-}
 
 const showAddTask = ref(false)
 
@@ -73,17 +137,6 @@ function createFormAddTask(){
 const name = ref('')
 const description = ref('')
 const lineThrough = ref('')
-
-function saveSubTask(){
-    subTasks.value.push({
-        name: name.value,
-        description: description.value,
-    })
-    checkedSubTask.value.push('false')
-    name.value = ''
-    description.value = ''
-    showAddTask.value = false
-}
 
 function closeAddTask(){
     showAddTask.value = false
@@ -124,6 +177,16 @@ function clonedItems(index){
     subTaskBackup.value = JSON.parse(JSON.stringify(subTasks.value[index]))
     return JSON.parse(JSON.stringify(subTasks.value[index]))
 }
+
+const rules = {
+    name: [
+        { required: true, message: 'name is required' },
+    ],
+    description: [
+        { required: true, message: 'description is required' },
+    ],
+}
+
 </script>
 
 <template>
@@ -138,20 +201,22 @@ function clonedItems(index){
     <div class="task-progress">
         <el-progress :percentage="(countCheckSubTask()/subTasks.length*100) ? (countCheckSubTask()/subTasks.length*100).toFixed(0) : 0" color="#00FF00"/>
     </div>
-    <el-row v-if="showAddTask">
-        <el-col :span="1" style="text-align: right;">
-        </el-col>
-        <el-col :span="23" style="text-align: right;">
-            <el-input v-model="name" type="textarea" :rows="1" autocomplete="off" placeholder="Tạo mới tên việc"
-                clearable style="display: block;" />
-            <el-input v-model="description" type="textarea" :rows="1" autocomplete="off" placeholder="tạo mới mô tả"
-                clearable style="display: block; margin-top: 8px;" />
-                <span class="task-btn">
-            <el-button color="green" style="margin-right: 8px;" @click="saveSubTask">Tạo việc</el-button>
-            <el-icon @click="closeAddTask" class="task-icon-close close"><CloseBold /></el-icon>
-        </span>
-        </el-col>
-    </el-row>
+    <el-form ref="ruleFormRef" :model="dataSubTask" class="demo-ruleForm" :rules="rules">
+        <el-row v-if="showAddTask">
+            <el-col :span="1" style="text-align: right;">
+            </el-col>
+            <el-col :span="23" style="text-align: right;">
+                <el-input v-model="dataSubTask.name" type="textarea" :rows="1" autocomplete="off" placeholder="Tạo mới tên việc"
+                    clearable style="display: block;" />
+                <el-input v-model="dataSubTask.description" type="textarea" :rows="1" autocomplete="off" placeholder="tạo mới mô tả"
+                    clearable style="display: block; margin-top: 8px;" />
+                    <span class="task-btn">
+                    <el-button color="green" style="margin-right: 8px;" @click="createSubTask()">Tạo việc</el-button>
+                    <el-icon @click="closeAddTask" class="task-icon-close close"><CloseBold /></el-icon>
+                </span>
+            </el-col>
+        </el-row>
+    </el-form>
 <div v-for="(item, index) in subTasks" :key="index">
     <div class="flex" style="margin: 16px 0">
         <div>
@@ -185,11 +250,10 @@ function clonedItems(index){
                     <el-button class="activity-icon" size="medium" :icon="Rank" style="width: 100%; border: none">Di chuyển</el-button>
                     <el-button class="activity-icon" size="medium" :icon="Bell" style="width: 100%; border: none">Nhắc việc</el-button>
                     <el-button class="activity-icon" size="medium" :icon="Share" style="width: 100%; border: none">Lấy link chia sẻ</el-button>
-                    <el-button class="activity-icon" size="medium" :icon="CloseBold" @click="deleteSubTask(index)" style="width: 100%; border: none">Xóa</el-button>
+                    <el-button class="activity-icon" size="medium" :icon="CloseBold" @click="deleteSubTask(item.id)" style="width: 100%; border: none">Xóa</el-button>
                 </el-popover>
             </el-col>
         </el-row>
-
         <div v-if="checked[index]" style="display: flex; align-items: center; width: 110%;">
             <el-col :span="23" style="text-align: right;">
                 <el-input @click="clonedItems(index)" v-model="item.name" :value="item.name" type="textarea" :rows="1" autocomplete="off" placeholder="Chỉnh sửa tên việc"
@@ -197,7 +261,7 @@ function clonedItems(index){
                 <el-input v-model="item.description" :value="item.description" type="textarea" :rows="2" autocomplete="off" placeholder="Chỉnh sửa mô tả"
                     clearable style="display: block; margin-top: 8px;" />
                     <span class="task-btn">
-                <el-button color="green" style="margin-right: 8px;" @click="editSubTask(item)">Cập nhật</el-button>
+                <el-button color="green" style="margin-right: 8px;" @click="updateSubTask(item)">Cập nhật</el-button>
                 <el-icon @click="closeFormUpdate(index, item)" class="task-icon-close close"><CloseBold /></el-icon>
             </span>
             </el-col>

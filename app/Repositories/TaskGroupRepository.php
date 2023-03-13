@@ -11,13 +11,13 @@ class TaskGroupRepository extends BaseRepository
         $this->model = $model;
     }
 
-    public function getByActivityId($activityId, array $withRelation = [])
+    public function getByActivityId($activityId)
     {
-        $query = $this->model->where('activity_id', $activityId);
-
-        if ($withRelation) {
-            $query->with($withRelation);
-        }
+        $query = $this->model->where('activity_id', $activityId)->with([
+            'tasks' => function($query) {
+                return $query->whereNull('parent_id');
+            }
+        ]);
 
         return $query->get();
     }

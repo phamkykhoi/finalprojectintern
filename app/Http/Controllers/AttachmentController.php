@@ -26,7 +26,7 @@ class AttachmentController extends Controller
         $fileName = $file->hashName();
         Storage::disk('local')->putFile('public/attachments', $file);
         $attachment = $this->attachmentRepo->save([
-            'attachable_id' => json_decode($request->all()['params'])->task_id,
+            'attachable_id' => json_decode($request['params'])->task_id,
             'file_path' => Storage::path($fileName),
             'file_name' => $fileName,
             'extension' => $file->extension(),
@@ -35,7 +35,9 @@ class AttachmentController extends Controller
             'title' => $file->getClientOriginalName(),
         ]); 
         event(new UploadFileSuccess($attachment, $request));
+
         return $this->success([
+            'attachment' => $attachment,
             'file_url' => url('/storage/attachments', ['file' => $fileName])
         ]);
     }
@@ -47,4 +49,13 @@ class AttachmentController extends Controller
         ]);
     }
 
+    public function updateAttachmentInfor(Request $request)
+    {
+        try {
+            $this->attachmentRepo->updateAttachment( $request->get('task'), $request->get('listAttachments'));
+            return $this->success();
+        } catch (\Exception $e) {
+            return $this->error($e->getMessage(), $e->getCode());
+        }
+    }
 }

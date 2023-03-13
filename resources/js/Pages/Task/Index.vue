@@ -35,7 +35,7 @@ function closeTaskDetail(value) {
         <li @click="taskDetail(task)">{{  task.name }}</li>
     </ul>
 
-    <TaskDetail :activity="props.activity" v-if="isShowTaskDetail" v-on:closeModal="closeTaskDetail" :taskGroup="taskGroup" :isShowModal="isShowTaskDetail" :task="state.task" :task_group_id="state.task_group_id"/>
+    <TaskDetail :activity="props.activity" v-if="isShowTaskDetail" v-on:closeModal="closeTaskDetail" :taskGroup="taskGroup" :isShowModal="isShowTaskDetail" :task="state.task" :task_group_id="props.task_group_id"/>
 </template>
 
 <style scoped>

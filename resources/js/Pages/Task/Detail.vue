@@ -88,14 +88,6 @@ const closeModal = () => {
     emit('closeModal', false);
 };
 
-const rules = {
-    name: [
-        { required: true, message: 'name is required' },
-    ],
-    description: [
-        { required: true, message: 'description is required' },
-    ],
-}
 const getGroupsTask = inject('getGroupsTask');
 
 const saveTask = (formEl: FormInstance | undefined) => {
@@ -111,7 +103,6 @@ const saveTask = (formEl: FormInstance | undefined) => {
                     })
                     closeModal()
                     getGroupsTask();
-
                 }
             })
         }
@@ -256,7 +247,7 @@ if (completedAt.value) {
                             </span>
                         </div>
                         <el-row class="mb-2" style="display: block; margin-top: 16px;">
-                            <SubTask :taskId="task.id" :subTasks="subTasks"></SubTask>
+                            <SubTask :taskId="task.id" :task_group_id="props.task_group_id"/>
                         </el-row>
 
                         <FileManagerOfTask :taskId="task.id"></FileManagerOfTask>
