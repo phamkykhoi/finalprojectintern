@@ -6,6 +6,8 @@ use App\Repositories\AttachmentRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use App\Events\UploadFileSuccess;
+use App\Models\Attachment;
 
 class AttachmentController extends Controller
 {
@@ -19,10 +21,11 @@ class AttachmentController extends Controller
     }
 
     public function upload(Request $request)
-    {
+    {   
         $file = $request->file('file');
         $fileName = $file->hashName();
         Storage::disk('local')->putFile('public/attachments', $file);
+
         $attachment = $this->attachmentRepo->save([
             'file_path' => Storage::path($fileName),
             'file_name' => $fileName,
@@ -30,7 +33,8 @@ class AttachmentController extends Controller
             'mime_type'=> $file->getMimeType(),
             'size' => $file->getSize(),
             'title' => $file->getClientOriginalName(),
-        ]);
+        ]); 
+        event(new UploadFileSuccess($attachment, json_decode($request['params'], true)));
 
         return $this->success([
             'attachment' => $attachment,
@@ -40,7 +44,7 @@ class AttachmentController extends Controller
 
     public function getAttachments($id)
     {
-       return $this->success([
+        return $this->success([
             'attachment_list' => $this->attachmentRepo->getByTaskId($id)
         ]);
     }
