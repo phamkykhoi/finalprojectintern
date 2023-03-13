@@ -18,8 +18,8 @@ class UploadFileSuccess
     public $attachment;
 
     public $params;
-   
-    public function __construct(Attachment $attachment, array $params)
+
+    public function __construct(Attachment $attachment, array $params = [])
     {
         $this->attachment = $attachment;
         $this->params = $params;

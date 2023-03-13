@@ -21,7 +21,7 @@ class AttachmentController extends Controller
     }
 
     public function upload(Request $request)
-    {   
+    {
         $file = $request->file('file');
         $fileName = $file->hashName();
         Storage::disk('local')->putFile('public/attachments', $file);
@@ -33,8 +33,10 @@ class AttachmentController extends Controller
             'mime_type'=> $file->getMimeType(),
             'size' => $file->getSize(),
             'title' => $file->getClientOriginalName(),
-        ]); 
-        event(new UploadFileSuccess($attachment, json_decode($request['params'], true)));
+        ]);
+
+        $params = $request->params ? json_decode($request->params, true) : [];
+        event(new UploadFileSuccess($attachment, $params ?? []));
 
         return $this->success([
             'attachment' => $attachment,
