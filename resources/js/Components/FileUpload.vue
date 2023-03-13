@@ -7,7 +7,7 @@
         :auto-upload="false"
         :limit="1"
     >
-        <el-button slot="trigger" type="primary">Select file</el-button>
+        <el-button slot="trigger" type="primary">Select File</el-button>
     </el-upload>
 </template>
 <script>
@@ -15,19 +15,24 @@ import axios from "axios";
 import { ElMessage } from "element-plus";
 
 export default {
+    props: {
+        params: Object
+    },
     methods: {
         handleChange(file) {
             file.url = URL.createObjectURL(file.raw);
-            this.submitUpload(file.url, file.name);
+            console.log(this.params)
+            this.submitUpload(file.url, file.name, this.params);
         },
 
-        submitUpload(fileUrl, title) {
+        submitUpload(fileUrl, title, params) {
             let formData = new FormData();
             fetch(fileUrl)
                 .then((res) => res.blob())
                 .then((blob) => {
                     let file = new File([blob], "filename.jpeg");
                     formData.append("file", file, title);
+                    formData.append("params", JSON.stringify(params));
                     axios
                         .post("/upload-file", formData)
                         .then((res) => {

@@ -12,6 +12,7 @@ class Attachment extends Model
     protected $fillable = [
         'uuid',
         'attachable_type',
+        'attachable_id',
         'file_path',
         'file_name',
         'extension',
