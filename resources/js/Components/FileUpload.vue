@@ -21,7 +21,6 @@ export default {
     methods: {
         handleChange(file) {
             file.url = URL.createObjectURL(file.raw);
-            console.log(this.params)
             this.submitUpload(file.url, file.name, this.params);
         },
 
@@ -43,7 +42,7 @@ export default {
                                     type: "success",
                                 });
                             }
-                            this.$emit('data',res.data.result);
+                            this.$emit('data-updated')
                         })
                         .catch((err) => {
                             ElMessage({

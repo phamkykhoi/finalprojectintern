@@ -6,6 +6,7 @@ use App\Events\UploadFileSuccess;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 use App\Models\Attachment;
+use App\Models\Task;
 
 class AssignAttachmentToTask
 {
@@ -28,7 +29,7 @@ class AssignAttachmentToTask
     public function handle(UploadFileSuccess $event): void
     {
         $inputs = Attachment::find($event->attachment['id'])->getAttributes();
-        $inputs['attachable_type'] = Attachment::class;
+        $inputs['attachable_type'] = Task::class;
         Attachment::updateOrCreate(['id' => $inputs['id']], $inputs);
     }
 }

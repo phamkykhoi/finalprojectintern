@@ -25,7 +25,7 @@ class Task extends Model
 
     public function attachment()
     {
-        return $this->morphOne(Attachment::class, 'attachable');
+        return $this->morphMany(Attachment::class, 'attachable');
     }
 
     public function discussions()

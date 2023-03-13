@@ -5,12 +5,18 @@ import FileUpload from '@/Components/FileUpload.vue';
 import {ArrowDown} from '@element-plus/icons-vue';
 import { ElMessage, ElMessageBox } from "element-plus";
 import request from '../utils/request';
+import TimeAgo from 'javascript-time-ago'
+import vi from 'javascript-time-ago/locale/vi'
 
 const props = defineProps({
     taskId: {
         type: Number,
     },
 });
+
+TimeAgo.addDefaultLocale(vi)
+
+const timeAgo = new TimeAgo('vi')
 
 const checkAll = ref(false);
 const checkedFiles = ref([]);
@@ -19,8 +25,7 @@ const showInputEdit = ref(false);
 const files = ref([]);
 async function getFiles() {
     await request.post(`/get-attachments-by-task/${props.taskId}`).then((res) => {
-        console.log(res.data.result.file_url)
-        files.value = res.data.result.file_url;
+        files.value = res.data.result.attachment_list;
     })
 }
 
@@ -107,7 +112,6 @@ const handleRemoveCheckedFile = () =>{
 }
 
 const handleGetLink = (url)=>{
-    console.log(url);
     navigator.clipboard.writeText(url);
     ElMessage({
         showClose: true,
@@ -145,7 +149,7 @@ function isImageFormat(fileExtention) {
     <div>
         <el-row class="my-4">
             <el-form-item label="Tệp đính kèm:"></el-form-item>
-            <FileUpload :params="{task_id : taskId}"></FileUpload>
+            <FileUpload @data-updated="getFiles" :params="{task_id : taskId}"></FileUpload>
             <el-dropdown>
                 <el-button class="ml-2 mr-2">
                     Sắp xếp theo
@@ -172,12 +176,12 @@ function isImageFormat(fileExtention) {
             <div v-for="file in files" class="w-[100%]">
                 <div class="option-img flex mt-8 mb-8 ">
                 <div class=" flex option-img-des ml-5 align-items-center " >
-                    <img :src="file.file_url" class="file-image image rounded"/>
+                    <img :src="'/storage/attachments/' + file.file_name" class="file-image image rounded"/>
                     <div class="image-infor ml-8">
                         <span class="info-img-item image-infor-title">{{ file.title }}</span>
                         <span class="flex">
                             <span class="image-infor-name mr-2">{{ file.user }}</span>
-                            <span class="font-weight-light">Đã thêm lúc {{ file.created_at }}</span>
+                            <span class="font-weight-light">Đã thêm lúc {{ timeAgo.format((new Date(file.created_at))) }}</span>
                         </span>
                         <span
                             v-if="!showInputEdit"
