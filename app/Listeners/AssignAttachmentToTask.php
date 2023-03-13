@@ -20,7 +20,7 @@ class AssignAttachmentToTask
     public function handle(UploadFileSuccess $event): void
     {
         $event->attachment->attachable_type = Task::class;
-        $event->attachment->attachable_id = json_decode($event->params['task_id']);
+        $event->attachment->attachable_id = $event->params['task_id'];
         $event->attachment->save();
     }
 }
