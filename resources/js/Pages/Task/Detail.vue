@@ -218,17 +218,40 @@ const handleChangeStatus = (taskId) =>{
 }
 
 const handleDeleteSchedule = (taskId) =>{
-    taskForm.end_date = taskForm.start_date = null;
-    request.put(`/task/${taskId}`, taskForm)
-    .then(res => {
-        popoverUpdateSchedule.value.hide();
+    ElMessageBox.confirm("Are you sure you want to remove schedule?", {
+        confirmButtonText: "OK",
+        cancelButtonText: "Cancel",
+        type: "warning",
     })
+    .then(() => {
+        taskForm.end_date = taskForm.start_date = null;
+        request.put(`/task/${taskId}`, taskForm)
+            .then(res => {
+                popoverUpdateSchedule.value.hide();
+                ElMessage({
+                        type: "success",
+                        message: "Delete completed",
+                    });
+            })
+    })
+        .catch(() => {
+            ElMessage({
+                type: "info",
+                message: "Delete canceled",
+            });
+        });
+
+
 }
 
 const handleUpdateSchedule = (taskId) =>{
     request.put(`/task/${taskId}`, taskForm)
     .then(res => {
         popoverUpdateSchedule.value.hide();
+        ElMessage({
+                        type: "success",
+                        message: "Update schedule completed!",
+        });
     })
 }
 
@@ -264,7 +287,7 @@ const checkStartDate = (rule: any, value: any, callback: any) => {
         return
     }
 
-    if(new Date(value).getTime()> new Date(taskForm.end_date).getTime()){
+    if(new Date(value).getTime()> new Date(taskForm.end_date).getTime()&&new Date(taskForm.end_date).getTime()){
             callback(new Error("You cannot choose the start date greater than the end date"))
             return
     }
@@ -280,7 +303,7 @@ const checkEndDate = (rule: any, value: any, callback: any) => {
     return
     }
 
-    if(new Date(value).getTime()< new Date(taskForm.start_date).getTime()){
+    if(new Date(value).getTime()< new Date(taskForm.start_date).getTime()&&new Date(taskForm.start_date).getTime()){
         callback(new Error("You cannot choose the end date less than the start date"))
         return;
     }
@@ -356,9 +379,9 @@ const rules = {
                             <div class="date" v-if="taskForm.start_date&&taskForm.end_date">
                                 <span ref="buttonUpdateSchedule"
                                  @click="showUpdateSchedule"
-                                   class="date-finish cursor-pointer" style="display: inline-block; color: red;" >{{ new Date(taskForm.start_date).toLocaleDateString("vi-VN", {day: "numeric", month: "numeric"}) }} - {{ new Date(taskForm.end_date).toLocaleDateString("vi-VN", {day: "numeric", month: "numeric"}) }}
+                                   class="date-finish cursor-pointer " style="display: inline-block; color: red;" >{{ new Date(taskForm.start_date).toLocaleDateString("vi-VN", {day: "numeric", month: "numeric"}) }} - {{ new Date(taskForm.end_date).toLocaleDateString("vi-VN", {day: "numeric", month: "numeric"}) }}
                                 </span>
-                                <el-icon color="orange " class="date-icon" @click="handleDeleteSchedule(task.id)">
+                                <el-icon color="orange " class="date-icon " @click="handleDeleteSchedule(task.id)">
                                 <Delete />
                                 </el-icon>
                             </div>
@@ -373,9 +396,11 @@ const rules = {
                                 virtual-triggering
                                 :visible="isShowUpdateSchedule"
                                 >
-                            <div>
-                                <el-icon @click="hideUpdateSchedule"><CircleCloseFilled /></el-icon>
-                                <el-form-item prop="start_date" class="mt-6">
+                           <div class="w-[100%]">
+                            <el-icon @click="hideUpdateSchedule" class="cursor-pointer float-right" size="25" color="red"  ><CircleCloseFilled /></el-icon>
+                           </div>
+                            <div style="display: inline-block;">
+                                <el-form-item prop="start_date" class="mt-3">
                                     <span>Ngày bắt đầu:</span>
                                     <el-date-picker
                                         v-model="taskForm.start_date"
@@ -390,7 +415,7 @@ const rules = {
                                         "
                                     />
                                 </el-form-item>
-                                <el-form-item prop="end_date" class="mt-6">
+                                <el-form-item prop="end_date" class="mt-3">
                                     <span style="font-size: 14px"
                                         >Ngày kết thúc:</span
                                     >
@@ -408,7 +433,7 @@ const rules = {
                                     />
                                 </el-form-item>
                                     <div class="flex w-[100%] mt-6">
-                                        <el-button type="success" class="button-schedule mr-14 ml-2 text-center" @click="handleUpdateSchedule(task.id)">Cập nhật</el-button>
+                                        <el-button type="success" class="button-schedule mr-3 text-center" @click="handleUpdateSchedule(task.id)">Cập nhật</el-button>
                                         <el-button type="danger" class="button-schedule text-center "  @click="handleDeleteSchedule(task.id)">Xóa</el-button>
                                     </div>
                             </div>
@@ -617,8 +642,8 @@ const rules = {
 
 .date-icon {
     position: absolute;
-    left: 0px;
-    bottom: 10px;
+    right: 10px;
+    bottom: 11px;
     display: none;
 }
 .date:hover .date-icon{
@@ -626,7 +651,7 @@ const rules = {
     display: block;
 }
 .date:hover .date-finish{
-    margin-left: 16px;
+    padding-right: 30px;
 }
 
 .user-icon-close{
@@ -660,10 +685,10 @@ const rules = {
     border-bottom: 1px solid #ccc;
 }
 ::v-deep .el-input__wrapper {
-    width: 100%;
+    width: 100% !important;
 }
 .button-schedule{
     border-radius: 3px !important;
-    width:100px !important;
+    width:100px ;
 }
 </style>
