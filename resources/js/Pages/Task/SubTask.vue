@@ -68,6 +68,7 @@ function createSubTask()
             message: 'Add subtask successfully',
             type: 'success',
         })
+        closeAddTask()
         getSubTasks(props.taskId)
         resetForm()
     }).catch(err => {
@@ -102,23 +103,10 @@ function resetForm() {
     dataSubTask.description=''
 }
 
-function updateSubTask(index, subTask) {
-    //fomat date
-    const date = new Date()
-    const year = date.getFullYear();
-    const month = `0${date.getMonth() + 1}`.slice(-2);
-    const day = `0${date.getDate()}`.slice(-2);
-    const hour = `0${date.getHours()}`.slice(-2);
-    const minute = `0${date.getMinutes()}`.slice(-2);
-    const second = `0${date.getSeconds()}`.slice(-2);
-
-    const completed_at = `${year}-${month}-${day} ${hour}:${minute}:${second}`;
-
+function updateSubTask(subTask) {
     const itemSubTask = reactive({
         name: subTask.name,
         description: subTask.description,
-        status: subTask.is_done ? 3 : 1, // 1 là todo, 3 là done
-        completed_at: subTask.is_done ? completed_at : null,
     })
     request.put(`/subtask/${subTask.id}`, itemSubTask).then((res)=>{
         ElMessage({
@@ -127,6 +115,33 @@ function updateSubTask(index, subTask) {
             type: 'success',
         })
         CloseInputTask()
+        getSubTasks(props.taskId)
+    }).catch(err => {
+        ElMessage({
+            showClose: true,
+            message: err.response.data.message,
+            type: 'error',
+            })
+    })
+}
+
+
+function completedSubTask(subTask) {
+    //fomat date
+    const date = new Date()
+    const year = date.getFullYear();
+    const month = `0${date.getMonth() + 1}`.slice(-2);
+    const day = `0${date.getDate()}`.slice(-2);
+    const hour = `0${date.getHours()}`.slice(-2);
+    const minute = `0${date.getMinutes()}`.slice(-2);
+    const second = `0${date.getSeconds()}`.slice(-2);
+    const completed_at = `${year}-${month}-${day} ${hour}:${minute}:${second}`;
+
+    const itemSubTask = reactive({
+        status: !subTask.is_done ? 3 : 1, // 1 là todo, 3 là done
+        completed_at: !subTask.is_done ? completed_at : null,
+    })
+    request.put(`/completed-task/${subTask.id}`, itemSubTask).then((res)=>{
         getSubTasks(props.taskId)
     }).catch(err => {
         ElMessage({
@@ -198,7 +213,7 @@ function clonedItems(index){
             <el-col :span="23" style="text-align: right;">
                 <el-input v-model="dataSubTask.name" type="textarea" :rows="1" autocomplete="off" placeholder="Tạo mới tên việc"
                     clearable style="display: block;" />
-                <el-input v-model="dataSubTask.description" type="textarea" :rows="1" autocomplete="off" placeholder="tạo mới mô tả"
+                <el-input v-model="dataSubTask.description" type="textarea" :rows="1" autocomplete="off" placeholder="Tạo mới mô tả"
                     clearable style="display: block; margin-top: 8px;" />
                     <span class="task-btn">
                     <el-button color="green" style="margin-right: 8px;" @click="createSubTask()">Tạo việc</el-button>
@@ -210,7 +225,7 @@ function clonedItems(index){
 <div v-for="(item, index) in subTasks" :key="index">
     <div class="flex" style="margin: 16px 0">
         <div>
-            <el-checkbox style="margin-right: 16px;" v-model="item.is_done" true-label="true" size="large"/>
+            <el-checkbox style="margin-right: 16px;" v-model="item.is_done" @click="completedSubTask(item)" size="large"/>
         </div>
 
         <el-row class="task-option" v-if="!checked[index]" :span="24">
@@ -251,7 +266,7 @@ function clonedItems(index){
                 <el-input v-model="item.description" :value="item.description" type="textarea" :rows="2" autocomplete="off" placeholder="Chỉnh sửa mô tả"
                     clearable style="display: block; margin-top: 8px;" />
                     <span class="task-btn">
-                <el-button color="green" style="margin-right: 8px;" @click="updateSubTask(index, item)">Cập nhật</el-button>
+                <el-button color="green" style="margin-right: 8px;" @click="updateSubTask(item)">Cập nhật</el-button>
                 <el-icon @click="closeFormUpdate(index, item)" class="task-icon-close close"><CloseBold /></el-icon>
             </span>
             </el-col>

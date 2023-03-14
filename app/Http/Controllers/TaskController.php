@@ -7,6 +7,7 @@ use App\Repositories\TaskGroupRepository;
 use App\Repositories\UserTaskRepository;
 use App\Http\Requests\Task\CreateTaskRequest;
 use App\Http\Requests\Task\UpdateTaskRequest;
+use App\Http\Requests\Task\CompletedTaskRequest;
 use App\Models\Task;
 use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Storage;
@@ -69,4 +70,13 @@ class TaskController extends Controller
         }
     }
 
+    public function completedTask($id, CompletedTaskRequest $request) 
+    {
+        try {
+            $this->taskRepo->save($request->all(), ['id' => $id]);
+            return $this->success();
+        } catch (\Exception $e) {
+            return $this->error($e->getMessage(), $e->getCode());
+        }
+    }
 }
