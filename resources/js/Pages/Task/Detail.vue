@@ -67,7 +67,7 @@ const taskForm = reactive({
     task_group_id: props.taskGroup.id   ,
     is_important: props.task.is_important,
     is_quickly: props.task.is_quickly,
-    status: props.task.status === 3 ? true : false,
+    status: props.task.status === 3,
     start_date: props.task.start_date,
     end_date: props.task.end_date,
 })
