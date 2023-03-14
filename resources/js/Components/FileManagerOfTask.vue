@@ -19,10 +19,13 @@ TimeAgo.addDefaultLocale(vi)
 const timeAgo = new TimeAgo('vi')
 
 const checkAll = ref(false);
+
 const checkedFiles = ref([]);
+
 const showInputEdit = ref(false);
 
 const files = ref([]);
+
 async function getFiles() {
     await request.post(`/get-attachments-by-task/${props.taskId}`).then((res) => {
         files.value = res.data.result.attachment_list;
@@ -31,7 +34,7 @@ async function getFiles() {
 
 getFiles()
 
-const fileList= files.value.map(a => a.id);
+const fileList = ref([])
 
 function handleShowEdit(){
     showInputEdit.value = true;
@@ -42,8 +45,9 @@ function handleCloseEdit(){
 }
 
 const handleCheckAllClick = ()=>{
-    checkedFiles.value = fileList;
-    checkAll.value = true;
+    checkAll.value = true
+    fileList.value = files.value.map(a => a.id);
+    checkedFiles.value =  fileList.value ;
 }
 
 const handleRemoveCheckAllClick = () =>{
@@ -52,7 +56,8 @@ const handleRemoveCheckAllClick = () =>{
 }
 
 const handleCheckAllChange = (val) =>{
-    checkedFiles.value = val ? fileList : [];
+    fileList.value = files.value.map(a => a.id);
+    checkedFiles.value = val ? fileList.value : [];
 }
 
 const handleCheckedFilesChange = () =>{
@@ -68,13 +73,14 @@ const handleRemoveFile = (id) =>{
       type: 'warning',
     }
   )
-    .then(() => {
-      files.value = files.value.filter(obj => obj.id !== id);
-      checkedFiles.value = checkedFiles.value.filter(item => item !== id);
-      ElMessage({
-        type: 'success',
-        message: 'Delete completed',
-      })
+    .then(async () => {
+        await request.delete(`/attachment/${id}`).then((res) => {
+            getFiles()
+        })
+        ElMessage({
+            type: "success",
+            message: "Delete completed",
+        });
     })
     .catch(() => {
       ElMessage({
@@ -84,7 +90,7 @@ const handleRemoveFile = (id) =>{
     })
 }
 
-const handleRemoveCheckedFile = () =>{
+const handleRemoveCheckedFile = (id) =>{
     ElMessageBox.confirm(
     'All selected files will be permanently deleted, keep deleting ?',
     {
@@ -94,14 +100,13 @@ const handleRemoveCheckedFile = () =>{
     }
   )
     .then(() => {
-        if(files.value.length){
-        files.value = files.value.filter(obj => !checkedFiles.value.includes(obj.id));
-        }
-        handleRemoveCheckAllClick();
-      ElMessage({
-        type: 'success',
-        message: 'Delete completed',
-      })
+        request.delete(`/attachment/delete/${id}`, {checkedFiles: checkedFiles.value }).then((res) => {
+            getFiles()
+        })
+        ElMessage({
+            type: "success",
+            message: "Delete completed",
+        });
     })
     .catch(() => {
       ElMessage({
@@ -240,7 +245,7 @@ function isImageFormat(fileExtention) {
 
             <div v-if="files.length" class="d-flex justify-content-end mr-4 w-[100%]">
                 <el-button type="primary" @click="handleDownloadAllFiles">Tải tất cả</el-button>
-                <el-button  v-if="checkedFiles.length" type="danger" class="ml-2" @click="handleRemoveCheckedFile" >Xóa tập tin đã chọn</el-button
+                <el-button  v-if="checkedFiles.length" type="danger" class="ml-2" @click="handleRemoveCheckedFile(props.taskId)" >Xóa tập tin đã chọn</el-button
                 >
                 <el-button class="ml-2" @click=" handleCheckAllClick">Chọn tất cả</el-button>
                 <el-button  v-if="checkedFiles.length" class="ml-2" @click="handleRemoveCheckAllClick">Bỏ chọn tất cả</el-button>

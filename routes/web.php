@@ -43,6 +43,8 @@ Route::middleware(['auth', 'verified'])->group(function() {
     Route::get('taskgroup/copy/{id}', [TaskGroupController::class,'copy']);
     Route::get('taskgroup/list/{id}', [TaskGroupController::class,'getTaskGroupList']);
     Route::post('taskgroup/move', [TaskGroupController::class,'move']);
+    Route::resource('attachment', AttachmentController::class);
+    Route::delete('attachment/delete/{id}', [AttachmentController::class,'deleteAttachmentByTask']);
     Route::post('/upload-file', [AttachmentController::class,'upload']);
     Route::post('get-attachments-by-task/{taskId}', [AttachmentController::class, 'getAttachments']);
     Route::post('/get-discussion-by-task-id/{taskId}',[DiscussionController::class,'getByTaskId']);

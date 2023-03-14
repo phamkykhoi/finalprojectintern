@@ -23,4 +23,10 @@ class AttachmentRepository extends BaseRepository
         ->whereIn('id', $listAttachments)
         ->update(['attachable_id' => $task['id'], 'attachable_type' => $task['class']]);
     }
+
+    public function deleteAttachmentByTask($ids)
+    {
+        $this->model
+        ->whereIn('id', $ids)->delete();
+    }
 }

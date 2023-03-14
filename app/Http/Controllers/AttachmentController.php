@@ -44,11 +44,31 @@ class AttachmentController extends Controller
         ]);
     }
 
+    public function destroy($attachmentId)
+    {
+        try {
+            $this->attachmentRepo->deleteById($attachmentId);
+            return $this->success();
+        } catch (\Exception $e) {
+            return $this->error($e->getMessage(), $e->getCode());
+        }
+    }
+
     public function getAttachments($id)
     {
         return $this->success([
             'attachment_list' => $this->attachmentRepo->getByTaskId($id)
         ]);
+    }
+
+    public function deleteAttachmentByTask(Request $request, $taskId)
+    {
+        try {
+            $this->attachmentRepo->deleteAttachmentByTask($request->checkedFiles);
+            return $this->success();
+        } catch (\Exception $e) {
+            return $this->error($e->getMessage(), $e->getCode());
+        }
     }
 
     public function updateAttachmentInfor(Request $request)
