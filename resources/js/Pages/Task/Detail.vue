@@ -251,7 +251,9 @@ const handleDeleteSchedule = (taskId) =>{
 
 }
 
-const handleUpdateSchedule = (taskId) =>{
+const handleUpdateSchedule = (taskId, formEl: FormInstance | undefined) =>{
+    formEl.validate((valid) => {
+        if (valid) {
     request.put(`/task/${taskId}`, taskForm)
     .then(res => {
         popoverUpdateSchedule.value.hide();
@@ -260,6 +262,7 @@ const handleUpdateSchedule = (taskId) =>{
             message: "Update schedule completed!",
         });
     })
+}})
 }
 
 const showUpdateSchedule = () => {
@@ -294,7 +297,7 @@ const checkStartDate = (rule: any, value: any, callback: any) => {
         return
     }
 
-    if(new Date(value).getTime()> new Date(taskForm.end_date).getTime()&&new Date(taskForm.end_date).getTime()){
+    if(new Date(value).getTime()> new Date(taskForm.end_date).getTime()&&new Date(taskForm.end_date).getTime()!= 0&& new Date(value).getTime()!=0){
             callback(new Error("You cannot choose the start date greater than the end date"))
             return
     }
@@ -310,7 +313,7 @@ const checkEndDate = (rule: any, value: any, callback: any) => {
     return
     }
 
-    if(new Date(value).getTime()< new Date(taskForm.start_date).getTime()&&new Date(taskForm.start_date).getTime()){
+    if(new Date(value).getTime()< new Date(taskForm.start_date).getTime() && new Date(taskForm.start_date).getTime()!=0 && new Date(value).getTime()!= 0){
         callback(new Error("You cannot choose the end date less than the start date"))
         return;
     }
@@ -383,10 +386,10 @@ const rules = {
                         <el-checkbox v-model="taskForm.status" true-label="3" :false-label="task.status===3 ? null : task.status" label="Hoàn thành việc" size="large" @change="handleChangeStatus(task.id)"/>
                         <span>Ngày thực hiện</span>
                         <el-form-item style="display: block;">
-                            <div class="date" v-if="taskForm.start_date&&taskForm.end_date">
+                            <div class="date" v-if="taskForm.start_date || taskForm.end_date">
                                 <span ref="buttonUpdateSchedule"
                                  @click="showUpdateSchedule"
-                                   class="date-finish cursor-pointer " style="display: inline-block; color: red;" >{{ new Date(taskForm.start_date).toLocaleDateString("vi-VN", {day: "numeric", month: "numeric"}) }} - {{ new Date(taskForm.end_date).toLocaleDateString("vi-VN", {day: "numeric", month: "numeric"}) }}
+                                   class="date-finish cursor-pointer " style="display: inline-block; color: red;" >{{ taskForm.start_date ? new Date(taskForm.start_date).toLocaleDateString("vi-VN", {day: "numeric", month: "numeric"}) : "Start" }} - {{ taskForm.end_date ? new Date(taskForm.end_date).toLocaleDateString("vi-VN", {day: "numeric", month: "numeric"}) : "End"}}
                                 </span>
                                 <el-icon color="orange " class="date-icon " @click="handleDeleteSchedule(task.id)">
                                 <Delete />
@@ -407,8 +410,8 @@ const rules = {
                             <el-icon @click="hideUpdateSchedule" class="cursor-pointer float-right" size="25" color="red"  ><CircleCloseFilled /></el-icon>
                            </div>
                             <div style="display: inline-block;">
-                                <el-form-item prop="start_date" class="mt-3">
-                                    <span>Ngày bắt đầu:</span>
+                                <el-form-item prop="start_date">
+                                    <span >Ngày bắt đầu:</span>
                                     <el-date-picker
                                         v-model="taskForm.start_date"
                                         type="date"
@@ -422,9 +425,8 @@ const rules = {
                                         "
                                     />
                                 </el-form-item>
-                                <el-form-item prop="end_date" class="mt-3">
-                                    <span style="font-size: 14px"
-                                        >Ngày kết thúc:</span
+                                <el-form-item prop="end_date" >
+                                    <span class="mt-1">Ngày kết thúc:</span
                                     >
                                     <el-date-picker
                                         v-model="taskForm.end_date"
@@ -439,9 +441,9 @@ const rules = {
                                         "
                                     />
                                 </el-form-item>
-                                    <div class="flex w-[100%] mt-6">
-                                        <el-button type="success" class="button-schedule mr-3 text-center" @click="handleUpdateSchedule(task.id)">Cập nhật</el-button>
-                                        <el-button type="danger" class="button-schedule text-center "  @click="handleDeleteSchedule(task.id)">Xóa</el-button>
+                                    <div class="flex w-[100%] ">
+                                        <el-button type="success" class="button-schedule mr-3 text-center" @click="handleUpdateSchedule(task.id, ruleFormRef)">Cập nhật</el-button>
+                                        <el-button type="danger" class="button-schedule text-center"  @click="handleDeleteSchedule(task.id)">Xóa</el-button>
                                     </div>
                             </div>
 
@@ -695,6 +697,7 @@ const rules = {
     width: 100% !important;
 }
 .button-schedule{
+    margin-top: 15px !important;
     border-radius: 3px !important;
     width:100px ;
 }
