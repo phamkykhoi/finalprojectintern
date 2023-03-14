@@ -21,8 +21,10 @@ class SubTaskController extends Controller
 
     public function store(CreateSubTaskRequest $request)
     {
+        $inputs = $request->only('status');
+        $inputs['completed_at'] = now();
         try {
-            $this->taskRepo->save($request->all());
+            $this->taskRepo->save($inputs);
             return $this->success();
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());

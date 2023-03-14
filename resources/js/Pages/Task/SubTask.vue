@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { ref, unref, onBeforeMount, reactive,toRefs } from 'vue';
+import { ref, unref, onBeforeMount, reactive,toRefs, watch } from 'vue';
 import { ClickOutside as vClickOutside } from 'element-plus'
 import { EditPen, CloseBold, CirclePlusFilled, Calendar, MoreFilled, DocumentCopy, Rank, Bell, Share, List } from '@element-plus/icons-vue';
 import { ElMessage } from 'element-plus';
@@ -33,11 +33,7 @@ function getSubTasks(id)
         .then((res) => {
             subTasks.value = res.data.result.subtask
             loading.value=false
-            let tasksDone = subTasks.value.filter(function (subTask)
-            {
-                return subTask.is_done == true
-            });
-            totalDoneSubTask.value = tasksDone.length
+            countSubTasksDone(subTasks)
         })
         .catch(err => {
             ElMessage({
@@ -53,6 +49,13 @@ onBeforeMount(async () => {
     getSubTasks(props.taskId);
 });
 
+function countSubTasksDone(subTasks) {
+    let tasksDone = subTasks.value.filter(function (subTask)
+        {
+            return subTask.is_done == true
+        });
+        totalDoneSubTask.value = tasksDone.length
+}
 const dataSubTask = reactive({
     name:'',
     description:'',
@@ -126,21 +129,15 @@ function updateSubTask(subTask) {
 }
 
 
-function completedSubTask(subTask) {
+function completedSubTask(index, subTask) {
     //fomat date
-    const date = new Date()
-    const year = date.getFullYear();
-    const month = `0${date.getMonth() + 1}`.slice(-2);
-    const day = `0${date.getDate()}`.slice(-2);
-    const hour = `0${date.getHours()}`.slice(-2);
-    const minute = `0${date.getMinutes()}`.slice(-2);
-    const second = `0${date.getSeconds()}`.slice(-2);
-    const completed_at = `${year}-${month}-${day} ${hour}:${minute}:${second}`;
-
-    const itemSubTask = reactive({
+    const itemSubTask = {
         status: !subTask.is_done ? 3 : 1, // 1 là todo, 3 là done
-        completed_at: !subTask.is_done ? completed_at : null,
-    })
+    }
+    subTask.is_done = true;
+
+    subTasks.value[index] = subTask
+    countSubTasksDone(subTasks)
     request.put(`/completed-task/${subTask.id}`, itemSubTask).then((res)=>{
         getSubTasks(props.taskId)
     }).catch(err => {
@@ -225,7 +222,7 @@ function clonedItems(index){
 <div v-for="(item, index) in subTasks" :key="index">
     <div class="flex" style="margin: 16px 0">
         <div>
-            <el-checkbox style="margin-right: 16px;" v-model="item.is_done" @click="completedSubTask(item)" size="large"/>
+            <el-checkbox style="margin-right: 16px;" v-model="item.is_done" @click="completedSubTask(index, item)" size="large"/>
         </div>
 
         <el-row class="task-option" v-if="!checked[index]" :span="24">
