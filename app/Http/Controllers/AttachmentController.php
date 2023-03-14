@@ -44,10 +44,10 @@ class AttachmentController extends Controller
         ]);
     }
 
-    public function destroy($attachmentId)
+    public function destroy(Request $request, $attachmentId)
     {
         try {
-            $this->attachmentRepo->deleteById($attachmentId);
+            $this->attachmentRepo->deleteById($attachmentId, $request->checkedFiles);
             return $this->success();
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());

@@ -100,7 +100,7 @@ const handleRemoveCheckedFile = (id) =>{
     }
   )
     .then(() => {
-        request.delete(`/attachment/delete/${id}`, {checkedFiles: checkedFiles.value }).then((res) => {
+        request.delete(`/attachment/${id}`, {checkedFiles: checkedFiles.value }).then((res) => {
             getFiles()
         })
         ElMessage({

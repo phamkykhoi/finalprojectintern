@@ -42,8 +42,11 @@ class BaseRepository
         return $this->model->find($id);
     }
 
-    public function deleteById($id)
-    {
+    public function deleteById($id, $listId)
+    {   
+        if($listId) {
+            return $this->model->whereIn('id', $listId)->delete();
+        }
         return $this->model->destroy($id);
     }
 
