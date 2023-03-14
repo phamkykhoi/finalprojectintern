@@ -186,7 +186,7 @@ onBeforeMount(async () => {
                             />
                         </el-form-item>
                         <el-form-item label="Tệp đính kèm">
-                            <FileUpload @data="handleLoadData"></FileUpload>
+                            <FileUpload @data="handleLoadData" :show-file-list = "true"></FileUpload>
                         </el-form-item>
                         <el-row>
                             <el-col :span="12">
@@ -285,10 +285,10 @@ onBeforeMount(async () => {
                     class="modal-footer flex flex-shrink-0 flex-wrap items-center justify-end p-4 border-t border-gray-200 rounded-b-md"
                 >
                     <div>
-                        <el-button type="primary" @click="closeModal">
+                        <el-button type="danger" @click="closeModal" class="mr-4">
                             Đóng
                         </el-button>
-                        <el-button type="primary" @click="addTask(ruleFormRef)">
+                        <el-button type="success" @click="addTask(ruleFormRef)">
                             Thêm mới
                         </el-button>
                     </div>
