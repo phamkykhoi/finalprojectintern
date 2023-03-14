@@ -60,7 +60,7 @@ const props = defineProps({
       type: Function,
     }
 })
-
+const taskGroup = props.taskGroup
 const taskForm = reactive({
     name: props.task.name,
     description: props.task.description,
@@ -375,7 +375,7 @@ const rules = {
                             </span>
                         </div>
                         <el-row class="mb-2" style="display: block; margin-top: 16px;">
-                            <SubTask :taskId="task.id" :task_group_id="props.task_group_id"/>
+                            <SubTask :taskId="task.id" :task_group_id="taskGroup.id"/>
                         </el-row>
 
                         <FileManagerOfTask :taskId="task.id"></FileManagerOfTask>
