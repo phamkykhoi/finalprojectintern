@@ -48,7 +48,6 @@ const props = defineProps({
         type: Boolean,
         default: false,
     },
-    task_group_id: Number,
     activity: {
       type: Object,
       default: () => ({ name: 'activityName' })
@@ -56,13 +55,16 @@ const props = defineProps({
     taskGroup: {
       type: Object,
       default: () => ({ name: 'taskGroupName' })
+    },
+    getGroupsTask: {
+      type: Function,
     }
 })
 
 const taskForm = reactive({
     name: props.task.name,
     description: props.task.description,
-    task_group_id: props.task_group_id,
+    task_group_id: props.taskGroup.id   ,
     is_important: props.task.is_important,
     is_quickly: props.task.is_quickly,
     status: props.task.status === 3 ? true : false,
@@ -96,8 +98,6 @@ const closeModal = () => {
     emit('closeModal', false);
 };
 
-const getGroupsTask = inject('getGroupsTask');
-
 const saveTask = (formEl: FormInstance | undefined) => {
     if (!formEl) return
     formEl.validate((valid) => {
@@ -110,7 +110,7 @@ const saveTask = (formEl: FormInstance | undefined) => {
                         type: 'success',
                     })
                     closeModal()
-                    getGroupsTask();
+                    props.getGroupsTask();
                 }
             })
         }
@@ -123,7 +123,7 @@ function changeImportantStatus(taskId) {
     change_status_type: 'important',
 })
     .then(res => {
-        getGroupsTask();
+        props.getGroupsTask();
     })
 }
 
@@ -133,7 +133,7 @@ function changeQuicklyStatus(taskId) {
         change_status_type: 'quickly',
     })
         .then(res => {
-            getGroupsTask();
+            props.getGroupsTask();
         })
 }
 const showHistory = ref(false)
