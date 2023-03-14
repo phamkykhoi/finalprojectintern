@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import FollowerList from "@/Components/UsersTask/FollowerList.vue"
 import {
     Avatar,
     CircleCheck,
@@ -8,6 +9,8 @@ import {
     Search,
 StarFilled,
 } from "@element-plus/icons-vue";
+import request from '../../utils/request';
+import { ElMessage } from 'element-plus';
 import { ref, unref} from "vue";
 
 defineProps({
@@ -100,6 +103,26 @@ const hidePopover5 = () => {
 
 const handleUpdate = () =>{
     hidePopover2();
+}
+
+const listUsers = ref([])
+function getUser(taskId)
+{
+    loading.value=true
+    request.get(`/api/list-user/${taskId}`)
+        .then((res) => {
+            listUsers.value = res.data.result.subtask
+            console.log(listUsers.value)
+            loading.value=false
+        })
+        .catch(err => {
+            ElMessage({
+                showClose: true,
+                message: err.response.data.message,
+                type: 'error',
+            })
+            loading.value=false;
+        })
 }
 
 </script>
@@ -227,7 +250,8 @@ const handleUpdate = () =>{
 
     <div>Người theo dõi (1):</div>
     <div class="people-handle" style="display: flex">
-        <div class="people-icon">
+        <FollowerList />
+        <!-- <div class="people-icon">
             <el-icon
                 size="25"
                 class="people-icon-avatar"
@@ -265,7 +289,7 @@ const handleUpdate = () =>{
             <el-icon size="15" class="people-icon-remove close">
                 <CircleCloseFilled />
             </el-icon>
-        </div>
+        </div> -->
 
         <el-icon
             size="25"

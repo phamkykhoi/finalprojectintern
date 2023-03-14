@@ -34,4 +34,10 @@ class UserRepository extends BaseRepository
             ->where('user_departments.department_id', $departmentId)
             ->get();
     }
+
+    public function getUserTask($id = null) {
+        return $this->model->join('user_tasks', 'user_tasks.user_id', 'users.id')
+                ->where('user_tasks.task_id', $id)
+                ->get();
+    }
 }
