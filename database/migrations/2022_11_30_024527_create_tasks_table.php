@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::create('tasks', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('description');
+            $table->string('description')->nullable();
             $table->unsignedBigInteger('task_group_id');
             $table->tinyInteger('type')->nullable();
             $table->timestamp('start_date')->nullable();
