@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { ref, unref, onBeforeMount, reactive,toRefs } from 'vue';
+import { ref, unref, onBeforeMount, reactive,toRefs, watch } from 'vue';
 import { ClickOutside as vClickOutside } from 'element-plus'
 import { EditPen, CloseBold, CirclePlusFilled, Calendar, MoreFilled, DocumentCopy, Rank, Bell, Share, List } from '@element-plus/icons-vue';
 import { ElMessage } from 'element-plus';
@@ -24,15 +24,18 @@ const onClickOutside = () => {
 }
 
 const subTasks = ref([])
+const totalDoneSubTask = ref(0)
 
 function getSubTasks(id)
 {
     loading.value=true
     request.get(`/api/subtask/${id}`)
         .then((res) => {
-            subTasks.value = res.data.result.subtask;
-            loading.value=false;
-        }).catch(err => {
+            subTasks.value = res.data.result.subtask
+            loading.value=false
+            countSubTasksDone(subTasks)
+        })
+        .catch(err => {
             ElMessage({
                 showClose: true,
                 message: err.response.data.message,
@@ -46,6 +49,13 @@ onBeforeMount(async () => {
     getSubTasks(props.taskId);
 });
 
+function countSubTasksDone(subTasks) {
+    let tasksDone = subTasks.value.filter(function (subTask)
+        {
+            return subTask.is_done == true
+        });
+        totalDoneSubTask.value = tasksDone.length
+}
 const dataSubTask = reactive({
     name:'',
     description:'',
@@ -61,6 +71,7 @@ function createSubTask()
             message: 'Add subtask successfully',
             type: 'success',
         })
+        closeAddTask()
         getSubTasks(props.taskId)
         resetForm()
     }).catch(err => {
@@ -117,6 +128,27 @@ function updateSubTask(subTask) {
     })
 }
 
+
+function completedSubTask(index, subTask) {
+    //fomat date
+    const itemSubTask = {
+        status: !subTask.is_done ? 3 : 1, // 1 là todo, 3 là done
+    }
+    subTask.is_done = true;
+
+    subTasks.value[index] = subTask
+    countSubTasksDone(subTasks)
+    request.put(`/completed-task/${subTask.id}`, itemSubTask).then((res)=>{
+        getSubTasks(props.taskId)
+    }).catch(err => {
+        ElMessage({
+            showClose: true,
+            message: err.response.data.message,
+            type: 'error',
+            })
+    })
+}
+
 const hidePopoverSubTask = (index) => {
     popoverRef.value[index].hide()
 }
@@ -142,27 +174,6 @@ function closeAddTask(){
     showAddTask.value = false
 }
 
-function countCheckSubTask() {
-    var count = 0
-
-    checkedSubTask.value.filter(function (task) {
-        if (task == true){
-            count = count + 1
-        }
-        return count;
-    });
-    addClass(count)
-
-    return count;
-}
-
-function addClass(count){
-    if (count == subTasks.value.length && count!=0){
-        return lineThrough.value = 'line-through'
-    }
-
-    return lineThrough.value = ''
-}
 const subTaskBackup = ref({})
 
 function closeFormUpdate(index, item){
@@ -178,15 +189,6 @@ function clonedItems(index){
     return JSON.parse(JSON.stringify(subTasks.value[index]))
 }
 
-const rules = {
-    name: [
-        { required: true, message: 'name is required' },
-    ],
-    description: [
-        { required: true, message: 'description is required' },
-    ],
-}
-
 </script>
 
 <template>
@@ -194,12 +196,12 @@ const rules = {
             <div class="flex list-task">
                 <el-icon style="padding-left: 0px;" :size="25"><List /></el-icon>
                 <el-form-item :class="lineThrough" style="margin-bottom: 0; margin-left: 6px; " label="Danh sách việc con"></el-form-item>
-                <span>({{ countCheckSubTask() + '/' + subTasks.length}})</span>
+                <span>({{ totalDoneSubTask + '/' + subTasks.length}})</span>
             </div>
             <el-button @click="createFormAddTask">Tạo việc con</el-button>
     </el-row>
     <div class="task-progress">
-        <el-progress :percentage="(countCheckSubTask()/subTasks.length*100) ? (countCheckSubTask()/subTasks.length*100).toFixed(0) : 0" color="#00FF00"/>
+        <el-progress :percentage="(totalDoneSubTask/subTasks.length*100) ? (totalDoneSubTask/subTasks.length*100).toFixed(0) : 0" color="#00FF00"/>
     </div>
     <el-form ref="ruleFormRef" :model="dataSubTask" class="demo-ruleForm" :rules="rules">
         <el-row v-if="showAddTask">
@@ -208,7 +210,7 @@ const rules = {
             <el-col :span="23" style="text-align: right;">
                 <el-input v-model="dataSubTask.name" type="textarea" :rows="1" autocomplete="off" placeholder="Tạo mới tên việc"
                     clearable style="display: block;" />
-                <el-input v-model="dataSubTask.description" type="textarea" :rows="1" autocomplete="off" placeholder="tạo mới mô tả"
+                <el-input v-model="dataSubTask.description" type="textarea" :rows="1" autocomplete="off" placeholder="Tạo mới mô tả"
                     clearable style="display: block; margin-top: 8px;" />
                     <span class="task-btn">
                     <el-button color="green" style="margin-right: 8px;" @click="createSubTask()">Tạo việc</el-button>
@@ -220,7 +222,7 @@ const rules = {
 <div v-for="(item, index) in subTasks" :key="index">
     <div class="flex" style="margin: 16px 0">
         <div>
-            <el-checkbox style="margin-right: 16px;" v-model="checkedSubTask[index]" size="large"/>
+            <el-checkbox style="margin-right: 16px;" v-model="item.is_done" @click="completedSubTask(index, item)" size="large"/>
         </div>
 
         <el-row class="task-option" v-if="!checked[index]" :span="24">

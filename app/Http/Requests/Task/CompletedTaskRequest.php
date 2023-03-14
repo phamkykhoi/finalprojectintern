@@ -4,7 +4,7 @@ namespace App\Http\Requests\Task;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class CreateSubTaskRequest extends FormRequest
+class CompletedTaskRequest extends FormRequest
 {
     public function authorize()
     {
@@ -14,8 +14,6 @@ class CreateSubTaskRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => ['required','unique:tasks,name'],
-            'description' => ['nullable'],
         ];
     }
 }
