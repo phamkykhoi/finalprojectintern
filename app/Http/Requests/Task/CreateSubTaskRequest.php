@@ -14,7 +14,8 @@ class CreateSubTaskRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => ['required'],
+            'name' => ['required','unique:tasks,name'],
+            'description' => ['nullable'],
         ];
     }
 }

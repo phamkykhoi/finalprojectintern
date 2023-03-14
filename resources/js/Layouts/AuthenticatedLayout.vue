@@ -21,7 +21,7 @@ const showingNavigationDropdown = ref(false);
                     <div class="flex justify-between h-16">
                         <div class="flex">
                             <!-- Navigation Links -->
-                            <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex" style="margin-left:-100px">
+                            <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex" style="margin-left:70px">
                                 <!-- :active="route().current('dashboard')" -->
                                 <NavLink :href="route('dashboard')">
                                     Lịch công tác

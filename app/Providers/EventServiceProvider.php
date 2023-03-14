@@ -3,7 +3,9 @@
 namespace App\Providers;
 
 use Illuminate\Auth\Events\Registered;
+use Illuminate\Auth\Events\UploadFileSuccess;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
+use Illuminate\Auth\Listeners\AssignAttachmentToTask;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Event;
 
@@ -17,7 +19,7 @@ class EventServiceProvider extends ServiceProvider
     protected $listen = [
         Registered::class => [
             SendEmailVerificationNotification::class,
-        ],
+        ]
     ];
 
     /**
@@ -25,9 +27,12 @@ class EventServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function boot()
+    public function boot(): void
     {
-        //
+        Event::listen(
+            UploadFileSuccess::class,
+            [AssignAttachmentToTask::class, 'handle']
+        );
     }
 
     /**
@@ -37,6 +42,6 @@ class EventServiceProvider extends ServiceProvider
      */
     public function shouldDiscoverEvents()
     {
-        return false;
+        return true;
     }
 }

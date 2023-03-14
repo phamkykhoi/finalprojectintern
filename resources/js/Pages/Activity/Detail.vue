@@ -347,7 +347,6 @@ function closePopoverAction() {
                                 </el-row>
                             </el-form>
                         </template>
-
                         <TaskList :tasks="taskGroup.tasks"  :task_group_id="taskGroup.id" :taskGroup="taskGroup" :activity="props.activity" :getGroupsTask="getGroupsTask"/>
                         <el-button class="button"  @click="createTaskForm(taskGroup)" text>
                             <el-icon><Plus /></el-icon>Thêm mới công việc
@@ -406,7 +405,7 @@ function closePopoverAction() {
             </section>
         </AuthenticatedLayout>
     </div>
-    <TaskForm v-if="showFormTask" :task="state.task" :isShowModal="showFormTask" v-on:closeModal="closeFormTask" />
+    <TaskForm v-if="showFormTask" :getGroupsTask="getGroupsTask" :activityId="activityId" :task="state.task" :isShowModal="showFormTask" v-on:closeModal="closeFormTask" />
     <TaskGroupForm  v-if="showFormTaskGroup" :getTaskGroups="getTaskGroups" :activityId="activityId" :isShowModal="showFormTaskGroup" v-on:closeModal="closeFormTaskGroup" />
     <MoveTaskGroupForm v-if="showFormMoveTaskGroup" :getTaskGroups="getTaskGroups" :activityId="activityId" :moveTaskGroupId="state.moveTaskGroupId" :taskGroups="taskGroups" :isShowModal="showFormMoveTaskGroup" v-on:closeModal="closeFormMoveTaskGroup" />
 </template>

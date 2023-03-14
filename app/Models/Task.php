@@ -23,9 +23,23 @@ class Task extends Model
         'parent_id',
     ];
 
+    const STATUS = [
+        'todo' => 1,
+        'in_progress' => 2,
+        'done' => 3,
+        'cancel' => 4
+   ];
+
+    protected $appends = ['is_done'];
+
+    public function getIsDoneAttribute()
+    {
+        return $this->status === static::STATUS['done'];
+    }
+
     public function attachment()
     {
-        return $this->morphOne(Attachment::class, 'attachable');
+        return $this->morphMany(Attachment::class, 'attachable');
     }
 
     public function discussions()
