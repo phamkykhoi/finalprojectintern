@@ -65,9 +65,14 @@ const taskForm = reactive({
     task_group_id: props.task_group_id,
     is_important: props.task.is_important,
     is_quickly: props.task.is_quickly,
-    status: props.task.status === 0 || null ? false : true,
+    status: props.task.status === 3 ? true : false,
     start_date: props.task.start_date,
     end_date: props.task.end_date,
+})
+
+const taskTemp = reactive({
+    name: taskForm.name,
+    description: taskForm.description,
 })
 
 const title = reactive({
@@ -148,9 +153,7 @@ function ShowInputDes(){
 
 function CloseInputDes(){
     showInputDescription.value = false
-    request.get(`/task/${props.task.id}`).then(res => {
-         taskForm.description = res.data.result.task.description;
-    })
+    taskForm.description = taskTemp.description;
 }
 
 const showTask = ref(false)
@@ -161,9 +164,7 @@ function ShowTaskName(){
 
 function CloseTaskName(){
     showTask.value = false;
-    request.get(`/task/${props.task.id}`).then(res => {
-         taskForm.name = res.data.result.task.name;
-    })
+    taskForm.name = taskTemp.name;
 }
 
 const showInputEdit = ref(false)
@@ -198,6 +199,7 @@ const handleUpdateTaskName = (taskId) => {
             message: 'Change task name successfully',
             type: 'success',
         })
+        taskTemp.name = res.data.result.task.name;
         showTask.value = false;
     })
 }
@@ -210,6 +212,7 @@ const handleUpdateTaskDescription = (taskId) => {
             message: 'Change task description successfully',
             type: 'success',
         })
+        taskTemp.description = res.data.result.task.description;
         showInputDescription.value = false;
     })
 }
@@ -217,7 +220,7 @@ const handleUpdateTaskDescription = (taskId) => {
 const handleChangeStatus = (taskId) =>{
     request.put(`/task/${taskId}`, taskForm)
     .then(res => {
-        console.log(res.status)
+        console.log(res)
     })
 }
 
@@ -253,8 +256,8 @@ const handleUpdateSchedule = (taskId) =>{
     .then(res => {
         popoverUpdateSchedule.value.hide();
         ElMessage({
-                        type: "success",
-                        message: "Update schedule completed!",
+            type: "success",
+            message: "Update schedule completed!",
         });
     })
 }
@@ -377,7 +380,7 @@ const rules = {
                         <TaskActivity :taskId="task.id"></TaskActivity>
                     </el-col>
                     <el-col :span="5" class="ml-2">
-                        <el-checkbox v-model="task.status" label="Hoàn thành việc" size="large" @change="handleChangeStatus(task.id)"/>
+                        <el-checkbox v-model="taskForm.status" true-label="3" :false-label="task.status===3 ? null : task.status" label="Hoàn thành việc" size="large" @change="handleChangeStatus(task.id)"/>
                         <span>Ngày thực hiện</span>
                         <el-form-item style="display: block;">
                             <div class="date" v-if="taskForm.start_date&&taskForm.end_date">

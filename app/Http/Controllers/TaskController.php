@@ -55,7 +55,6 @@ class TaskController extends Controller
     public function show($id)
     {
         return $this->success([
-            'task' => $this->taskRepo->findById($id),
             'taskGroups' => $this->taskGroupRepo->getByActivityId($id, ['tasks']),
         ]);
     }
@@ -63,8 +62,14 @@ class TaskController extends Controller
     public function update($id, UpdateTaskRequest $request)
     {
         try {
+            if(!$this->taskRepo->findById($id)->isDone() && $request->status == 3){
+                $request->merge(["completed_at"=>now()]);
+            }else{
+                $request->merge(["completed_at"=>null]);
+            }
+            
             $this->taskRepo->save($request->all(), ['id' => $id]);
-            return $this->success();
+            return $this->success( ['task' => $this->taskRepo->findById($id)]);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
         }
