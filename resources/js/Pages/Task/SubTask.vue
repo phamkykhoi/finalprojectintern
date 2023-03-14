@@ -42,7 +42,7 @@ function getSubTasks(id)
                 type: 'error',
             })
             loading.value=false;
-        })      
+        })
 }
 
 onBeforeMount(async () => {
@@ -134,10 +134,7 @@ function completedSubTask(index, subTask) {
     const itemSubTask = {
         status: !subTask.is_done ? 3 : 1, // 1 là todo, 3 là done
     }
-    subTask.is_done = true;
 
-    subTasks.value[index] = subTask
-    countSubTasksDone(subTasks)
     request.put(`/completed-task/${subTask.id}`, itemSubTask).then((res)=>{
         getSubTasks(props.taskId)
     }).catch(err => {
@@ -241,8 +238,7 @@ function clonedItems(index){
                     :width="300"
                     trigger="click"
                     virtual-triggering
-                    placement="right-start"
-                >
+                    placement="right-start">
                     <div style="display: flex; align-items: center; justify-content: space-between;">
                         <p>Chức năng</p>
                         <el-icon class="close" @click="hidePopoverSubTask(index)"><CloseBold /></el-icon>
