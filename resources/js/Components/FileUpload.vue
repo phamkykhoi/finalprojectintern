@@ -43,6 +43,7 @@ export default {
                                     type: "success",
                                 });
                             }
+                            this.$emit('data',res.data.result)
                             this.$emit('data-updated')
                         })
                         .catch((err) => {
