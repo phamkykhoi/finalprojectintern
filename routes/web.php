@@ -29,6 +29,7 @@ Route::middleware(['auth', 'verified'])->group(function() {
     Route::get('api/activity/{id}', [TaskController::class, 'show']);
     Route::resource('activity', ActivityController::class);
     Route::resource('task', TaskController::class);
+    Route::post('clone-task-by-id/{id}',[TaskController::class,'cloneTaskById']);
     Route::put('completed-task/{id}', [TaskController::class,'completedTask']);
     Route::resource('subtask', SubTaskController::class);
     Route::get('api/subtask/{id}', [SubTaskController::class, 'getSubTask']);

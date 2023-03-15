@@ -429,7 +429,7 @@ const rules = {
                         <div>
                             <UpdateThePlan :icon="DocumentAdd" :title="title.updateThePlan"/>
                             <AttachFile :icon="DocumentAdd" :title="title.attachFile"/>
-                            <Copy :icon="DocumentCopy" :title="title.copy" />
+                            <Copy :icon="DocumentCopy" :title="title.copy" :task="task" :closeModal="closeModal"/>
                             <Move :icon="Rank" :title="title.move" />
                             <CreateReminder :icon="Bell" :title="title.reminder"/>
                             <Evaluation :icon="Finished" :title="title.evaluation" />
