@@ -42,6 +42,7 @@ function closeTaskDetail(value) {
 
 <style scoped>
 .list-items {
+    overflow-x: hidden;
     flex: 1;
     display: flex;
     flex-direction: column;
