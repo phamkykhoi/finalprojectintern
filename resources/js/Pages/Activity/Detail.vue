@@ -347,8 +347,7 @@ function closePopoverAction() {
                                 </el-row>
                             </el-form>
                         </template>
-
-                        <TaskList :tasks="taskGroup.tasks"   :task_group_id="taskGroup.id" :taskGroup="taskGroup" :activity="props.activity"/>
+                        <TaskList :tasks="taskGroup.tasks"  :task_group_id="taskGroup.id" :taskGroup="taskGroup" :activity="props.activity" :getGroupsTask="getGroupsTask"/>
                         <el-button class="button"  @click="createTaskForm(taskGroup)" text>
                             <el-icon><Plus /></el-icon>Thêm mới công việc
                         </el-button>
