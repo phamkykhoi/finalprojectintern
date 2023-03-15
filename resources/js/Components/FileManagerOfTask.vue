@@ -56,7 +56,7 @@ const handleRemoveCheckAllClick = () =>{
 }
 
 const handleCheckAllChange = (val) =>{
-    fileList.value = files.value.map(a => a.id);
+    fileList.value = files.value.map(file => file.id);
     checkedFiles.value = val ? fileList.value : [];
 }
 
@@ -64,7 +64,7 @@ const handleCheckedFilesChange = () =>{
     checkAll.value = checkedFiles.value.length === files.value.length;
 }
 
-const handleRemoveFile = (id) =>{
+const handleRemoveFile = (attachmentId) =>{
   ElMessageBox.confirm(
     'The file will be permanently deleted, continue to delete the file?',
     {
@@ -74,7 +74,7 @@ const handleRemoveFile = (id) =>{
     }
   )
     .then(async () => {
-        await request.delete(`/attachment/${id}`).then((res) => {
+        await request.delete(`/attachment/${attachmentId}`).then((res) => {
             getFiles()
         })
         ElMessage({
@@ -90,7 +90,7 @@ const handleRemoveFile = (id) =>{
     })
 }
 
-const handleRemoveCheckedFile = (id) =>{
+const handleRemoveCheckedFile = (taskId) =>{
     ElMessageBox.confirm(
     'All selected files will be permanently deleted, keep deleting ?',
     {
@@ -100,7 +100,7 @@ const handleRemoveCheckedFile = (id) =>{
     }
   )
     .then(() => {
-        request.delete(`/attachment/${id}`, {checkedFiles: checkedFiles.value }).then((res) => {
+        request.delete(`/attachment/${taskId}`, {checkedFiles: checkedFiles.value }).then((res) => {
             getFiles()
         })
         ElMessage({
@@ -179,7 +179,7 @@ function isImageFormat(fileExtention) {
             >
 
             <div v-for="file in files" class="w-[100%]">
-                <div class="option-img flex mt-8 mb-8 ">
+                <div class="option-img flex" style="margin-top: 0.5rem; margin-bottom: 0.5rem;">
                 <div class=" flex option-img-des ml-5 align-items-center " >
                     <img v-if="isImageFormat(file.extension)" :src="'/storage/attachments/' + file.file_name" class="file-image image rounded"/>
                     <img v-else src="https://cdn-icons-png.flaticon.com/512/3767/3767084.png" class="file-image image rounded"/>

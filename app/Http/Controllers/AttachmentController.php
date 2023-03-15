@@ -47,7 +47,15 @@ class AttachmentController extends Controller
     public function destroy(Request $request, $attachmentId)
     {
         try {
-            $this->attachmentRepo->deleteById($attachmentId, $request->checkedFiles);
+            if($request->checkedFiles){
+                foreach($request->checkedFiles as $attachmentId){
+                    $this->attachmentRepo->deleteById($attachmentId);
+                }
+
+                return $this->success();
+            }
+           
+            $this->attachmentRepo->deleteById($attachmentId);
             return $this->success();
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
