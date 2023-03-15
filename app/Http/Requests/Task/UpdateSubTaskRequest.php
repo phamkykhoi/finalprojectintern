@@ -14,8 +14,13 @@ class UpdateSubTaskRequest extends FormRequest
 
     public function rules()
     {
+        $request = request()->all();
         return [
-            'name' => ['required',Rule::unique('tasks')->ignore($this->route('subtask'))],
+            'name' => ['required',
+                Rule::unique('tasks')->where(function ($query) use ($request) {
+                    return $query->where('parent_id', $request['parent_id']);
+                })->ignore($this->route('subtask')),
+            ],
             'description' => ['required'],
         ];
     }

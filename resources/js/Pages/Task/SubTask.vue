@@ -110,6 +110,8 @@ function updateSubTask(subTask) {
     const itemSubTask = reactive({
         name: subTask.name,
         description: subTask.description,
+        task_group_id: props.task_group_id,
+        parent_id: props.taskId,
     })
     request.put(`/subtask/${subTask.id}`, itemSubTask).then((res)=>{
         ElMessage({
