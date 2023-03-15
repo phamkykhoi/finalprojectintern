@@ -10,7 +10,6 @@ const props = defineProps({
 });
 
 const handleCopyTask = ()=>{
-    console.log(props.task);
     request.post(`/clone-task-by-id/${props.task.id}`).then((res) => {
                 ElMessage({
                     showClose: true,
