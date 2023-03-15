@@ -100,6 +100,7 @@ const handleRemoveCheckedFile = (taskId) =>{
     }
   )
     .then(() => {
+        console.log()
         request.delete(`/delete-attachment`, {checkedFiles: checkedFiles.value }).then((res) => {
             getFiles()
         })
@@ -107,6 +108,7 @@ const handleRemoveCheckedFile = (taskId) =>{
             type: "success",
             message: "Delete completed",
         });
+        checkedFiles.value = []
     })
     .catch(() => {
       ElMessage({
