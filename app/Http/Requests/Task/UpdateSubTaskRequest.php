@@ -21,7 +21,7 @@ class UpdateSubTaskRequest extends FormRequest
                     return $query->where('parent_id', $request['parent_id']);
                 })->ignore($this->route('subtask')),
             ],
-            'description' => ['required'],
+            'description' => ['nullable'],
         ];
     }
 
