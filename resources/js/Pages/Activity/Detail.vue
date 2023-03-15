@@ -333,9 +333,10 @@ function closePopoverAction() {
                             </div>
                             <el-form v-if="dialog.editNameTaskGroup[index]">
                                 <el-row>
-                                    <el-input autosize
+                                    <el-input
+                                    clearable
                                     v-model="temp.editTaskGroupName[index] "
-                                    type="textarea"
+                                    type="text"
                                     />
                                 </el-row>
                                 <div style="margin: 10px 0" />
