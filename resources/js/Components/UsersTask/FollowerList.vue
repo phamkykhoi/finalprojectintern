@@ -38,10 +38,10 @@ function getUser(taskId)
         })
 }
 
-onBeforeMount(async () => {
+function showListUser() 
+{
     getUser(props.taskId);
-});
-
+}
 </script>
 
 <template>
@@ -51,6 +51,7 @@ onBeforeMount(async () => {
             class="people-icon-avatar"
             ref="buttonListFollowers"
             v-click-outside="onClickOutside4"
+            @click="showListUser"
         >
             <Avatar />
         </el-icon>
@@ -67,18 +68,19 @@ onBeforeMount(async () => {
             @click="hidePopover4"
             ><CloseBold
         /></el-icon>
-        <div class="info-user info-user-close"  v-for="(participant, index) in participants" :key="index">
-            <img
-                src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcShN0nuLT7HIpIANuDi6wbMKpeuCgZsl2PtAA&usqp=CAU"
-                class="user-avt"
-            />
-            <div>
-                <h6 class="info-user-item">{{ participant.email }}</h6>
-                <h6 class="info-user-item">{{ participant.name }}</h6>
+        <div v-loading="loading">
+            <div class="info-user info-user-close"  v-for="(participant, index) in participants" :key="index">
+                <img
+                    src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcShN0nuLT7HIpIANuDi6wbMKpeuCgZsl2PtAA&usqp=CAU"
+                    class="user-avt"
+                />
+                <div>
+                    <h6 class="info-user-item">{{ participant.email }}</h6>
+                    <h6 class="info-user-item">{{ participant.name }}</h6>
+                </div>
+
             </div>
-
         </div>
-
         </el-popover>
         <el-icon size="15" class="people-icon-remove close">
             <CircleCloseFilled />
