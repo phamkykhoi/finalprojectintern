@@ -18,8 +18,7 @@ class TaskRepository extends BaseRepository
 
     public function cloneTask($id)
     {
-       $originalTask = $this->model->find($id);
-       $newTask = $originalTask->replicate();
+       $newTask = $this->model->find($id)->replicate();
        $newTask->status = Task::STATUS['todo'];
        $newTask->save();
        return $newTask;
