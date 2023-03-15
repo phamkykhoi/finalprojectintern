@@ -71,7 +71,7 @@ function showListUser()
         <div v-loading="loading">
             <div class="info-user info-user-close"  v-for="(participant, index) in participants" :key="index">
                 <img
-                    src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcShN0nuLT7HIpIANuDi6wbMKpeuCgZsl2PtAA&usqp=CAU"
+                    :src="participant.avatar"
                     class="user-avt"
                 />
                 <div>

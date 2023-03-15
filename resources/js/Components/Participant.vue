@@ -160,7 +160,7 @@ onBeforeMount(async () => {
             <p class="mt-4 sub-title">THÀNH VIÊN TRONG KẾ HOẠCH</p>
             <div class="info" v-for="(participant, index) in participants" :key="index">
                 <div class="info-user w-[100%]">
-                    <img class="user-avt-small" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcShN0nuLT7HIpIANuDi6wbMKpeuCgZsl2PtAA&usqp=CAU"/>
+                    <img class="user-avt-small" :src="participant.avatar"/>
                     <div>
                         <p class="info-user-item">{{ participant.email }}</p>
                         <p class="info-user-item">{{ participant.name }}</p>
@@ -283,7 +283,7 @@ onBeforeMount(async () => {
                 <div class="info-user w-[100%]">
                     <div class="info-user-icon">
                         <img
-                        src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcShN0nuLT7HIpIANuDi6wbMKpeuCgZsl2PtAA&usqp=CAU"
+                        :src="participant.avatar"
                         class="user-avt-small"
                     />
                         <el-icon class="user-icon-star" :size="20" color="blue"

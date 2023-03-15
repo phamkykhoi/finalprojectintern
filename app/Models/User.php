@@ -47,7 +47,7 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
-
+    
     public function discussions()
     {
         return $this->hasMany(Discussion::class);
@@ -61,5 +61,11 @@ class User extends Authenticatable
     public function attachment()
     {
         return $this->morphOne(Attachment::class, 'attachable');
+    }
+    protected $appends = ['avatar'];
+
+    public function getAvatarAttribute()
+    {
+       return $this->attachment ? "/storage/attachments/$this->attachment->file_name" : "../assets/img/images.png";
     }
 }
