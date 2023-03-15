@@ -71,13 +71,23 @@ class TaskController extends Controller
         }
     }
 
-    public function completedTask($id, CompletedTaskRequest $request) 
+    public function completedTask($id, CompletedTaskRequest $request)
     {
         $inputs = $request->only('status');
         $inputs['completed_at'] = now();
         try {
             $this->taskRepo->save($inputs, ['id' => $id]);
             return $this->success();
+        } catch (\Exception $e) {
+            return $this->error($e->getMessage(), $e->getCode());
+        }
+    }
+
+    public function cloneTaskById($id)
+    {
+        try {
+            $newTask = $this->taskRepo->cloneTask($id);
+            return $this->success(['task' => $newTask]);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
         }
