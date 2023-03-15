@@ -9,11 +9,14 @@ class FileService
 {
     public function deleteFile($id)
     {
-        Attachment::find($id);
-        if (Storage::exists("public\attachments\\".Attachment::find($id)['file_name'])) {
-            Storage::delete("public\attachments\\".Attachment::find($id)['file_name']);
+        if (!$file = Attachment::find($id)) {
+            return;
         }
-        Attachment::destroy($id);
         
+        if (Storage::exists("public\attachments\\".$file->file_name)) {
+            Storage::delete("public\attachments\\".$file->file_name);
+        }
+
+        return $file->delete();
     }
 }
