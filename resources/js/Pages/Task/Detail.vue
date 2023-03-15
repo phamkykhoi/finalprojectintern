@@ -88,7 +88,6 @@ const title = reactive({
     save: 'Lưu trữ việc',
     delete: 'Xóa việc',
 });
-const buttonUpdateSchedule = ref();
 const emit = defineEmits(['closeModal', 'unClose'])
 
 confirmingTaskDeletion.value = props.isShowModal;
@@ -234,7 +233,6 @@ const handleDeleteSchedule = (taskId) =>{
         taskForm.end_date = taskForm.start_date = null;
         request.put(`/task/${taskId}`, taskForm)
             .then(res => {
-                popoverUpdateSchedule.value.hide();
                 ElMessage({
                         type: "success",
                         message: "Delete completed",
@@ -256,17 +254,12 @@ const handleUpdateSchedule = (taskId, formEl: FormInstance | undefined) =>{
         if (valid) {
     request.put(`/task/${taskId}`, taskForm)
     .then(res => {
-        popoverUpdateSchedule.value.hide();
         ElMessage({
             type: "success",
             message: "Update schedule completed!",
         });
     })
 }})
-}
-
-const showUpdateSchedule = () => {
-    isShowUpdateSchedule.value = !isShowUpdateSchedule.value;
 }
 
 const checked1 = ref(false)
@@ -283,13 +276,6 @@ if (completedAt.value) {
         checked.value[props.task.id] = true;
     }
 }
-
-const popoverUpdateSchedule = ref();
-const isShowUpdateSchedule = ref(false);
-
-const hideUpdateSchedule =() => {
-    popoverUpdateSchedule.value.hide();
-};
 
 const checkStartDate = (rule: any, value: any, callback: any) => {
     if(new Date(value).getTime()< todayTime && new Date(value).getTime()!=0) {
@@ -385,37 +371,13 @@ const rules = {
                     <el-col :span="5" class="ml-2">
                         <el-checkbox v-model="taskForm.status" true-label="3" :false-label="task.status===3 ? null : task.status" label="Hoàn thành việc" size="large" @change="handleChangeStatus(task.id)"/>
                         <span>Ngày thực hiện</span>
-                        <el-form-item style="display: block;">
-                            <div class="date" v-if="taskForm.start_date || taskForm.end_date">
-                                <span ref="buttonUpdateSchedule"
-                                 @click="showUpdateSchedule"
-                                   class="date-finish cursor-pointer " style="display: inline-block; color: red;" >{{ taskForm.start_date ? new Date(taskForm.start_date).toLocaleDateString("vi-VN", {day: "numeric", month: "numeric"}) : "Start" }} - {{ taskForm.end_date ? new Date(taskForm.end_date).toLocaleDateString("vi-VN", {day: "numeric", month: "numeric"}) : "End"}}
-                                </span>
-                                <el-icon color="orange " class="date-icon " @click="handleDeleteSchedule(task.id)">
-                                <Delete />
-                                </el-icon>
-                            </div>
-                            <div v-else>
-                                <el-icon ref="buttonUpdateSchedule"  @click="showUpdateSchedule" color="orange " size="25" class="mt-3 cursor-pointer"><Calendar /></el-icon>
-                            </div>
-                            <el-popover
-                                :width="300"
-                                ref="popoverUpdateSchedule"
-                                :virtual-ref="buttonUpdateSchedule"
-                                trigger="click"
-                                virtual-triggering
-                                :visible="isShowUpdateSchedule"
-                                >
-                           <div class="w-[100%]">
-                            <el-icon @click="hideUpdateSchedule" class="cursor-pointer float-right" size="25" color="red"  ><CircleCloseFilled /></el-icon>
-                           </div>
+                        <el-form-item style="display: block; margin-top: 20px;">
                             <div style="display: inline-block;">
-                                <el-form-item prop="start_date">
-                                    <span >Ngày bắt đầu:</span>
+                                <el-form-item prop="start_date" class="form_item-date">
                                     <el-date-picker
                                         v-model="taskForm.start_date"
                                         type="date"
-                                        placeholder="Chọn"
+                                        placeholder="Ngày bắt đầu"
                                         format="YYYY/MM/DD"
                                         clearable
                                         value-format="YYYY-MM-DD"
@@ -425,13 +387,11 @@ const rules = {
                                         "
                                     />
                                 </el-form-item>
-                                <el-form-item prop="end_date" >
-                                    <span class="mt-1">Ngày kết thúc:</span
-                                    >
+                                <el-form-item prop="end_date" class="form_item-date">
                                     <el-date-picker
                                         v-model="taskForm.end_date"
                                         type="date"
-                                        placeholder="Chọn"
+                                        placeholder="Ngày kết thúc"
                                         format="YYYY/MM/DD"
                                         clearable
                                         value-format="YYYY-MM-DD"
@@ -446,8 +406,6 @@ const rules = {
                                         <el-button type="danger" class="button-schedule text-center"  @click="handleDeleteSchedule(task.id)">Xóa</el-button>
                                     </div>
                             </div>
-
-                            </el-popover>
 
                         </el-form-item>
                         <Participant :taskId="task.id"></Participant>
@@ -697,8 +655,10 @@ const rules = {
     width: 100% !important;
 }
 .button-schedule{
-    margin-top: 15px !important;
     border-radius: 3px !important;
     width:100px ;
+}
+.form_item-date{
+    margin-bottom:30px;
 }
 </style>
