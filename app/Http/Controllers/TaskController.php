@@ -87,7 +87,7 @@ class TaskController extends Controller
         }
     }
 
-    public function getUser($id) 
+    public function getUsers($id) 
     {
         return $this->success([
             'listsUser' => $this->userRepo->getUserTask($id),
