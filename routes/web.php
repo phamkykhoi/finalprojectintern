@@ -28,8 +28,6 @@ Route::middleware(['auth', 'verified'])->group(function() {
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('api/activity/{id}', [TaskController::class, 'show']);
     Route::get('api/list-user/{id}', [TaskController::class, 'getUser']);
-    Route::get('api/followers/{id}', [TaskController::class, 'getFollower']);
-    Route::get('api/executor/{id}', [TaskController::class, 'getExecutor']);
     Route::resource('activity', ActivityController::class);
     Route::resource('task', TaskController::class);
     Route::put('completed-task/{id}', [TaskController::class,'completedTask']);

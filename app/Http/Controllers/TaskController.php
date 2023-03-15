@@ -93,18 +93,4 @@ class TaskController extends Controller
             'listsUser' => $this->userRepo->getUserTask($id),
         ]);
     }
-
-    public function getFollower($id) 
-    {
-        return $this->success([
-            'listsUser' => $this->userRepo->getUserTask($id, 2),
-        ]);
-    }
-
-    public function getExecutor($id) 
-    {
-        return $this->success([
-            'listsUser' => $this->userRepo->getUserTask($id, 1),
-        ]);
-    }
 }

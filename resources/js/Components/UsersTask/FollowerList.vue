@@ -23,7 +23,7 @@ const participants = ref([]);
 function getUser(taskId)
 {
     loading.value=true
-    request.get(`/api/followers/${props.taskId}`)
+    request.get(`/api/list-user/${props.taskId}`)
         .then((res) => {
             participants.value = res.data.result.listsUser
             loading.value=false
