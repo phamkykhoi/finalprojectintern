@@ -14,4 +14,9 @@ class UserTask extends Model
         'task_id',
         'role_task',
     ];
+
+    const STATUS = [
+        'executor' => 1,
+        'followers' => 2,
+   ];
 }

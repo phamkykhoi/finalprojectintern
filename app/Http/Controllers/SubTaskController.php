@@ -18,7 +18,6 @@ class SubTaskController extends Controller
         $this->taskRepo = $taskRepo;
     }
 
-
     public function store(CreateSubTaskRequest $request)
     {
         try {

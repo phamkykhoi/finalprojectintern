@@ -9,32 +9,15 @@ import {
     Search,
 StarFilled,
 } from "@element-plus/icons-vue";
-import request from '../../utils/request';
+import request from '../utils/request';
 import { ElMessage } from 'element-plus';
-import { ref, unref} from "vue";
+import { ref, unref, onBeforeMount} from "vue";
 
-defineProps({
+const props = defineProps({
     taskId: {
         type: Number,
     },
 });
-
-let participants = ref([
-    {
-        id: 1,
-        name: "Vo Van Duc",
-        email: "ducklady1610@gmail.com",
-        attachment:
-            "https://i.bloganchoi.com/bloganchoi.com/wp-content/uploads/2022/09/avatar-buon-2022-106.jpg?fit\u003d594%2C20000\u0026quality\u003d95\u0026ssl\u003d1",
-    },
-    {
-        id: 2,
-        name: "Ngo Quoc An",
-        email: "ancncnccn@gmail.com",
-        attachment:
-            "http://media.vov.vn/sites/default/files/styles/large/public/2022-08/anh-nen-avatar-dep_652403.jpg",
-    },
-]);
 
 const isPopoverVisible = ref(false);
 const buttonSearchParticipants = ref();
@@ -104,15 +87,16 @@ const hidePopover5 = () => {
 const handleUpdate = () =>{
     hidePopover2();
 }
+const loading = ref(false)
 
-const listUsers = ref([])
+const participants = ref([]);
+
 function getUser(taskId)
 {
     loading.value=true
-    request.get(`/api/list-user/${taskId}`)
+    request.get(`/api/list-user/${props.taskId}`)
         .then((res) => {
-            listUsers.value = res.data.result.subtask
-            console.log(listUsers.value)
+            participants.value = res.data.result.listsUser
             loading.value=false
         })
         .catch(err => {
@@ -124,6 +108,10 @@ function getUser(taskId)
             loading.value=false;
         })
 }
+
+onBeforeMount(async () => {
+    getUser(props.taskId);
+});
 
 </script>
 <template>
@@ -170,9 +158,9 @@ function getUser(taskId)
                 :suffix-icon="Search"
             />
             <p class="mt-4 sub-title">THÀNH VIÊN TRONG KẾ HOẠCH</p>
-            <div class="info" v-for="participant in participants">
+            <div class="info" v-for="(participant, index) in participants" :key="index">
                 <div class="info-user w-[100%]">
-                    <img class="user-avt-small" :src="participant.attachment"/>
+                    <img class="user-avt-small" src="https://i.bloganchoi.com/bloganchoi.com/wp-content/uploads/2022/09/avatar-buon-2022-106.jpg?fit\u003d594%2C20000\u0026quality\u003d95\u0026ssl\u003d1"/>
                     <div>
                         <p class="info-user-item">{{ participant.email }}</p>
                         <p class="info-user-item">{{ participant.name }}</p>
@@ -250,46 +238,7 @@ function getUser(taskId)
 
     <div>Người theo dõi (1):</div>
     <div class="people-handle" style="display: flex">
-        <FollowerList />
-        <!-- <div class="people-icon">
-            <el-icon
-                size="25"
-                class="people-icon-avatar"
-                ref="buttonListFollowers"
-                v-click-outside="onClickOutside4"
-            >
-                <Avatar />
-            </el-icon>
-
-            <el-popover
-                :width="300"
-                ref="popoverListFollowers"
-                :virtual-ref="buttonListFollowers"
-                trigger="click"
-                virtual-triggering
-            >
-            <el-icon
-                        class="user-icon-close close left-0"
-                        @click="hidePopover4"
-                        ><CloseBold
-                    /></el-icon>
-                <div class="info-user info-user-close"  v-for="participant in participants">
-                    <img
-                        :src="participant.attachment"
-                        class="user-avt"
-                    />
-                    <div>
-                        <h6 class="info-user-item">{{ participant.email }}</h6>
-                        <h6 class="info-user-item">{{ participant.name }}</h6>
-                    </div>
-
-                </div>
-
-            </el-popover>
-            <el-icon size="15" class="people-icon-remove close">
-                <CircleCloseFilled />
-            </el-icon>
-        </div> -->
+        <FollowerList :taskId="props.taskId" />
 
         <el-icon
             size="25"
@@ -330,11 +279,11 @@ function getUser(taskId)
                     size="large"
                 />
             </div>
-            <div class="info" v-for="participant in participants">
+            <div class="info" v-for="(participant, index) in participants" :key="index">
                 <div class="info-user w-[100%]">
                     <div class="info-user-icon">
                         <img
-                        :src="participant.attachment"
+                        src="https://i.bloganchoi.com/bloganchoi.com/wp-content/uploads/2022/09/avatar-buon-2022-106.jpg?fit\u003d594%2C20000\u0026quality\u003d95\u0026ssl\u003d1"
                         class="user-avt-small"
                     />
                         <el-icon class="user-icon-star" :size="20" color="blue"

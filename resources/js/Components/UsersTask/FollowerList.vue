@@ -1,30 +1,46 @@
 <script setup lang="ts">
 import {Avatar, CircleCheck, CircleCloseFilled, CloseBold } from "@element-plus/icons-vue";
-import { ref, unref } from 'vue'
+import { ref, unref, onBeforeMount} from 'vue'
 import { ClickOutside as vClickOutside } from 'element-plus'
+import { ElMessage } from 'element-plus';
+import request from '../../utils/request';
 
+const props = defineProps({
+    taskId: Number,
+})
 const buttonListFollowers = ref();
 const popoverListFollowers = ref();
 const onClickOutside4 = () => {
     unref(popoverListFollowers).popoverListFollowers?.delayHide?.();
 };
+const hidePopover4 = () => {
+    popoverListFollowers.value.hide();
+};
+const loading = ref(false)
 
-let participants = ref([
-    {
-        id: 1,
-        name: "Vo Van Duc",
-        email: "ducklady1610@gmail.com",
-        attachment:
-            "https://i.bloganchoi.com/bloganchoi.com/wp-content/uploads/2022/09/avatar-buon-2022-106.jpg?fit\u003d594%2C20000\u0026quality\u003d95\u0026ssl\u003d1",
-    },
-    {
-        id: 2,
-        name: "Ngo Quoc An",
-        email: "ancncnccn@gmail.com",
-        attachment:
-            "http://media.vov.vn/sites/default/files/styles/large/public/2022-08/anh-nen-avatar-dep_652403.jpg",
-    },
-]);
+const participants = ref([]);
+
+function getUser(taskId)
+{
+    loading.value=true
+    request.get(`/api/followers/${props.taskId}`)
+        .then((res) => {
+            participants.value = res.data.result.listsUser
+            loading.value=false
+        })
+        .catch(err => {
+            ElMessage({
+                showClose: true,
+                message: err.response.data.message,
+                type: 'error',
+            })
+            loading.value=false;
+        })
+}
+
+onBeforeMount(async () => {
+    getUser(props.taskId);
+});
 
 </script>
 
@@ -51,9 +67,9 @@ let participants = ref([
                     @click="hidePopover4"
                     ><CloseBold
                 /></el-icon>
-            <div class="info-user info-user-close"  v-for="participant in participants">
+            <div class="info-user info-user-close"  v-for="(participant, index) in participants" :key="index">
                 <img
-                    :src="participant.attachment"
+                    src="https://i.bloganchoi.com/bloganchoi.com/wp-content/uploads/2022/09/avatar-buon-2022-106.jpg?fit\u003d594%2C20000\u0026quality\u003d95\u0026ssl\u003d1"
                     class="user-avt"
                 />
                 <div>

@@ -57,4 +57,9 @@ class User extends Authenticatable
     {
         return $this->role === static::ROLES['root'];
     }
+
+    public function attachment()
+    {
+        return $this->morphOne(Attachment::class, 'attachable');
+    }
 }
