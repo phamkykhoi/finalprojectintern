@@ -46,7 +46,7 @@ function handleCloseEdit(){
 
 const handleCheckAllClick = ()=>{
     checkAll.value = true
-    fileList.value = files.value.map(a => a.id);
+    fileList.value = files.value.map(file => file.id);
     checkedFiles.value =  fileList.value ;
 }
 
