@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use App\Events\UploadFileSuccess;
 use App\Models\Attachment;
+use App\Services\FileService;
 
 class AttachmentController extends Controller
 {
@@ -44,18 +45,18 @@ class AttachmentController extends Controller
         ]);
     }
 
-    public function destroy(Request $request, $attachmentId)
+    public function deleteByIds(Request $request)
     {
         try {
-            if($request->checkedFiles){
-                foreach($request->checkedFiles as $attachmentId){
-                    $this->attachmentRepo->deleteById($attachmentId);
-                }
-
+            if(!is_array($request->checkedFiles)){
+                app(FileService::class)->deleteFile($request->checkedFiles);
                 return $this->success();
             }
-           
-            $this->attachmentRepo->deleteById($attachmentId);
+            
+            foreach($request->checkedFiles as $attachmentId){
+                app(FileService::class)->deleteFile($attachmentId);
+            }
+
             return $this->success();
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());

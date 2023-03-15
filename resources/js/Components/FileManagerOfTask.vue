@@ -74,7 +74,7 @@ const handleRemoveFile = (attachmentId) =>{
     }
   )
     .then(async () => {
-        await request.delete(`/attachment/${attachmentId}`).then((res) => {
+        await request.delete(`/delete-attachment`, {checkedFiles: attachmentId }).then((res) => {
             getFiles()
         })
         ElMessage({
@@ -100,7 +100,7 @@ const handleRemoveCheckedFile = (taskId) =>{
     }
   )
     .then(() => {
-        request.delete(`/attachment/${taskId}`, {checkedFiles: checkedFiles.value }).then((res) => {
+        request.delete(`/delete-attachment`, {checkedFiles: checkedFiles.value }).then((res) => {
             getFiles()
         })
         ElMessage({
@@ -127,7 +127,8 @@ const handleGetLink = (url)=>{
 
 const handleDownloadFile=(file)=>{
       const link = document.createElement('a');
-      link.href = file.url;
+      link.href = 'http://laravelmedufa.com/storage/attachments/' + file.file_name;
+      console.log(file.file_path)
       link.download =file.title.concat('.'+file.extention);
       document.body.appendChild(link);
       link.click();
