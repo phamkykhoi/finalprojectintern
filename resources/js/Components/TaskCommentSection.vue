@@ -126,7 +126,7 @@ const handleCurrentChange = (page: number) => {
                         <el-input
                         v-model="form.description"
                         type="textarea"
-                        :rows="2"
+                        :autosize="{ minRows: 2 }"
                         autocomplete="off"
                         placeholder="Nhấn Shift + Enter để gửi"
                         clearable
@@ -151,8 +151,8 @@ const handleCurrentChange = (page: number) => {
                         <el-input
                             v-if="showEditCmt[index]"
                             v-model="listComments[index].description"
-                            type="textarea"
-                            :rows="2"
+                            type="text"
+                            autosize
                             autocomplete="off"
                             class="d-inline-block w-[100%] cursor-pointer"
                         />

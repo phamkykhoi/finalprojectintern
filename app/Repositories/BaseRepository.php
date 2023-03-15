@@ -43,7 +43,7 @@ class BaseRepository
     }
 
     public function deleteById($id)
-    {
+    {   
         return $this->model->destroy($id);
     }
 

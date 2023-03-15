@@ -22,14 +22,7 @@ class Task extends Model
         'completed_at',
         'parent_id',
     ];
-
-    const STATUS = [
-        'todo' => 1,
-        'in_progress' => 2,
-        'done' => 3,
-        'cancel' => 4
-   ];
-
+    
     protected $appends = ['is_done'];
 
     public function getIsDoneAttribute()
@@ -47,9 +40,20 @@ class Task extends Model
         return $this->hasMany(Discussion::class);
     }
 
+    const STATUS = [
+        'todo' => 1,
+        'in_progress' => 2,
+        'done' => 3,
+        'cancel' => 4
+    ];
+
     protected $casts = [
         'is_important' => 'boolean',
         'is_quickly' => 'boolean',
     ];
 
+    public function isDone()
+    {
+        return $this->status === static::STATUS['done'];
+    }
 }

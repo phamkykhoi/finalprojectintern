@@ -207,9 +207,9 @@ function clonedItems(index){
             <el-col :span="1" style="text-align: right;">
             </el-col>
             <el-col :span="23" style="text-align: right;">
-                <el-input v-model="dataSubTask.name" type="textarea" :rows="1" autocomplete="off" placeholder="Tạo mới tên việc"
+                <el-input v-model="dataSubTask.name" type="text" autocomplete="off" placeholder="Tạo mới tên việc"
                     clearable style="display: block;" />
-                <el-input v-model="dataSubTask.description" type="textarea" :rows="1" autocomplete="off" placeholder="Tạo mới mô tả"
+                <el-input v-model="dataSubTask.description" type="textarea" :autosize="{ minRows: 2 }" autocomplete="off" placeholder="Tạo mới mô tả"
                     clearable style="display: block; margin-top: 8px;" />
                     <span class="task-btn">
                     <el-button color="green" style="margin-right: 8px;" @click="createSubTask()">Tạo việc</el-button>
@@ -256,9 +256,9 @@ function clonedItems(index){
         </el-row>
         <div v-if="checked[index]" style="display: flex; align-items: center; width: 110%;">
             <el-col :span="23" style="text-align: right;">
-                <el-input @click="clonedItems(index)" v-model="item.name" :value="item.name" type="textarea" :rows="1" autocomplete="off" placeholder="Chỉnh sửa tên việc"
+                <el-input @click="clonedItems(index)" v-model="item.name" :value="item.name" type="text" autocomplete="off" placeholder="Chỉnh sửa tên việc"
                     clearable style="display: block;"/>
-                <el-input v-model="item.description" :value="item.description" type="textarea" :rows="2" autocomplete="off" placeholder="Chỉnh sửa mô tả"
+                <el-input v-model="item.description" :value="item.description" type="textarea" :autosize="{ minRows: 2 }" autocomplete="off" placeholder="Chỉnh sửa mô tả"
                     clearable style="display: block; margin-top: 8px;" />
                     <span class="task-btn">
                 <el-button color="green" style="margin-right: 8px;" @click="updateSubTask(item)">Cập nhật</el-button>

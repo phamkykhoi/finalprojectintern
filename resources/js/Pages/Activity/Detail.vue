@@ -333,9 +333,10 @@ function closePopoverAction() {
                             </div>
                             <el-form v-if="dialog.editNameTaskGroup[index]">
                                 <el-row>
-                                    <el-input autosize
+                                    <el-input
+                                    clearable
                                     v-model="temp.editTaskGroupName[index] "
-                                    type="textarea"
+                                    type="text"
                                     />
                                 </el-row>
                                 <div style="margin: 10px 0" />
@@ -347,8 +348,7 @@ function closePopoverAction() {
                                 </el-row>
                             </el-form>
                         </template>
-
-                        <TaskList :tasks="taskGroup.tasks"   :task_group_id="taskGroup.id" :taskGroup="taskGroup" :activity="props.activity"/>
+                        <TaskList :tasks="taskGroup.tasks"  :task_group_id="taskGroup.id" :taskGroup="taskGroup" :activity="props.activity" :getGroupsTask="getGroupsTask"/>
                         <el-button class="button"  @click="createTaskForm(taskGroup)" text>
                             <el-icon><Plus /></el-icon>Thêm mới công việc
                         </el-button>

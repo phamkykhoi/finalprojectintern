@@ -19,10 +19,13 @@ TimeAgo.addDefaultLocale(vi)
 const timeAgo = new TimeAgo('vi')
 
 const checkAll = ref(false);
+
 const checkedFiles = ref([]);
+
 const showInputEdit = ref(false);
 
 const files = ref([]);
+
 async function getFiles() {
     await request.post(`/get-attachments-by-task/${props.taskId}`).then((res) => {
         files.value = res.data.result.attachment_list;
@@ -31,7 +34,7 @@ async function getFiles() {
 
 getFiles()
 
-const fileList= files.value.map(a => a.id);
+const fileList = ref([])
 
 function handleShowEdit(){
     showInputEdit.value = true;
@@ -42,8 +45,9 @@ function handleCloseEdit(){
 }
 
 const handleCheckAllClick = ()=>{
-    checkedFiles.value = fileList;
-    checkAll.value = true;
+    checkAll.value = true
+    fileList.value = files.value.map(file => file.id);
+    checkedFiles.value =  fileList.value ;
 }
 
 const handleRemoveCheckAllClick = () =>{
@@ -52,14 +56,15 @@ const handleRemoveCheckAllClick = () =>{
 }
 
 const handleCheckAllChange = (val) =>{
-    checkedFiles.value = val ? fileList : [];
+    fileList.value = files.value.map(file => file.id);
+    checkedFiles.value = val ? fileList.value : [];
 }
 
 const handleCheckedFilesChange = () =>{
     checkAll.value = checkedFiles.value.length === files.value.length;
 }
 
-const handleRemoveFile = (id) =>{
+const handleRemoveFile = (attachmentId) =>{
   ElMessageBox.confirm(
     'The file will be permanently deleted, continue to delete the file?',
     {
@@ -68,13 +73,14 @@ const handleRemoveFile = (id) =>{
       type: 'warning',
     }
   )
-    .then(() => {
-      files.value = files.value.filter(obj => obj.id !== id);
-      checkedFiles.value = checkedFiles.value.filter(item => item !== id);
-      ElMessage({
-        type: 'success',
-        message: 'Delete completed',
-      })
+    .then(async () => {
+        await request.delete(`/delete-attachment`, {checkedFiles: attachmentId }).then((res) => {
+            getFiles()
+        })
+        ElMessage({
+            type: "success",
+            message: "Delete completed",
+        });
     })
     .catch(() => {
       ElMessage({
@@ -84,7 +90,7 @@ const handleRemoveFile = (id) =>{
     })
 }
 
-const handleRemoveCheckedFile = () =>{
+const handleRemoveCheckedFile = (taskId) =>{
     ElMessageBox.confirm(
     'All selected files will be permanently deleted, keep deleting ?',
     {
@@ -94,14 +100,15 @@ const handleRemoveCheckedFile = () =>{
     }
   )
     .then(() => {
-        if(files.value.length){
-        files.value = files.value.filter(obj => !checkedFiles.value.includes(obj.id));
-        }
-        handleRemoveCheckAllClick();
-      ElMessage({
-        type: 'success',
-        message: 'Delete completed',
-      })
+        console.log()
+        request.delete(`/delete-attachment`, {checkedFiles: checkedFiles.value }).then((res) => {
+            getFiles()
+        })
+        ElMessage({
+            type: "success",
+            message: "Delete completed",
+        });
+        checkedFiles.value = []
     })
     .catch(() => {
       ElMessage({
@@ -122,7 +129,8 @@ const handleGetLink = (url)=>{
 
 const handleDownloadFile=(file)=>{
       const link = document.createElement('a');
-      link.href = file.url;
+      link.href = 'http://laravelmedufa.com/storage/attachments/' + file.file_name;
+      console.log(file.file_path)
       link.download =file.title.concat('.'+file.extention);
       document.body.appendChild(link);
       link.click();
@@ -174,9 +182,10 @@ function isImageFormat(fileExtention) {
             >
 
             <div v-for="file in files" class="w-[100%]">
-                <div class="option-img flex mt-8 mb-8 ">
+                <div class="option-img flex" style="margin-top: 0.5rem; margin-bottom: 0.5rem;">
                 <div class=" flex option-img-des ml-5 align-items-center " >
-                    <img :src="'/storage/attachments/' + file.file_name" class="file-image image rounded"/>
+                    <img v-if="isImageFormat(file.extension)" :src="'/storage/attachments/' + file.file_name" class="file-image image rounded"/>
+                    <img v-else src="https://cdn-icons-png.flaticon.com/512/3767/3767084.png" class="file-image image rounded"/>
                     <div class="image-infor ml-8">
                         <span class="info-img-item image-infor-title">{{ file.title }}</span>
                         <span class="flex">
@@ -239,7 +248,7 @@ function isImageFormat(fileExtention) {
 
             <div v-if="files.length" class="d-flex justify-content-end mr-4 w-[100%]">
                 <el-button type="primary" @click="handleDownloadAllFiles">Tải tất cả</el-button>
-                <el-button  v-if="checkedFiles.length" type="danger" class="ml-2" @click="handleRemoveCheckedFile" >Xóa tập tin đã chọn</el-button
+                <el-button  v-if="checkedFiles.length" type="danger" class="ml-2" @click="handleRemoveCheckedFile(props.taskId)" >Xóa tập tin đã chọn</el-button
                 >
                 <el-button class="ml-2" @click=" handleCheckAllClick">Chọn tất cả</el-button>
                 <el-button  v-if="checkedFiles.length" class="ml-2" @click="handleRemoveCheckAllClick">Bỏ chọn tất cả</el-button>
