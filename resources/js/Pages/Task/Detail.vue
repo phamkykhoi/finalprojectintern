@@ -131,9 +131,9 @@ function changeQuicklyStatus(taskId) {
         is_quickly: taskForm.is_quickly,
         change_status_type: 'quickly',
     })
-        .then(res => {
-            props.getGroupsTask();
-        })
+    .then(res => {
+        props.getGroupsTask();
+    })
 }
 const showHistory = ref(false)
 
@@ -180,14 +180,15 @@ const checkAll = ref(false)
 const isIndeterminate = ref(true)
 const checkedFiles = ref([])
 const files = ['']
+
 const handleCheckAllChange = (val: boolean) => {
-  checkedFiles.value = val ? files : []
-  isIndeterminate.value = false
+    checkedFiles.value = val ? files : []
+    isIndeterminate.value = false
 }
 const handlecheckedFilesChange = (value: string[]) => {
-  const checkedCount = value.length
-  checkAll.value = checkedCount === files.length
-  isIndeterminate.value = checkedCount > 0 && checkedCount < files.length
+    const checkedCount = value.length
+    checkAll.value = checkedCount === files.length
+    isIndeterminate.value = checkedCount > 0 && checkedCount < files.length
 }
 
 const handleUpdateTaskName = (taskId) => {
@@ -239,26 +240,18 @@ const handleDeleteSchedule = (taskId) =>{
                     });
             })
     })
-        .catch(() => {
-            ElMessage({
-                type: "info",
-                message: "Delete canceled",
-            });
+    .catch(() => {
+        ElMessage({
+            type: "info",
+            message: "Delete canceled",
         });
-
-
+    });
 }
 
 const handleUpdateSchedule = (taskId, formEl: FormInstance | undefined) =>{
     formEl.validate((valid) => {
         if (valid) {
     request.put(`/task/${taskId}`, taskForm)
-    .then(res => {
-        ElMessage({
-            type: "success",
-            message: "Update schedule completed!",
-        });
-    })
 }})
 }
 
@@ -278,14 +271,9 @@ if (completedAt.value) {
 }
 
 const checkStartDate = (rule: any, value: any, callback: any) => {
-    if(new Date(value).getTime()< todayTime && new Date(value).getTime()!=0) {
-        callback(new Error("You cannot choose a date in the past"))
-        return
-    }
-
     if(new Date(value).getTime()> new Date(taskForm.end_date).getTime()&&new Date(taskForm.end_date).getTime()!= 0&& new Date(value).getTime()!=0){
-            callback(new Error("You cannot choose the start date greater than the end date"))
-            return
+        callback(new Error("You cannot choose the start date greater than the end date"))
+        return
     }
 
     callback();
@@ -294,11 +282,6 @@ const today = new Date();
 const todayTime = new Date(today.getFullYear(), today.getMonth(), today.getDate()).getTime();
 
 const checkEndDate = (rule: any, value: any, callback: any) => {
-    if(new Date(value).getTime()< todayTime && new Date(value).getTime()!=0) {
-        callback(new Error("You cannot choose a date in the past"))
-    return
-    }
-
     if(new Date(value).getTime()< new Date(taskForm.start_date).getTime() && new Date(taskForm.start_date).getTime()!=0 && new Date(value).getTime()!= 0){
         callback(new Error("You cannot choose the end date less than the start date"))
         return;
@@ -370,9 +353,9 @@ const rules = {
                     </el-col>
                     <el-col :span="5" class="ml-2">
                         <el-checkbox v-model="taskForm.status" true-label="3" :false-label="task.status===3 ? null : task.status" label="Hoàn thành việc" size="large" @change="handleChangeStatus(task.id)"/>
-                        <span>Ngày thực hiện</span>
                         <el-form-item style="display: block; margin-top: 20px;">
                             <div style="display: inline-block;">
+                                <span>Ngày thực hiện</span>
                                 <el-form-item prop="start_date" class="form_item-date">
                                     <el-date-picker
                                         v-model="taskForm.start_date"
@@ -385,8 +368,10 @@ const rules = {
                                             display: block;
                                             width: 100%;
                                         "
+                                        @change="handleUpdateSchedule(task.id, ruleFormRef)"
                                     />
                                 </el-form-item>
+                                <span>Ngày kết thúc</span>
                                 <el-form-item prop="end_date" class="form_item-date">
                                     <el-date-picker
                                         v-model="taskForm.end_date"
@@ -399,12 +384,9 @@ const rules = {
                                             display: block;
                                             width: 100%;
                                         "
+                                        @change="handleUpdateSchedule(task.id, ruleFormRef)"
                                     />
                                 </el-form-item>
-                                    <div class="flex w-[100%] ">
-                                        <el-button type="success" class="button-schedule mr-3 text-center" @click="handleUpdateSchedule(task.id, ruleFormRef)">Cập nhật</el-button>
-                                        <el-button type="danger" class="button-schedule text-center"  @click="handleDeleteSchedule(task.id)">Xóa</el-button>
-                                    </div>
                             </div>
 
                         </el-form-item>
@@ -659,6 +641,6 @@ const rules = {
     width:100px ;
 }
 .form_item-date{
-    margin-bottom:30px;
+    margin-bottom: 10px;
 }
 </style>
