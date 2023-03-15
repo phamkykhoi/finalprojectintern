@@ -48,7 +48,6 @@ const props = defineProps({
         type: Boolean,
         default: false,
     },
-    task_group_id: Number,
     activity: {
       type: Object,
       default: () => ({ name: 'activityName' })
@@ -56,15 +55,26 @@ const props = defineProps({
     taskGroup: {
       type: Object,
       default: () => ({ name: 'taskGroupName' })
+    },
+    getGroupsTask: {
+      type: Function,
     }
 })
-
+const taskGroup = props.taskGroup
 const taskForm = reactive({
     name: props.task.name,
     description: props.task.description,
-    task_group_id: props.task_group_id,
+    task_group_id: props.taskGroup.id   ,
     is_important: props.task.is_important,
-    is_quickly: props.task.is_quickly
+    is_quickly: props.task.is_quickly,
+    status: props.task.status === 3,
+    start_date: props.task.start_date,
+    end_date: props.task.end_date,
+})
+
+const taskTemp = reactive({
+    name: taskForm.name,
+    description: taskForm.description,
 })
 
 const title = reactive({
@@ -78,7 +88,7 @@ const title = reactive({
     save: 'Lưu trữ việc',
     delete: 'Xóa việc',
 });
-
+const buttonUpdateSchedule = ref();
 const emit = defineEmits(['closeModal', 'unClose'])
 
 confirmingTaskDeletion.value = props.isShowModal;
@@ -87,8 +97,6 @@ const closeModal = () => {
     confirmingTaskDeletion.value = false;
     emit('closeModal', false);
 };
-
-const getGroupsTask = inject('getGroupsTask');
 
 const saveTask = (formEl: FormInstance | undefined) => {
     if (!formEl) return
@@ -102,7 +110,7 @@ const saveTask = (formEl: FormInstance | undefined) => {
                         type: 'success',
                     })
                     closeModal()
-                    getGroupsTask();
+                    props.getGroupsTask();
                 }
             })
         }
@@ -115,7 +123,7 @@ function changeImportantStatus(taskId) {
     change_status_type: 'important',
 })
     .then(res => {
-        getGroupsTask();
+        props.getGroupsTask();
     })
 }
 
@@ -123,9 +131,9 @@ function changeQuicklyStatus(taskId) {
     request.put(`/task/${taskId}`, {
         is_quickly: taskForm.is_quickly,
         change_status_type: 'quickly',
-})
+    })
         .then(res => {
-            getGroupsTask();
+            props.getGroupsTask();
         })
 }
 const showHistory = ref(false)
@@ -145,6 +153,7 @@ function ShowInputDes(){
 
 function CloseInputDes(){
     showInputDescription.value = false
+    taskForm.description = taskTemp.description;
 }
 
 const showTask = ref(false)
@@ -154,7 +163,8 @@ function ShowTaskName(){
 }
 
 function CloseTaskName(){
-    showTask.value = false
+    showTask.value = false;
+    taskForm.name = taskTemp.name;
 }
 
 const showInputEdit = ref(false)
@@ -181,6 +191,84 @@ const handlecheckedFilesChange = (value: string[]) => {
   isIndeterminate.value = checkedCount > 0 && checkedCount < files.length
 }
 
+const handleUpdateTaskName = (taskId) => {
+    request.put(`/task/${taskId}`, taskForm)
+    .then(res => {
+        ElMessage({
+            showClose: true,
+            message: 'Change task name successfully',
+            type: 'success',
+        })
+        taskTemp.name = res.data.result.task.name;
+        showTask.value = false;
+    })
+}
+
+const handleUpdateTaskDescription = (taskId) => {
+    request.put(`/task/${taskId}`, taskForm)
+    .then(res => {
+        ElMessage({
+            showClose: true,
+            message: 'Change task description successfully',
+            type: 'success',
+        })
+        taskTemp.description = res.data.result.task.description;
+        showInputDescription.value = false;
+    })
+}
+
+const handleChangeStatus = (taskId) =>{
+    request.put(`/task/${taskId}`, taskForm)
+    .then(res => {
+        console.log(res)
+    })
+}
+
+const handleDeleteSchedule = (taskId) =>{
+    ElMessageBox.confirm("Are you sure you want to remove schedule?", {
+        confirmButtonText: "OK",
+        cancelButtonText: "Cancel",
+        type: "warning",
+    })
+    .then(() => {
+        taskForm.end_date = taskForm.start_date = null;
+        request.put(`/task/${taskId}`, taskForm)
+            .then(res => {
+                popoverUpdateSchedule.value.hide();
+                ElMessage({
+                        type: "success",
+                        message: "Delete completed",
+                    });
+            })
+    })
+        .catch(() => {
+            ElMessage({
+                type: "info",
+                message: "Delete canceled",
+            });
+        });
+
+
+}
+
+const handleUpdateSchedule = (taskId, formEl: FormInstance | undefined) =>{
+    formEl.validate((valid) => {
+        if (valid) {
+    request.put(`/task/${taskId}`, taskForm)
+    .then(res => {
+        popoverUpdateSchedule.value.hide();
+        ElMessage({
+            type: "success",
+            message: "Update schedule completed!",
+        });
+    })
+}})
+}
+
+const showUpdateSchedule = () => {
+    isShowUpdateSchedule.value = !isShowUpdateSchedule.value;
+}
+
 const checked1 = ref(false)
 const value = ref()
 const checked = ref([false])
@@ -196,6 +284,46 @@ if (completedAt.value) {
     }
 }
 
+const popoverUpdateSchedule = ref();
+const isShowUpdateSchedule = ref(false);
+
+const hideUpdateSchedule =() => {
+    popoverUpdateSchedule.value.hide();
+};
+
+const checkStartDate = (rule: any, value: any, callback: any) => {
+    if(new Date(value).getTime()< todayTime && new Date(value).getTime()!=0) {
+        callback(new Error("You cannot choose a date in the past"))
+        return
+    }
+
+    if(new Date(value).getTime()> new Date(taskForm.end_date).getTime()&&new Date(taskForm.end_date).getTime()!= 0&& new Date(value).getTime()!=0){
+            callback(new Error("You cannot choose the start date greater than the end date"))
+            return
+    }
+
+    callback();
+};
+const today = new Date();
+const todayTime = new Date(today.getFullYear(), today.getMonth(), today.getDate()).getTime();
+
+const checkEndDate = (rule: any, value: any, callback: any) => {
+    if(new Date(value).getTime()< todayTime && new Date(value).getTime()!=0) {
+        callback(new Error("You cannot choose a date in the past"))
+    return
+    }
+
+    if(new Date(value).getTime()< new Date(taskForm.start_date).getTime() && new Date(taskForm.start_date).getTime()!=0 && new Date(value).getTime()!= 0){
+        callback(new Error("You cannot choose the end date less than the start date"))
+        return;
+    }
+    callback();
+};
+
+const rules = {
+    start_date: [{ validator: checkStartDate, trigger: "blur" }],
+    end_date: [{ validator: checkEndDate, trigger: "blur" }],
+};
 </script>
 
 <template>
@@ -211,7 +339,7 @@ if (completedAt.value) {
                                 <el-icon class="el-icon" :size="25">
                                     <Document />
                                 </el-icon>
-                                <strong @click="ShowTaskName" class="ml-6"> {{ task.name }}</strong>
+                                <strong @click="ShowTaskName" class="ml-6"> {{ taskForm.name }}</strong>
                             </h5>
                         </div>
                         <el-row v-if="showTask" class="mb-2" style="display: block;">
@@ -225,7 +353,7 @@ if (completedAt.value) {
                                     <el-input v-model="taskForm.name" :value="taskForm.name"
                                     type="textarea" :rows="2" autocomplete="off" placeholder="Mô tả công việc" clearable style="display: inline-block;" />
                                     <span class="name-btn">
-                                        <el-button color="green" style="margin-right: 8px;">Cập nhật</el-button>
+                                        <el-button color="green" style="margin-right: 8px;" @click="handleUpdateTaskName(task.id)">Cập nhật</el-button>
                                         <el-icon @click="CloseTaskName" class="name-icon-close close"><CloseBold /></el-icon>
                                     </span>
                                 </el-col>
@@ -237,17 +365,17 @@ if (completedAt.value) {
                             <el-form-item label="Mô tả:" style="display: block; margin-bottom: 0; margin-left: 6px; ">
                             </el-form-item>
                         </div>
-                        <span class="ml-31" v-if="!showInputDescription" @click="ShowInputDes">{{ props.task.description }}</span>
+                        <span class="ml-31" v-if="!showInputDescription" @click="ShowInputDes">{{ taskForm.description }}</span>
                         <div v-if="showInputDescription" style="margin: 16px 0;">
                             <el-input v-model="taskForm.description" :value="taskForm.description"
                             type="textarea" :rows="2" autocomplete="off" placeholder="Mô tả công việc" clearable style="display: inline-block;" />
                             <span class="description-btn">
-                                <el-button color="green" style="margin-right: 8px;">Cập nhật</el-button>
+                                <el-button color="green" style="margin-right: 8px;" @click="handleUpdateTaskDescription(task.id)">Cập nhật</el-button>
                                 <el-icon @click="CloseInputDes" class="description-icon-close close"><CloseBold /></el-icon>
                             </span>
                         </div>
                         <el-row class="mb-2" style="display: block; margin-top: 16px;">
-                            <SubTask :taskId="task.id" :task_group_id="props.task_group_id"/>
+                            <SubTask :taskId="task.id" :task_group_id="taskGroup.id"/>
                         </el-row>
 
                         <FileManagerOfTask :taskId="task.id"></FileManagerOfTask>
@@ -255,17 +383,71 @@ if (completedAt.value) {
                         <TaskActivity :taskId="task.id"></TaskActivity>
                     </el-col>
                     <el-col :span="5" class="ml-2">
-                        <el-checkbox v-model="checked[props.task.id]" label="Hoàn thành việc" size="large" />
+                        <el-checkbox v-model="taskForm.status" true-label="3" :false-label="task.status===3 ? null : task.status" label="Hoàn thành việc" size="large" @change="handleChangeStatus(task.id)"/>
                         <span>Ngày thực hiện</span>
                         <el-form-item style="display: block;">
-                            <div class="date">
-                                <el-icon color="orange " class="date-icon">
+                            <div class="date" v-if="taskForm.start_date || taskForm.end_date">
+                                <span ref="buttonUpdateSchedule"
+                                 @click="showUpdateSchedule"
+                                   class="date-finish cursor-pointer " style="display: inline-block; color: red;" >{{ taskForm.start_date ? new Date(taskForm.start_date).toLocaleDateString("vi-VN", {day: "numeric", month: "numeric"}) : "Start" }} - {{ taskForm.end_date ? new Date(taskForm.end_date).toLocaleDateString("vi-VN", {day: "numeric", month: "numeric"}) : "End"}}
+                                </span>
+                                <el-icon color="orange " class="date-icon " @click="handleDeleteSchedule(task.id)">
                                 <Delete />
                                 </el-icon>
-                                <span class="date-finish" style="display: inline-block; color: red;">31/10 - 31/10
-                                </span>
+                            </div>
+                            <div v-else>
+                                <el-icon ref="buttonUpdateSchedule"  @click="showUpdateSchedule" color="orange " size="25" class="mt-3 cursor-pointer"><Calendar /></el-icon>
+                            </div>
+                            <el-popover
+                                :width="300"
+                                ref="popoverUpdateSchedule"
+                                :virtual-ref="buttonUpdateSchedule"
+                                trigger="click"
+                                virtual-triggering
+                                :visible="isShowUpdateSchedule"
+                                >
+                           <div class="w-[100%]">
+                            <el-icon @click="hideUpdateSchedule" class="cursor-pointer float-right" size="25" color="red"  ><CircleCloseFilled /></el-icon>
+                           </div>
+                            <div style="display: inline-block;">
+                                <el-form-item prop="start_date">
+                                    <span >Ngày bắt đầu:</span>
+                                    <el-date-picker
+                                        v-model="taskForm.start_date"
+                                        type="date"
+                                        placeholder="Chọn"
+                                        format="YYYY/MM/DD"
+                                        clearable
+                                        value-format="YYYY-MM-DD"
+                                        style="
+                                            display: block;
+                                            width: 100%;
+                                        "
+                                    />
+                                </el-form-item>
+                                <el-form-item prop="end_date" >
+                                    <span class="mt-1">Ngày kết thúc:</span
+                                    >
+                                    <el-date-picker
+                                        v-model="taskForm.end_date"
+                                        type="date"
+                                        placeholder="Chọn"
+                                        format="YYYY/MM/DD"
+                                        clearable
+                                        value-format="YYYY-MM-DD"
+                                        style="
+                                            display: block;
+                                            width: 100%;
+                                        "
+                                    />
+                                </el-form-item>
+                                    <div class="flex w-[100%] ">
+                                        <el-button type="success" class="button-schedule mr-3 text-center" @click="handleUpdateSchedule(task.id, ruleFormRef)">Cập nhật</el-button>
+                                        <el-button type="danger" class="button-schedule text-center"  @click="handleDeleteSchedule(task.id)">Xóa</el-button>
+                                    </div>
                             </div>
 
+                            </el-popover>
 
                         </el-form-item>
                         <Participant :taskId="task.id"></Participant>
@@ -469,8 +651,8 @@ if (completedAt.value) {
 
 .date-icon {
     position: absolute;
-    left: 0px;
-    bottom: 10px;
+    right: 10px;
+    bottom: 11px;
     display: none;
 }
 .date:hover .date-icon{
@@ -478,7 +660,7 @@ if (completedAt.value) {
     display: block;
 }
 .date:hover .date-finish{
-    margin-left: 16px;
+    padding-right: 30px;
 }
 
 .user-icon-close{
@@ -510,5 +692,13 @@ if (completedAt.value) {
 ::v-deep .el-dialog__body{
     border-top: 1px solid #ccc;
     border-bottom: 1px solid #ccc;
+}
+::v-deep .el-input__wrapper {
+    width: 100% !important;
+}
+.button-schedule{
+    margin-top: 15px !important;
+    border-radius: 3px !important;
+    width:100px ;
 }
 </style>

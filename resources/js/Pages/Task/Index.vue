@@ -7,7 +7,8 @@ const props = defineProps({
     tasks: Array,
     task_group_id: Number,
     taskGroup: Object,
-    activity: Object
+    activity: Object,
+    getGroupsTask:Function,
 });
 
 const isShowTaskDetail = ref(false);
@@ -27,6 +28,7 @@ function taskDetail(task) {
 
 function closeTaskDetail(value) {
     isShowTaskDetail.value = value
+    props.getGroupsTask();
 }
 </script>
 
@@ -35,7 +37,7 @@ function closeTaskDetail(value) {
         <li @click="taskDetail(task)">{{  task.name }}</li>
     </ul>
 
-    <TaskDetail :activity="props.activity" v-if="isShowTaskDetail" v-on:closeModal="closeTaskDetail" :taskGroup="taskGroup" :isShowModal="isShowTaskDetail" :task="state.task" :task_group_id="props.task_group_id"/>
+    <TaskDetail :activity="props.activity" v-if="isShowTaskDetail" v-on:closeModal="closeTaskDetail" :taskGroup="taskGroup" :isShowModal="isShowTaskDetail" :task="state.task" />
 </template>
 
 <style scoped>

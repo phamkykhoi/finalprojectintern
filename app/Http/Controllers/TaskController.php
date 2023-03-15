@@ -63,8 +63,9 @@ class TaskController extends Controller
     public function update($id, UpdateTaskRequest $request)
     {
         try {
+            $request->merge(["completed_at" => $request->status == Task:: STATUS['done'] ? now() : null]);
             $this->taskRepo->save($request->all(), ['id' => $id]);
-            return $this->success();
+            return $this->success( ['task' => $this->taskRepo->findById($id)]);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
         }
@@ -72,8 +73,10 @@ class TaskController extends Controller
 
     public function completedTask($id, CompletedTaskRequest $request) 
     {
+        $inputs = $request->only('status');
+        $inputs['completed_at'] = now();
         try {
-            $this->taskRepo->save($request->all(), ['id' => $id]);
+            $this->taskRepo->save($inputs, ['id' => $id]);
             return $this->success();
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
