@@ -316,7 +316,7 @@ const rules = {
     <section class="space-y-6">
         <Modal :show="isShowModal" @close="closeModal" v-bind:max-width="'4xl'">
             <form class="space-y-6 m-3">
-                <el-form enctype="multipart/form-data" ref="ruleFormRef" :model="taskForm" class="demo-ruleForm" :rules="rules">
+                <el-form enctype="multipart/form-data" ref="ruleFormRef" :model="taskForm" class="demo-ruleForm" :rules="rules" label-position="top">
                 <el-row>
                     <el-col :span="18">
                         <div v-if="!showTask" class="modal-header flex flex-shrink-0 items-center justify-between rounded-t-md">
@@ -370,10 +370,9 @@ const rules = {
                     </el-col>
                     <el-col :span="5" class="ml-2">
                         <el-checkbox v-model="taskForm.status" true-label="3" :false-label="task.status===3 ? null : task.status" label="Hoàn thành việc" size="large" @change="handleChangeStatus(task.id)"/>
-                        <span>Ngày thực hiện</span>
-                        <el-form-item style="display: block; margin-top: 20px;">
+                        <el-form-item style="display: block;">
                             <div style="display: inline-block;">
-                                <el-form-item prop="start_date" class="form_item-date">
+                                <el-form-item prop="start_date" class="form_item-date" label="Ngày thực hiện">
                                     <el-date-picker
                                         v-model="taskForm.start_date"
                                         type="date"
@@ -381,13 +380,9 @@ const rules = {
                                         format="YYYY/MM/DD"
                                         clearable
                                         value-format="YYYY-MM-DD"
-                                        style="
-                                            display: block;
-                                            width: 100%;
-                                        "
                                     />
                                 </el-form-item>
-                                <el-form-item prop="end_date" class="form_item-date">
+                                <el-form-item prop="end_date" class="form_item-date" label="Ngày kết thúc">
                                     <el-date-picker
                                         v-model="taskForm.end_date"
                                         type="date"
@@ -395,16 +390,8 @@ const rules = {
                                         format="YYYY/MM/DD"
                                         clearable
                                         value-format="YYYY-MM-DD"
-                                        style="
-                                            display: block;
-                                            width: 100%;
-                                        "
                                     />
                                 </el-form-item>
-                                    <div class="flex w-[100%] ">
-                                        <el-button type="success" class="button-schedule mr-3 text-center" @click="handleUpdateSchedule(task.id, ruleFormRef)">Cập nhật</el-button>
-                                        <el-button type="danger" class="button-schedule text-center"  @click="handleDeleteSchedule(task.id)">Xóa</el-button>
-                                    </div>
                             </div>
 
                         </el-form-item>
@@ -659,6 +646,6 @@ const rules = {
     width:100px ;
 }
 .form_item-date{
-    margin-bottom:30px;
+    margin-bottom: 10px;
 }
 </style>
