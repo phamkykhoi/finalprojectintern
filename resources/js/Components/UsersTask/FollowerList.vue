@@ -20,10 +20,10 @@ const loading = ref(false)
 
 const participants = ref([]);
 
-function getUser(taskId)
+function getUsers(taskId)
 {
     loading.value=true
-    request.get(`/api/list-user/${props.taskId}`)
+    request.get(`/api/list-users/${props.taskId}`)
         .then((res) => {
             participants.value = res.data.result.listsUser
             loading.value=false
@@ -40,7 +40,7 @@ function getUser(taskId)
 
 function showListUser() 
 {
-    getUser(props.taskId);
+    getUsers(props.taskId);
 }
 </script>
 

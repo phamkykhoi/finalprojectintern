@@ -67,6 +67,6 @@ class User extends Authenticatable
 
     public function getAvatarAttribute()
     {
-       return $this->attachment ? "/storage/attachments/$this->attachment->file_name" : "/assets/img/images.png";
+       return $this->attachment ? "/storage/attachments/".$this->attachment->file_name  : "/assets/img/images.png";
     }
 }
