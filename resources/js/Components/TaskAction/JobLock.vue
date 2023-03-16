@@ -7,6 +7,7 @@ const props = defineProps({
     icon: String,
     title: String,
     task: Object,
+    closeModal: Function,
 });
 
 const confirmButton = ref()
@@ -30,6 +31,7 @@ const handleLockTask = () =>{
             message: "You have locked this task!",
             type: "success",
         });
+        props.closeModal()
         loading.value = false
     })
     .catch(err => {
