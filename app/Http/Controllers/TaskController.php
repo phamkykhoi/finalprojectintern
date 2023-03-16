@@ -107,8 +107,9 @@ class TaskController extends Controller
 
     public function assignMembers(Request $request)
     {
+        $input = $request->only('user_id', 'task_id', 'role_task');
         try {
-            return $this->success([$this->userTaskRepo->save($request->all())]);
+            return $this->success($this->userTaskRepo->save($input, $input));
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
         }
