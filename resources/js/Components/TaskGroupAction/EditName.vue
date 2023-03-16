@@ -7,13 +7,10 @@ const props = defineProps({
     editNameTaskGroup:Array,
 });
 
-function editNameTaskGroup(index) {
-    props.editNameTaskGroup[index] = !props.editNameTaskGroup[index]
-}
 </script>
 
 <template>
-    <el-button @click="editNameTaskGroup(idTaskGroup)" :icon="icon">
+    <el-button :icon="icon">
         {{ props.title }}
     </el-button>
 </template>
