@@ -16,7 +16,7 @@ const onClickOutside2 = () => {
 </script>
 
 <template>
-    <el-button  v-popover="copyJobGroup" @click="dialogCopy = true" :icon="icon" v-click-outside="onClickOutside2">
+    <el-button style="border: none;" v-popover="copyJobGroup" @click="dialogCopy = true" :icon="icon" v-click-outside="onClickOutside2">
         {{ props.title }}
     </el-button>
 

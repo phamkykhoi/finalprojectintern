@@ -16,7 +16,7 @@ const openDialogAddTask = () => {
 </script>
 
 <template>
-    <el-button @click="openDialogAddTask" v-popover="poppveraddNewTask"
+    <el-button @click="openDialogAddTask" class="btn-item"
         v-click-outside="false" :icon="icon"> 
         {{ props.title }}
     </el-button>

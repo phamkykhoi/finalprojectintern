@@ -14,8 +14,8 @@ import {
     CaretTop, CaretBottom, Select, CircleClose
 } from '@element-plus/icons-vue';
 import { ClickOutside as vClickOutside, ElMessageBox, ElMessage } from 'element-plus';
-import axios from 'axios';
 import request from '../../utils/request';
+import TaskGroupAction from '@/Components/TaskGroupAction.vue';
 
 const props = defineProps({
     activity: Object,
@@ -207,7 +207,7 @@ function getTaskGroups(id)
             loading.value=false;
 }
 async function editTaskGroup(id, newTaskGroupName, index){
-    loading.value=true;
+    loading.value = true;
      await request.put(`/taskgroup/${id}`,{'name':newTaskGroupName}).then(res => {
         if (res.data.status) {
             ElMessage({
@@ -216,6 +216,7 @@ async function editTaskGroup(id, newTaskGroupName, index){
                 type: 'success',
             })
         }
+        getTaskGroups(state.activityId);
         dialog.editNameTaskGroup[index] = false;
     }).catch(err => {
         ElMessage({
@@ -224,7 +225,6 @@ async function editTaskGroup(id, newTaskGroupName, index){
             type: 'error',
         })
     })
-    getTaskGroups(state.activityId);
 }
 
 async function deleteTaskGroup(id)
@@ -304,6 +304,14 @@ function closePopoverAction() {
     dialog.editNameTaskGroup[index] = true
 };
 
+function openDialogAddTask(currentTask){
+    showFormTask.value = true;
+    state.task = currentTask
+}
+
+function closeTaskGroupName(index){
+    dialog.editNameTaskGroup[index] = false
+}
 </script>
 
 <template>
@@ -326,7 +334,10 @@ function closePopoverAction() {
                                     <div class="group-icons">
                                         <el-button v-popover="popoverRef[index]" v-click-outside="popoverInfoTaskGroup" :icon="InfoFilled" circle/>
                                         <el-button v-popover="popoverRef1[index]" v-click-outside="popoverSort" :icon="DCaret" circle/>
-                                        <el-button v-popover="popoverRef2[index]" @click="openPopoverAction(index)"  v-click-outside="popoverOption" :icon="MoreFilled" circle/>
+                                        <TaskGroupAction @open-dialog-add-task="openDialogAddTask(taskGroup)"
+                                        @refreshTaskGroups="clickEditNameTaskGroup(index, taskGroup.name)"
+                                        />
+                                        <TaskForm v-if="showFormTask" :task="state.task" :isShowModal="showFormTask" v-on:closeModal="closeFormTask" />
                                         <el-button @click="hidePopoverAction(index)" style="display: none;"/>
                                     </div>
                                 </el-col>
@@ -343,7 +354,7 @@ function closePopoverAction() {
                                 <div style="margin: 5px 0 10px 0" />
                                 <el-row>
                                     <el-button type="success" @click="editTaskGroup(taskGroup.id, temp.editTaskGroupName[index], index)">Lưu</el-button>
-                                    <el-button @click="  dialog.editNameTaskGroup[index] = false; temp.editTaskGroupName = taskGroup.name" style="margin-left: 10px;">x</el-button>
+                                    <el-button @click="closeTaskGroupName(index)" style="margin-left: 10px;">x</el-button>
 
                                 </el-row>
                             </el-form>
@@ -376,7 +387,8 @@ function closePopoverAction() {
                     </el-popover>
                         <ActionTaskGroup :idTaskGroup="index" :taskGroup="taskGroup" :visible="dialog.popoverAction"
                             :state="state" :popperRef="popoverRef" :popoverRef2="popoverRef2" :editNameTaskGroup="dialog.editNameTaskGroup"
-                            @open-dialog-add-task-group="openDialogAddTaskGroup" @open-dialog-add-task="openDialogAddTask"
+                            @open-dialog-add-task-group="openDialogAddTaskGroup" @open-dialog-add-task="openDialogAddTask(taskGroup)"
+                            @refreshTaskGroups="clickEditNameTaskGroup(index, taskGroup.name)"
                             @close-popover-action="closePopoverAction" :popoverAction="dialog.popoverAction"
                         />
                 </div>
