@@ -26,15 +26,17 @@ use App\Http\Controllers\SubTaskController;
 
 Route::middleware(['auth', 'verified'])->group(function() {
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
-    Route::get('api/activity/{id}', [TaskController::class, 'show']);
-    Route::get('api/list-users/{id}', [TaskController::class, 'getUsers']);
     Route::resource('activity', ActivityController::class);
     Route::resource('task', TaskController::class);
+    Route::get('api/activity/{id}', [TaskController::class, 'show']);
+    Route::get('api/list-members/{id}', [TaskController::class, 'getMembers']);
+    Route::post('assign-members/{id}',[TaskController::class, 'assignMembers']);
     Route::post('clone-task-by-id/{id}',[TaskController::class,'cloneTaskById']);
     Route::put('completed-task/{id}', [TaskController::class,'completedTask']);
     Route::resource('subtask', SubTaskController::class);
     Route::get('api/subtask/{id}', [SubTaskController::class, 'getSubTask']);
     Route::get('user/list', [UserController::class, 'indexJson']);
+    Route::get('api/list-users', [UserController::class, 'listUsers']);
     Route::resource('user', UserController::class);
     Route::resource('department', DepartmentController::class);
     Route::get('api/department', [DepartmentController::class, 'indexJson']);

@@ -20,12 +20,12 @@ const loading = ref(false)
 
 const participants = ref([]);
 
-function getUsers(taskId)
+function getMembers(taskId)
 {
     loading.value=true
-    request.get(`/api/list-users/${props.taskId}`)
+    request.get(`/api/list-members/${props.taskId}`)
         .then((res) => {
-            participants.value = res.data.result.listsUser
+            participants.value = res.data.result.listMembers
             loading.value=false
         })
         .catch(err => {
@@ -40,7 +40,7 @@ function getUsers(taskId)
 
 function showListUser() 
 {
-    getUsers(props.taskId);
+    getMembers(props.taskId);
 }
 </script>
 
@@ -69,16 +69,17 @@ function showListUser()
             ><CloseBold
         /></el-icon>
         <div v-loading="loading">
-            <div class="info-user info-user-close"  v-for="(participant, index) in participants" :key="index">
-                <img
-                    :src="participant.avatar"
-                    class="user-avt"
-                />
-                <div>
-                    <h6 class="info-user-item">{{ participant.email }}</h6>
-                    <h6 class="info-user-item">{{ participant.name }}</h6>
+            <div v-if="participants">
+                <div v-for="(participant, index) in participants" :key="index">
+                    <div class="info-user info-user-close" v-if="participant.role_task">
+                    <img :src="participant.avatar" class="user-avt" />
+                    <div>
+                        <h6 class="info-user-item">{{ participant.email }}</h6>
+                        <h6 class="info-user-item">{{ participant.name }}</h6>
+                    </div>
+                    </div>
                 </div>
-
+                <div v-if="!participants.length">Không có người theo dõi </div>
             </div>
         </div>
         </el-popover>
@@ -87,3 +88,99 @@ function showListUser()
         </el-icon>
     </div>
 </template>
+
+<style scoped>
+.close {
+    cursor: pointer;
+}
+.info-user-close {
+    position: relative;
+}
+.btn-add-user {
+    width: 100%;
+}
+.people-icon:hover,
+.icon-plus {
+    cursor: pointer;
+}
+.info-user-item {
+    margin-left: 6px;
+}
+.info-user-icon {
+    position: relative;
+}
+
+.icon-circle-check{
+    position: absolute;
+    right:20px;
+}
+
+.info {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 3px;
+}
+.info-user {
+    display: flex;
+    align-items: center;
+    padding:10px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+.info-user:hover{
+    background-color:#ccc;
+}
+.people-icon {
+    position: relative;
+}
+.people-icon:hover .people-icon-remove {
+    display: block;
+    left: 50%;
+    bottom: 70%;
+}
+.people-icon-remove {
+    display: none;
+    position: absolute;
+    color: red;
+}
+.user-icon-star {
+    position: absolute;
+    right: -5%;
+    bottom: -5%;
+}
+.user-team {
+    margin-top: 16px;
+    align-items: center;
+    justify-content: space-between;
+}
+.user-add {
+    display: flex;
+    margin: 16px 0;
+}
+.user-add img {
+    border-radius: 50%;
+    margin-right: 8px;
+}
+.info-user-close {
+    position: relative;
+}
+.user-avt{
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: 50%;
+}
+.user-avt-small{
+    width: 35px;
+    height: 35px;
+    object-fit: cover;
+    border-radius: 50%;
+}
+.user-icon-close{
+    float: right;
+}
+.sub-title{
+    line-height: 14px;
+}
+</style>
