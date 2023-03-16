@@ -99,6 +99,11 @@ const closeModal = () => {
     emit('closeModal', false);
 };
 
+const isTaskLocked = ref(props.task.is_locked);
+const handleChangeIsLocked = () => {
+    isTaskLocked.value = !isTaskLocked.value;
+}
+
 const saveTask = (formEl: FormInstance | undefined) => {
     if (!formEl) return
     formEl.validate((valid) => {
@@ -416,8 +421,8 @@ const rules = {
                             <Move :icon="Rank" :title="title.move" />
                             <CreateReminder :icon="Bell" :title="title.reminder"/>
                             <Evaluation :icon="Finished" :title="title.evaluation" />
-                            <JobUnlock v-if="task.is_locked" :icon="Unlock" :title="title.unlock"/>
-                            <JobLock v-else :icon="Lock" :title="title.lock" :task="task" :closeModal="closeModal"/>
+                            <JobUnlock v-if="isTaskLocked" :icon="Unlock" :title="title.unlock"/>
+                            <JobLock v-else :icon="Lock" :title="title.lock" :task="task" @is-task-locked="handleChangeIsLocked"/>
                             <Save :icon="TakeawayBox" :title="title.save"/>
                             <DeleteTask :icon="Close" :title="title.delete" />
                         </div>

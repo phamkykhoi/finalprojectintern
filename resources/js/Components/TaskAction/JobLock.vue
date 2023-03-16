@@ -13,6 +13,8 @@ const props = defineProps({
 const confirmButton = ref()
 const lockPopover = ref()
 const loading = ref(false)
+const emit = defineEmits(['is-task-locked']);
+
 const clickOutsideLockPopover = () => {
   unref(lockPopover).popperRef8?.delayHide?.()
 }
@@ -29,7 +31,7 @@ const handleLockTask = () =>{
             message: "You have locked this task!",
             type: "success",
         });
-        props.closeModal()
+        emit('is-task-locked');
         loading.value = false
     })
     .catch(err => {
