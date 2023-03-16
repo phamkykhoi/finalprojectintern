@@ -22,9 +22,7 @@ const hideLockPopover = () => {
 
 const handleLockTask = () =>{
     loading.value = true
-    request.put(`/task/${props.task.id}`, {...props.task,
-    is_locked: true,
-    })
+    request.post(`/lock-task-by-id/${props.task.id}`)
     .then(res => {
         ElMessage({
             showClose: true,

@@ -29,4 +29,9 @@ class TaskRepository extends BaseRepository
 
         return $newTask;
     }
+
+    public function lockTask($id)
+    {
+        $this->model->find($id)->update(['is_locked'=>true]);
+    }
 }

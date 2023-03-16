@@ -30,6 +30,7 @@ Route::middleware(['auth', 'verified'])->group(function() {
     Route::get('api/list-users/{id}', [TaskController::class, 'getUsers']);
     Route::resource('activity', ActivityController::class);
     Route::resource('task', TaskController::class);
+    Route::post('lock-task-by-id/{id}',[TaskController::class,'lockTaskById']);
     Route::post('clone-task-by-id/{id}',[TaskController::class,'cloneTaskById']);
     Route::put('completed-task/{id}', [TaskController::class,'completedTask']);
     Route::resource('subtask', SubTaskController::class);
