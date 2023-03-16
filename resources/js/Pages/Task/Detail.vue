@@ -414,7 +414,7 @@ const rules = {
                             <Move :icon="Rank" :title="title.move" />
                             <CreateReminder :icon="Bell" :title="title.reminder"/>
                             <Evaluation :icon="Finished" :title="title.evaluation" />
-                            <JobLock :icon="Lock" :title="title.lock"/>
+                            <JobLock :icon="Lock" :title="title.lock" :task="task"/>
                             <Save :icon="TakeawayBox" :title="title.save"/>
                             <DeleteTask :icon="Close" :title="title.delete" />
                         </div>
