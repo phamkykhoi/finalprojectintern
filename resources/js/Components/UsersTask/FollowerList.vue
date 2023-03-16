@@ -23,9 +23,9 @@ const participants = ref([]);
 function getMembers(taskId)
 {
     loading.value=true
-    request.get(`/api/list-members/${props.taskId}`)
+    request.get(`/api/list-followers-in-task`)
         .then((res) => {
-            participants.value = res.data.result.listMembers
+            participants.value = res.data.result.listFollowers
             loading.value=false
         })
         .catch(err => {

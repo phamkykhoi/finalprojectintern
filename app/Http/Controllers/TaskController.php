@@ -105,7 +105,7 @@ class TaskController extends Controller
 
     }
 
-    public function assignMembers(Request $request)
+    public function assignFollowers(Request $request)
     {
         $input = $request->only('user_id', 'task_id', 'role_task');
         try {

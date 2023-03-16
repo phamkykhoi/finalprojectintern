@@ -95,8 +95,8 @@ const users = ref([]);
 function getUsers()
 {
     loading.value=true
-    request.get(`/api/list-users`).then((res) => {
-            users.value = res.data.result.listUsers
+    request.get(`/api/list-followers-in-task`).then((res) => {
+            users.value = res.data.result.listFollowers
             loading.value=false
             countFollowers(users)
         })
@@ -121,7 +121,7 @@ function assginMember(user)
         task_id: props.taskId,
         role_task: 2, // 
     }
-    request.post(`/assign-members/${props.taskId} `, members).then((res)=>{
+    request.post(`/assign-followers/${props.taskId} `, members).then((res)=>{
         ElMessage({
             showClose: true,
             message: 'Assign members successfully',
