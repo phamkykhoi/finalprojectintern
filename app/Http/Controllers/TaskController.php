@@ -9,6 +9,7 @@ use App\Http\Requests\Task\CreateTaskRequest;
 use App\Http\Requests\Task\UpdateTaskRequest;
 use App\Http\Requests\Task\CompletedTaskRequest;
 use App\Models\Task;
+use App\Repositories\UserRepository;
 use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
@@ -21,14 +22,18 @@ class TaskController extends Controller
 
     protected $userTaskRepo;
 
+    protected $userRepo;
+
     public function __construct(
         TaskRepository $taskRepo,
         TaskGroupRepository $taskGroupRepo,
         UserTaskRepository $userTaskRepo,
+        UserRepository $userRepo,
     ) {
         $this->taskRepo = $taskRepo;
         $this->taskGroupRepo = $taskGroupRepo;
         $this->userTaskRepo = $userTaskRepo;
+        $this->userRepo = $userRepo;
     }
 
     public function store(CreateTaskRequest $request)
@@ -83,6 +88,12 @@ class TaskController extends Controller
         }
     }
 
+    public function getUsers($id) 
+    {
+        return $this->success([
+            'listsUser' => $this->userRepo->getUserTask($id),
+        ]);
+    }
     public function cloneTaskById($id)
     {
         try {
@@ -91,5 +102,6 @@ class TaskController extends Controller
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
         }
+
     }
 }
