@@ -28,6 +28,7 @@ Route::middleware(['auth', 'verified'])->group(function() {
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
     Route::resource('activity', ActivityController::class);
     Route::resource('task', TaskController::class);
+    Route::post('lock-task-by-id/{id}',[TaskController::class,'lockTaskById']);
     Route::get('api/activity/{id}', [TaskController::class, 'show']);
     Route::get('api/list-members/{id}', [TaskController::class, 'getMembers']);
     Route::post('assign-members/{id}',[TaskController::class, 'assignMembers']);

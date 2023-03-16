@@ -88,7 +88,7 @@ class TaskController extends Controller
         }
     }
 
-    public function getMembers($id) 
+    public function getMembers($id)
     {
         return $this->success([
             'listMembers' => $this->userRepo->getMembersTask($id),
@@ -105,6 +105,16 @@ class TaskController extends Controller
 
     }
 
+    public function lockTaskById($id)
+    {
+        try {
+            $this->taskRepo->lockTask($id);
+            return $this->success();
+             } catch (\Exception $e) {
+            return $this->error($e->getMessage(), $e->getCode());
+        }
+    }
+    
     public function assignMembers(Request $request)
     {
         $input = $request->only('user_id', 'task_id', 'role_task');
