@@ -15,7 +15,7 @@ import {
 } from '@element-plus/icons-vue';
 import { ClickOutside as vClickOutside, ElMessageBox, ElMessage } from 'element-plus';
 import request from '../../utils/request';
-import Drop from '@/Components/Drop.vue';
+import TaskGroupAction from '@/Components/TaskGroupAction.vue';
 
 const props = defineProps({
     activity: Object,
@@ -207,7 +207,7 @@ function getTaskGroups(id)
             loading.value=false;
 }
 async function editTaskGroup(id, newTaskGroupName, index){
-    loading.value=true;
+    loading.value = true;
      await request.put(`/taskgroup/${id}`,{'name':newTaskGroupName}).then(res => {
         if (res.data.status) {
             ElMessage({
@@ -334,7 +334,7 @@ function closeTaskGroupName(index){
                                     <div class="group-icons">
                                         <el-button v-popover="popoverRef[index]" v-click-outside="popoverInfoTaskGroup" :icon="InfoFilled" circle/>
                                         <el-button v-popover="popoverRef1[index]" v-click-outside="popoverSort" :icon="DCaret" circle/>
-                                        <Drop @open-dialog-add-task="openDialogAddTask(taskGroup)"
+                                        <TaskGroupAction @open-dialog-add-task="openDialogAddTask(taskGroup)"
                                         @refreshTaskGroups="clickEditNameTaskGroup(index, taskGroup.name)"
                                         />
                                         <TaskForm v-if="showFormTask" :task="state.task" :isShowModal="showFormTask" v-on:closeModal="closeFormTask" />
