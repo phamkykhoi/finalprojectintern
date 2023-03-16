@@ -84,5 +84,11 @@ class UserController extends Controller
         ]);
     }
     
+    public function listUsers()
+    {
+        return $this->success([
+            'listUsers' => $this->userRepo->getAll(null, 2),
+        ]);
+    }
     
 }

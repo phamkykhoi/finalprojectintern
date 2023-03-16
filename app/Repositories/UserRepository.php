@@ -11,15 +11,22 @@ class UserRepository extends BaseRepository
         $this->model = $model;
     }
 
-    public function getAll(array $withRelation = null)
+    public function getAll(array $withRelation = null, $role_task = null)
     {
-        $query = $this->model->query();
-
+        $query = $this->model->leftJoin('user_tasks', 'users.id', '=', 'user_tasks.user_id')
+        ->select('users.*', 'user_tasks.role_task');
+        
         if ($withRelation) {
             $query->with($withRelation);
         }
 
-        return $query->where('id', '!=', 1)->get();
+        if($role_task) {
+            $query->where(function($query) use ($role_task) {
+                $query->where('role_task', $role_task)->orWhereNull('role_task');
+            });
+        }
+
+        return $query->where('users.id', '!=', 1)->get();
     }
 
     public function getByDepartmentId($departmentId)
@@ -35,8 +42,9 @@ class UserRepository extends BaseRepository
             ->get();
     }
 
-    public function getUserTask($id = null) {
+    public function getMembersTask($id = null) {
         return $this->model->with('attachment')->join('user_tasks', 'user_tasks.user_id', 'users.id')
             ->where('user_tasks.task_id', $id)->get();
     }
+
 }

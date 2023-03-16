@@ -90,14 +90,15 @@ const handleUpdate = () =>{
 const loading = ref(false)
 
 const participants = ref([]);
+const users = ref([]);
 
-function getUsers(taskId)
+function getUsers()
 {
     loading.value=true
-    request.get(`/api/list-users/${props.taskId}`)
-        .then((res) => {
-            participants.value = res.data.result.listsUser
+    request.get(`/api/list-users`).then((res) => {
+            users.value = res.data.result.listUsers
             loading.value=false
+            countFollowers(users)
         })
         .catch(err => {
             ElMessage({
@@ -110,8 +111,42 @@ function getUsers(taskId)
 }
 
 onBeforeMount(async () => {
-    getUsers(props.taskId);
+    getUsers()
 });
+
+function assginMember(user)
+{
+    const members = {
+        user_id: user.id,
+        task_id: props.taskId,
+        role_task: 2, // 
+    }
+    request.post(`/assign-members/${props.taskId} `, members).then((res)=>{
+        ElMessage({
+            showClose: true,
+            message: 'Assign members successfully',
+            type: 'success',
+        })
+        getUsers()
+        countFollowers(users)
+    }).catch(err => {
+        ElMessage({
+            showClose: true,
+            message: err.response.data.message,
+            type: 'error',
+            })
+        })
+}
+
+const total = ref(0)
+function countFollowers(users)
+{
+    let follower = users.value.filter(function (user)
+        {
+            return user.role_task == 2
+        });
+        total.value = follower.length
+}
 
 </script>
 <template>
@@ -137,6 +172,7 @@ onBeforeMount(async () => {
         </el-icon>
         <el-popover
             :width="400"
+            :height="400"
             ref="popoverSearchParticipants"
             :virtual-ref="buttonSearchParticipants"
             :trigger="'click'"
@@ -158,19 +194,30 @@ onBeforeMount(async () => {
                 :suffix-icon="Search"
             />
             <p class="mt-4 sub-title">THÀNH VIÊN TRONG KẾ HOẠCH</p>
-            <div class="info" v-for="(participant, index) in participants" :key="index">
-                <div class="info-user w-[100%]">
-                    <img class="user-avt-small" :src="participant.avatar"/>
-                    <div>
-                        <p class="info-user-item">{{ participant.email }}</p>
-                        <p class="info-user-item">{{ participant.name }}</p>
+            <div style="overflow-y: scroll; height: 155px;">
+                <el-row class="info" v-for="(user, index) in users" :key="index" :span="24">
+                    <div class="info-user w-[100%]">
+                        <el-col class="info-user-icon" :span="3">
+                            <img
+                            :src="user.avatar"
+                            class="user-avt-small"
+                        />
+                            <el-icon class="user-icon-star" :size="20" color="blue"><StarFilled/></el-icon>
+                        </el-col>
+                        <el-col :span="21">
+                            <el-row>
+                                <el-col :span="18">
+                                    <p class="info-user-item">{{ user.email }}</p>
+                                    <p class="info-user-item">{{ user.name }}</p>
+                                </el-col>
+                                <el-col style="position: relative;" :span="3"  v-if="user.role_task == 1">
+                                    <el-icon color="green" class="icon-circle-check " size="25"><CircleCheck/></el-icon>
+                                </el-col>
+                            </el-row>
+                        </el-col>
                     </div>
-                    <el-icon color="green" class="icon-circle-check " size="25"
-                    ><CircleCheck
-                /></el-icon>
-                </div>
+                </el-row>
             </div>
-
             <el-button
                 ref="buttonInviteParticipants"
                 v-click-outside="onClickOutside3"
@@ -236,10 +283,9 @@ onBeforeMount(async () => {
         </el-popover>
     </div>
 
-    <div>Người theo dõi (1):</div>
+    <div>Người theo dõi ({{ total }}):</div>
     <div class="people-handle" style="display: flex">
         <FollowerList :taskId="props.taskId" />
-
         <el-icon
             size="25"
             class="icon-plus"
@@ -250,6 +296,7 @@ onBeforeMount(async () => {
         </el-icon>
         <el-popover
             :width="400"
+            :height="400"
             ref="popoverSearchFollowers"
             :virtual-ref="buttonSearchFollowers"
             trigger="click"
@@ -279,27 +326,33 @@ onBeforeMount(async () => {
                     size="large"
                 />
             </div>
-            <div class="info" v-for="(participant, index) in participants" :key="index">
-                <div class="info-user w-[100%]">
-                    <div class="info-user-icon">
-                        <img
-                        :src="participant.avatar"
-                        class="user-avt-small"
-                    />
-                        <el-icon class="user-icon-star" :size="20" color="blue"
-                            ><StarFilled
-                        /></el-icon>
+            <div style="overflow-y: scroll; height: 155px;">
+                <el-row class="info" v-for="(user, index) in users" :key="index" :span="24" @click="assginMember(user)">
+                    <div class="info-user w-[100%]">
+                        <el-col class="info-user-icon" :span="3">
+                            <img
+                            :src="user.avatar"
+                            class="user-avt-small"
+                        />
+                            <el-icon class="user-icon-star" :size="20" color="blue"
+                                ><StarFilled
+                            /></el-icon>
+                        </el-col>
+                        <el-col :span="21">
+                            <el-row>
+                                <el-col :span="18">
+                                    <p class="info-user-item">{{ user.email }}</p>
+                                    <p class="info-user-item">{{ user.name }}</p>
+                                </el-col>
+                                <el-col style="position: relative;" :span="3" v-if="user.role_task == 2">
+                                    <el-icon color="green" class="icon-circle-check " size="25"><CircleCheck/></el-icon>
+                                </el-col>
+                            </el-row>
+                        </el-col>
                     </div>
-                    <div>
-                        <p class="info-user-item">{{ participant.email }}</p>
-                        <p class="info-user-item">{{ participant.name }}</p>
-                    </div>
-                    <el-icon color="green" class="icon-circle-check " size="25"
-                    ><CircleCheck
-                /></el-icon>
-                </div>
+                </el-row>
             </div>
-            <el-button color="green" class="btn-add-user" @click="handleUpdate">Cập nhật</el-button>
+            <el-button color="green" style="place-content: center; margin-top: 10px;" class="btn-add-user" @click="handleUpdate">Cập nhật</el-button>
             <el-button
                 style="margin: 6px 0px"
                 ref="buttonInviteFollowers"
@@ -351,9 +404,7 @@ onBeforeMount(async () => {
                                 label="Cho phép theo dõi công việc đã có?"
                                 size="large"
                             />
-                            <el-button color="green" class="btn-add-user"
-                                >Cập nhật</el-button
-                            >
+                            <el-button color="green" class="btn-add-user">Cập nhật</el-button>
                         </div>
                     </div>
                     <span style="color: red"
@@ -366,7 +417,7 @@ onBeforeMount(async () => {
         </el-popover>
     </div>
 </template>
-<style>
+<style scoped>
 .close {
     cursor: pointer;
 }
