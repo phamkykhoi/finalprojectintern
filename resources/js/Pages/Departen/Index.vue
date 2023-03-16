@@ -57,11 +57,11 @@ const closeFormDepartmentUser = (value) => {
             <div class="flex flex-col h-full flex-hull">
                 <div class="h-16 border-b border-gray-100 hidden space-x-8 sm:flex">
                     <h3
-                        class='text-lg font-bold pl-2 inline-flex items-center w-full border-indigo-400 font-medium leading-5 text-gray-900 transition duration-150 ease-in-out'>
+                        class='text-lg font-bold pl-2 inline-flex items-center w-full border-indigo-400 font-medium leading-5 text-gray-900 transition duration-150 ease-in-out' style="position:fixed; margin-top:21px;">
                         &nbsp; Công việc của Tôi</h3>
                 </div>
 
-                <nav aria-label="Main" class="flex-1 px-2 py-4 space-y-2 overflow-y-hidden hover:overflow-y-auto">
+                <nav aria-label="Main" class="flex-1 px-2 py-4 space-y-2 overflow-y-hidden hover:overflow-y-auto" style="background-color:floralwhite;">
                     <div :key="index" v-for="(department, index) in departments">
                         <a href="#"
                             class="font-bold flex items-center transition-colors rounded-md dark:text-light hover:bg-primary-100 dark:hover:bg-primary"

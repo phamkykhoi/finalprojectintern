@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+
 import TaskForm from '@/Pages/Task/Form.vue';
 import AddTask from '@/Components/TaskGroupAction/AddTask.vue';
 import EditName from '@/Components/TaskGroupAction/EditName.vue';
@@ -9,10 +10,10 @@ import Move from '@/Components/TaskGroupAction/Move.vue';
 import MoveAll from '@/Components/TaskGroupAction/MoveAll.vue';
 import Save from '@/Components/TaskGroupAction/Save.vue';
 import SaveAll from '@/Components/TaskGroupAction/SaveAll.vue';
-import { reactive, ref, unref, defineProps } from 'vue';
-import { Plus, EditPen, CopyDocument, Switch, Rank, TakeawayBox, Delete} from '@element-plus/icons-vue';
+import { reactive, ref, unref, defineProps, defineEmits } from 'vue';
+import { Plus, EditPen, CopyDocument, Switch, Rank, TakeawayBox, Delete, MoreFilled} from '@element-plus/icons-vue';
 import { ClickOutside as vClickOutside, ElMessageBox, ElMessage } from 'element-plus';
-import request from '../../utils/request';
+import request from '../utils/request';
 
 const props = defineProps({
     idTaskGroup: Number,
@@ -124,7 +125,6 @@ async function deleteTaskGroup(id)
 }
 const emit = defineEmits(['open-dialog-add-task', 'refreshTaskGroups'])
 function openDialogAddTask() {
-    props.popoverRef2[props.idTaskGroup].hide()
     emit('open-dialog-add-task');
 }
 
@@ -140,70 +140,46 @@ function showParentPopover() {
     popoverVisible.value = true
 }
 function handleTaskGroupName(){
-    props.popoverRef2[props.idTaskGroup].hide()
     emit('refreshTaskGroups');
 }
 </script>
 <template>
-    <el-popover
-        :ref="ref => popoverRef2[props.idTaskGroup] = ref"
-        virtual-triggering
-        persistent
-        width="320px"
-        trigger="click"
-    >
-        <AddTask :icon="Plus" :title="title.addTask" @click="openDialogAddTask"/>
-        <EditName :icon="EditPen" @click="handleTaskGroupName" :title="title.editName" :editNameTaskGroup="props.editNameTaskGroup" :idTaskGroup="props.idTaskGroup"/>
-        <hr>
-        <AddGroup :icon="Plus" :title="title.addTaskGroup" @open-dialog-add-task-group="openDialogAddTaskGroup"/>
-        <Copy :icon="CopyDocument" :title="title.copy" @show-parent-popover="showParentPopover"/>
-        <Move :icon="Switch" :title="title.move"/>
-        <MoveAll :icon="Rank" :title="title.moveAll"/>
-        <hr/>
-        <Save :icon="TakeawayBox" :title="title.save"/>
-        <SaveAll :icon="TakeawayBox" :title="title.saveAll"/>
-        <hr/>
-        <DeleteTaskGroup :icon="Delete" :title="title.delete"/>
-
-        <TaskForm v-if="showFormTask" :task="state.task" :isShowModal="showFormTask" v-on:closeModal="closeFormTask" />
-    </el-popover>
-
-    <el-dialog
-        v-model="dialog.addTaskGroup"
-        title="Tạo nhóm công việc"
-        width="30%"
-    >
-        <input type="text" name="" placeholder="Nhập tên nhóm công việc" style="width: 100%; border-radius: 8px;">
-        <template #footer>
-        <span class="dialog-footer">
-            <el-button style="margin-right: 10px;" @click="dialog.addTaskGroup = false">Đóng</el-button>
-            <el-button type="primary" @click="dialog.addTaskGroup = false">Lưu</el-button>
-        </span>
+    <el-dropdown size="small" trigger="click">
+        <el-button :icon="MoreFilled" circle/>
+        <template #dropdown>
+            <el-dropdown-menu>
+                <el-dropdown-item >
+                    <AddTask :icon="Plus" :title="title.addTask" @click="openDialogAddTask"/>
+                </el-dropdown-item>
+                <el-dropdown-item>
+                    <EditName :icon="EditPen" @click="handleTaskGroupName()" :title="title.editName" :editNameTaskGroup="props.editNameTaskGroup" :idTaskGroup="props.idTaskGroup"/>
+                </el-dropdown-item>
+                <el-dropdown-item divided>
+                    <AddGroup :icon="Plus" :title="title.addTaskGroup" @open-dialog-add-task-group="openDialogAddTaskGroup"/>
+                </el-dropdown-item>
+                <el-dropdown-item>
+                    <Copy :icon="CopyDocument" :title="title.copy" @show-parent-popover="showParentPopover"/>
+                </el-dropdown-item>
+                <el-dropdown-item>
+                    <Move :icon="Switch" :title="title.move"/>
+                </el-dropdown-item>
+                <el-dropdown-item>
+                    <MoveAll :icon="Rank" :title="title.moveAll"/>
+                </el-dropdown-item>
+                <el-dropdown-item divided>
+                    <Save :icon="TakeawayBox" :title="title.save"/>
+                </el-dropdown-item>
+                <el-dropdown-item>
+                    <SaveAll :icon="TakeawayBox" :title="title.saveAll"/>
+                </el-dropdown-item>
+                <el-dropdown-item divided>
+                    <DeleteTaskGroup :icon="Delete" :title="title.delete"/>
+                </el-dropdown-item>
+            </el-dropdown-menu>
         </template>
-    </el-dialog>
-    <el-dialog
-        v-model="dialog.addNewTask"
-        title="Thêm mới công việc"
-        width="50%"
-    >
-        <el-row>
-            <el-col>Tên công việc</el-col>
-            <el-input v-model="input" placeholder="Nhập tên công việc" />
-        </el-row>
-        <el-row>
-            <el-col>Mô tả</el-col>
-            <el-input v-model="input" :rows="3" type="textarea" placeholder="Nhập mô tả"/>
-        </el-row>
-        
-        <template #footer>
-        <span class="dialog-footer">
-            <el-button style="margin-right: 10px;" @click="dialog.addNewTask = false">Đóng</el-button>
-            <el-button type="primary" @click="dialog.addNewTask = false">Lưu</el-button>
-        </span>
-        </template>
-    </el-dialog>
+    </el-dropdown>
 </template>
-<style>
+<style scoped>
 .card-header {
    position: relative;
 }
@@ -222,11 +198,12 @@ function handleTaskGroupName(){
     margin: 0;
 }
 
-.el-button.is-circle {
+.el-button.is-circle,
+.btn-item {
     border: none;
 }
 
-.el-popover .el-button {
+.el-button {
     width: 100%;
     place-content: normal;
     border: none;
@@ -238,7 +215,7 @@ function handleTaskGroupName(){
     margin-bottom: 20px;
 }
 
-.el-popover .select .el-button {
+.select .el-button {
     place-content: center;
 }
 

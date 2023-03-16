@@ -10,7 +10,7 @@ use App\Http\Requests\Task\UpdateTaskRequest;
 use App\Http\Requests\Task\CompletedTaskRequest;
 use App\Models\Task;
 use App\Repositories\UserRepository;
-use Illuminate\Http\Client\Request;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
 
@@ -88,10 +88,10 @@ class TaskController extends Controller
         }
     }
 
-    public function getUsers($id)
+    public function getMembers($id)
     {
         return $this->success([
-            'listsUser' => $this->userRepo->getUserTask($id),
+            'listMembers' => $this->userRepo->getMembersTask($id),
         ]);
     }
     public function cloneTaskById($id)
@@ -110,6 +110,16 @@ class TaskController extends Controller
         try {
             $this->taskRepo->lockTask($id);
             return $this->success();
+             } catch (\Exception $e) {
+            return $this->error($e->getMessage(), $e->getCode());
+        }
+    }
+    
+    public function assignMembers(Request $request)
+    {
+        $input = $request->only('user_id', 'task_id', 'role_task');
+        try {
+            return $this->success($this->userTaskRepo->save($input, $input));
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
         }
