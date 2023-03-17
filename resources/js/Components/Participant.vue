@@ -19,6 +19,10 @@ const props = defineProps({
     taskId: {
         type: Number,
     },
+    isDisabled: {
+        type: Boolean,
+        default: false,
+    }
 });
 
 const isPopoverVisible = ref(false);
@@ -41,8 +45,10 @@ const checkAllSearchFollowers = ref(false);
 const checkAllowParticipants = ref(false);
 
 function showParticipants() {
+    if(!props.isDisabled){
     isPopoverVisible.value = !isPopoverVisible.value;
     popoverSearchParticipants.value.show();
+    }
 }
 
 const onClickOutside = () => {
@@ -223,6 +229,7 @@ function assignPerformer(performer)
             @click="showParticipants"
             ref="buttonSearchParticipants"
             v-click-outside="onClickOutside"
+            :disabled="isDisabled"
         >
             <CirclePlusFilled />
         </el-icon>
@@ -358,6 +365,7 @@ function assignPerformer(performer)
             :virtual-ref="buttonSearchFollowers"
             trigger="click"
             virtual-triggering
+            :disabled="isDisabled"
         >
             <div class="form-add-user flex">
                 <span>Chọn người theo dõi</span>

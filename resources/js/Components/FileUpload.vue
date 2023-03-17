@@ -8,7 +8,7 @@
         :multiple="true"
         :show-file-list = "false"
     >
-        <el-button slot="trigger" type="primary">Select File</el-button>
+        <el-button slot="trigger" type="primary" :disabled="isDisabled">Select File</el-button>
     </el-upload>
 </template>
 <script>
@@ -17,7 +17,8 @@ import { ElMessage } from "element-plus";
 
 export default {
     props: {
-        params: Object
+        params: Object,
+        isDisabled: Boolean,
     },
     methods: {
         handleChange(file) {
