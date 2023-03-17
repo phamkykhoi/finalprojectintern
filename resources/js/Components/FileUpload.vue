@@ -8,7 +8,7 @@
         :multiple="true"
         :show-file-list = "false"
     >
-        <el-button slot="trigger" type="primary" :disabled="isDisabled">Select File</el-button>
+        <slot name="content"> <el-button slot="trigger" type="primary" :disabled="isDisabled">Select File</el-button></slot>
     </el-upload>
 </template>
 <script>
