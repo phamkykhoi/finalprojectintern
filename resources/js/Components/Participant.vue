@@ -399,7 +399,6 @@ function assignPerformer(performer)
                         <el-col :span="21">
                             <el-row>
                                 <el-col :span="18">
-                                    {{ follower.role_follower }}
                                     <p class="info-user-item">{{ follower.email }}</p>
                                     <p class="info-user-item">{{ follower.name }}</p>
                                 </el-col>
