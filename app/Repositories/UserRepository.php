@@ -46,5 +46,4 @@ class UserRepository extends BaseRepository
         return $this->model->with('attachment')->join('user_tasks', 'user_tasks.user_id', 'users.id')
             ->where('user_tasks.task_id', $id)->get();
     }
-
 }

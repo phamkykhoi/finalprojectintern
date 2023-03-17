@@ -88,12 +88,20 @@ class TaskController extends Controller
         }
     }
 
-    public function getMembers($id)
+    public function getFollowers($id) 
     {
         return $this->success([
-            'listMembers' => $this->userRepo->getMembersTask($id),
+            'listFollowers' => $this->userRepo->getMembersTask($id),
         ]);
     }
+
+    public function getPerformers($id) 
+    {
+        return $this->success([
+            'listPerformers' => $this->userRepo->getMembersTask($id),
+        ]);
+    }
+    
     public function cloneTaskById($id)
     {
         try {
@@ -111,6 +119,7 @@ class TaskController extends Controller
             $this->taskRepo->lockTask($id);
             return $this->success();
              } catch (\Exception $e) {
+
             return $this->error($e->getMessage(), $e->getCode());
         }
     }
@@ -125,7 +134,17 @@ class TaskController extends Controller
         }
     }
 
-    public function assignMembers(Request $request)
+    public function assignFollower(Request $request)
+    {
+        $input = $request->only('user_id', 'task_id', 'role_task');
+        try {
+            return $this->success($this->userTaskRepo->save($input, $input));
+        } catch (\Exception $e) {
+            return $this->error($e->getMessage(), $e->getCode());
+        }
+    }
+
+    public function assignPerformer(Request $request)
     {
         $input = $request->only('user_id', 'task_id', 'role_task');
         try {

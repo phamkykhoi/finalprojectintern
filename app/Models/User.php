@@ -17,6 +17,16 @@ class User extends Authenticatable
         'member' => 2,
     ];
 
+    const ROLETASKS = [
+        "Admin" => 1,
+        "Giám sát department" => 2,
+        "Giám sát activity" => 3,
+        "Người phối hợp" => 4,
+        "Người theo dõi" => 5,
+        "Chủ task" => 6,
+        "Người thực hiện" => 7, 
+   ];
+
     /**
      * The attributes that are mass assignable.
      *
@@ -48,7 +58,7 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
     
-    protected $appends = ['avatar'];
+    protected $appends = ['avatar', 'role_follower', 'role_performer'];
     
     public function discussions()
     {
@@ -69,4 +79,14 @@ class User extends Authenticatable
     {
        return $this->attachment ? "/storage/attachments/".$this->attachment->file_name  : "/assets/img/images.png";
     }
+
+   public function getRoleFollowerAttribute()
+   {
+       return $this->role_task === static::ROLETASKS['Người theo dõi'];
+   }
+
+   public function getRolePerformerAttribute()
+   {
+       return $this->role_task === static::ROLETASKS['Người thực hiện'];
+   }
 }
