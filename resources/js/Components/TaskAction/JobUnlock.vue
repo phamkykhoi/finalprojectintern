@@ -59,7 +59,7 @@ const handleUnlockTask = () =>{
         </p>
         <div class="flex mt-6" >
         <el-button class="unlock-btn" type="danger" @click="hideUnlockPopover" >Hủy bỏ</el-button>
-        <el-button class="unlock-btn" style="margin-left:80px"  type="success" @click="handleUnlockTask">Xác nhận</el-button>
+        <el-button class="unlock-btn" style="margin-left:60px"  type="success" @click="handleUnlockTask">Xác nhận</el-button>
         </div>
     </el-popover>
 </template>
@@ -78,7 +78,7 @@ const handleUnlockTask = () =>{
 }
 .unlock-btn{
      width: 40% !important;
-     border-radius:5px !important;
+     border-radius:3px !important;
      place-content: center !important;
 }
 </style>
