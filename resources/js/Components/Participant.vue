@@ -1,5 +1,7 @@
 <script lang="ts" setup>
+import Performers from "@/Components/UsersTask/Performers.vue"
 import FollowerList from "@/Components/UsersTask/FollowerList.vue"
+
 import {
     Avatar,
     CircleCheck,
@@ -93,18 +95,49 @@ const hidePopover5 = () => {
 const handleUpdate = () =>{
     hidePopover2();
 }
+
+const selectRules = ref([])
+
+const roles = ref([
+    { id: 1, role: "Admin" },
+    { id: 2, role: "Giám sát department" },
+    { id: 3, role: "Giám sát activity" },
+    { id: 4, role: "Người phối hợp" },
+    { id: 5, role: "Người theo dõi" },
+    { id: 6, role: "Chủ task" },
+    { id: 7, role: "Người thực hiện" },
+]);
+
 const loading = ref(false)
 
 const participants = ref([]);
-const users = ref([]);
+const followers = ref([]);
+const performers = ref([]);
 
-function getUsers()
+function getFollowers()
 {
     loading.value=true
-    request.get(`/api/list-users`).then((res) => {
-            users.value = res.data.result.listUsers
+    request.get(`/api/list-followers-in-task`).then((res) => {
+            followers.value = res.data.result.listFollowers
             loading.value=false
-            countFollowers(users)
+            countFollowers(followers)
+        })
+        .catch(err => {
+            ElMessage({
+                showClose: true,
+                message: err.response.data.message,
+                type: 'error',
+            })
+            loading.value=false;
+        })
+}
+
+function getPerformers()
+{
+    loading.value=true
+    request.get(`/api/list-performers-in-task`).then((res) => {
+            performers.value = res.data.result.listPerformers
+            loading.value=false
         })
         .catch(err => {
             ElMessage({
@@ -117,24 +150,25 @@ function getUsers()
 }
 
 onBeforeMount(async () => {
-    getUsers()
+    getFollowers()
+    getPerformers()
 });
 
-function assginMember(user)
-{
+function assignFollower(follower) {
     const members = {
-        user_id: user.id,
-        task_id: props.taskId,
-        role_task: 2, //
+    user_id: follower.id,
+    task_id: props.taskId,
+    role_task: follower.role_follower ? 5 : null, //5 -> Người theo dõi
     }
-    request.post(`/assign-members/${props.taskId} `, members).then((res)=>{
+
+    request.put(`/assign-follower/${props.taskId} `, members).then((res)=>{
         ElMessage({
             showClose: true,
-            message: 'Assign members successfully',
+            message: 'Assign followers successfully',
             type: 'success',
         })
-        getUsers()
-        countFollowers(users)
+        getFollowers()
+        countFollowers(followers)
     }).catch(err => {
         ElMessage({
             showClose: true,
@@ -145,23 +179,45 @@ function assginMember(user)
 }
 
 const total = ref(0)
-function countFollowers(users)
+function countFollowers(followers)
 {
-    let follower = users.value.filter(function (user)
+    let follower = followers.value.filter(function (follow)
         {
-            return user.role_task == 2
+            return follow.role_follower
         });
         total.value = follower.length
+}
+
+function assignPerformer(performer)
+{
+    const members = {
+        user_id: performer.id,
+        task_id: props.taskId,
+        role_task: performer.role_performer ? 7 : null, // 
+    }
+    request.put(`/assign-performer/${props.taskId} `, members).then((res)=>{
+        ElMessage({
+            showClose: true,
+            message: 'Assign performer successfully',
+            type: 'success',
+        })
+        getFollowers()
+        countFollowers(followers)
+    }).catch(err => {
+        ElMessage({
+            showClose: true,
+            message: err.response.data.message,
+            type: 'error',
+            })
+        })
 }
 
 </script>
 <template>
     <div>Người thực hiện:</div>
     <div class="people-handle" style="display: flex">
+        <Performers :taskId="props.taskId" />
         <div class="people-icon">
-            <el-icon size="25" class="people-icon-avatar">
-                <Avatar />
-            </el-icon>
             <el-icon size="15" class="people-icon-remove close">
                 <CircleCloseFilled />
             </el-icon>
@@ -201,24 +257,25 @@ function countFollowers(users)
                 :suffix-icon="Search"
             />
             <p class="mt-4 sub-title">THÀNH VIÊN TRONG KẾ HOẠCH</p>
-            <div style="overflow-y: scroll; height: 155px;">
-                <el-row class="info" v-for="(user, index) in users" :key="index" :span="24">
+            <div style="overflow-y: scroll; height: 215px;">
+                <el-row class="info" v-for="(performer, index) in performers" :key="index" :span="24">
                     <div class="info-user w-[100%]">
                         <el-col class="info-user-icon" :span="3">
                             <img
-                            :src="user.avatar"
+                            :src="performer.avatar"
                             class="user-avt-small"
                         />
                             <el-icon class="user-icon-star" :size="20" color="blue"><StarFilled/></el-icon>
                         </el-col>
                         <el-col :span="21">
-                            <el-row>
-                                <el-col :span="18">
-                                    <p class="info-user-item">{{ user.email }}</p>
-                                    <p class="info-user-item">{{ user.name }}</p>
+                            <el-row :span="24">
+                                <el-col :span="21">
+                                    <p class="info-user-item">{{ performer.email }}</p>
+                                    <p class="info-user-item">{{ performer.name }}</p>
                                 </el-col>
-                                <el-col style="position: relative;" :span="3"  v-if="user.role_task == 1">
-                                    <el-icon color="green" class="icon-circle-check " size="25"><CircleCheck/></el-icon>
+                                <el-col :span="3">
+                                    <el-checkbox style="margin-right: 16px;" 
+                                    v-model="performer.role_performer" size="large" @change="assignPerformer(performer)"/>
                                 </el-col>
                             </el-row>
                         </el-col>
@@ -335,11 +392,11 @@ function countFollowers(users)
                 />
             </div>
             <div style="overflow-y: scroll; height: 155px;">
-                <el-row class="info" v-for="(user, index) in users" :key="index" :span="24" @click="assginMember(user)">
+                <el-row class="info" v-for="(follower, index) in followers" :key="index" :span="24" >
                     <div class="info-user w-[100%]">
                         <el-col class="info-user-icon" :span="3">
                             <img
-                            :src="user.avatar"
+                            :src="follower.avatar"
                             class="user-avt-small"
                         />
                             <el-icon class="user-icon-star" :size="20" color="blue"
@@ -349,11 +406,12 @@ function countFollowers(users)
                         <el-col :span="21">
                             <el-row>
                                 <el-col :span="18">
-                                    <p class="info-user-item">{{ user.email }}</p>
-                                    <p class="info-user-item">{{ user.name }}</p>
+                                    <p class="info-user-item">{{ follower.email }}</p>
+                                    <p class="info-user-item">{{ follower.name }}</p>
                                 </el-col>
-                                <el-col style="position: relative;" :span="3" v-if="user.role_task == 2">
-                                    <el-icon color="green" class="icon-circle-check " size="25"><CircleCheck/></el-icon>
+
+                                <el-col :span="3">
+                                    <el-checkbox style="margin-right: 16px;" v-model="follower.role_follower" size="large" @change="assignFollower(follower)"/>
                                 </el-col>
                             </el-row>
                         </el-col>
