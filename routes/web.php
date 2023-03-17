@@ -42,6 +42,7 @@ Route::middleware(['auth', 'verified'])->group(function() {
     Route::get('api/department', [DepartmentController::class, 'indexJson']);
     Route::post('department/assign-member', [DepartmentController::class, 'assignMember'])->name('department.assign.member');
     Route::resource('taskgroup', TaskGroupController::class);
+    Route::get('api/taskgroup/{id}', [TaskGroupController::class, 'getInfo']);
     Route::get('department/{departmentId}/members', [DepartmentController::class, 'getMembers'])->name('department.members');
     Route::delete('department/{departmentId}/remove/member/{userId}', [DepartmentController::class, 'removeMember'])->name('department.remove.member');
     Route::get('taskgroup/copy/{id}', [TaskGroupController::class,'copy']);
