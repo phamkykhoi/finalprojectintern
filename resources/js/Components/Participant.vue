@@ -152,24 +152,41 @@ function assignFollower(follower) {
     const members = {
     user_id: follower.id,
     task_id: props.taskId,
-    role_task: follower.role_follower ? 5 : null, //5 -> Người theo dõi
+    role_task: 5 //5 -> Người theo dõi
     }
-
-    request.put(`/assign-follower/${props.taskId} `, members).then((res)=>{
-        ElMessage({
-            showClose: true,
-            message: 'Assign followers successfully',
-            type: 'success',
-        })
-        getFollowers()
-        countFollowers(followers)
-    }).catch(err => {
-        ElMessage({
-            showClose: true,
-            message: err.response.data.message,
-            type: 'error',
+    if(follower.role_follower) {
+        request.put(`/assign-follower/${props.taskId} `, members).then((res)=>{
+            ElMessage({
+                showClose: true,
+                message: 'Assign followers successfully',
+                type: 'success',
+            })
+            getFollowers()
+            countFollowers(followers)
+        }).catch(err => {
+            ElMessage({
+                showClose: true,
+                message: err.response.data.message,
+                type: 'error',
             })
         })
+    }
+    else {
+        request.delete(`/delete-member-in-task/${follower.user_task_id}`).then((res)=>{
+        ElMessage({
+            showClose: true,
+            message: 'Delete follower successfully',
+            type: 'success',
+        })
+        getPerformers()
+        }).catch(err => {
+            ElMessage({
+                showClose: true,
+                message: err.response.data.message,
+                type: 'error',
+            })
+        })
+    }
 }
 
 const total = ref(0)
@@ -187,23 +204,41 @@ function assignPerformer(performer)
     const members = {
         user_id: performer.id,
         task_id: props.taskId,
-        role_task: performer.role_performer ? 7 : null, // 
+        role_task: 7, // 7-người thực hiện
     }
-    request.put(`/assign-performer/${props.taskId} `, members).then((res)=>{
+    if(performer.role_performer) {
+        request.put(`/assign-performer/${props.taskId} `, members).then((res)=>{
         ElMessage({
             showClose: true,
             message: 'Assign performer successfully',
             type: 'success',
         })
-        getFollowers()
-        countFollowers(followers)
-    }).catch(err => {
-        ElMessage({
-            showClose: true,
-            message: err.response.data.message,
-            type: 'error',
+        getPerformers()
+        }).catch(err => {
+            ElMessage({
+                showClose: true,
+                message: err.response.data.message,
+                type: 'error',
             })
         })
+    } 
+    else {
+        request.delete(`/delete-member-in-task/${performer.user_task_id}`).then((res)=>{
+        ElMessage({
+            showClose: true,
+            message: 'Delete performer successfully',
+            type: 'success',
+        })
+        getPerformers()
+        }).catch(err => {
+            ElMessage({
+                showClose: true,
+                message: err.response.data.message,
+                type: 'error',
+            })
+        })
+    }
+    
 }
 
 </script>

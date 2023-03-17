@@ -153,4 +153,11 @@ class TaskController extends Controller
             return $this->error($e->getMessage(), $e->getCode());
         }
     }
+
+    public function deleteMemberInTask($id)
+    {
+        return $this->success([
+            $this->userTaskRepo->deleteById($id),
+        ]);
+    }
 }

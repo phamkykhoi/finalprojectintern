@@ -14,7 +14,7 @@ class UserRepository extends BaseRepository
     public function getAll(array $withRelation = null, $role_task = null)
     {
         $query = $this->model->leftJoin('user_tasks', 'users.id', '=', 'user_tasks.user_id')
-        ->select('users.*', 'user_tasks.role_task');
+        ->select('users.*', 'user_tasks.role_task', 'user_tasks.id as user_task_id');
         
         if ($withRelation) {
             $query->with($withRelation);

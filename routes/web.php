@@ -37,6 +37,7 @@ Route::middleware(['auth', 'verified'])->group(function() {
     Route::put('assign-performer/{id}',[TaskController::class, 'assignPerformer']);
     Route::post('clone-task-by-id/{id}',[TaskController::class,'cloneTaskById']);
     Route::put('completed-task/{id}', [TaskController::class,'completedTask']);
+    Route::delete('delete-member-in-task/{id}', [TaskController::class,'deleteMemberInTask']);
     Route::resource('subtask', SubTaskController::class);
     Route::get('api/subtask/{id}', [SubTaskController::class, 'getSubTask']);
     Route::get('user/list', [UserController::class, 'indexJson']);
