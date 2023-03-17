@@ -10,39 +10,23 @@ class TaskGroupService
 {
     public function getInfoTaskGroup($taskGroupId)
     {
-        $countTasking = 0;
-
-        if (DB::table('tasks')
-            ->where('start_date', '<', Carbon::now())
+        $countTasking = DB::table('tasks')->where('start_date', '<', Carbon::now())
+            ->whereNotNull('start_date')
             ->whereNull('end_date')
             ->whereNull('completed_at')
             ->where('task_group_id', $taskGroupId)
-            ->exists()) {
-                $countTasking = DB::table('tasks')
-                    ->where('start_date', '<', Carbon::now())
-                    ->whereNull('end_date')
-                    ->whereNull('completed_at')
-                    ->where('task_group_id', $taskGroupId)
-                    ->count();
-        } elseif(DB::table('tasks')
-            ->where('start_date', '<', Carbon::now())
-            ->where('end_date', '>', Carbon::now())
-            ->whereNull('completed_at')
-            ->where('task_group_id', $taskGroupId)
-            ->exists()) {
-                $countTasking = DB::table('tasks')
-                    ->where('start_date', '<', Carbon::now())
-                    ->where('end_date', '>', Carbon::now())
-                    ->whereNull('completed_at')
-                    ->where('task_group_id', $taskGroupId)
-                    ->count();
-            }
+            ->count();
         
         $countOverDate = DB::table('tasks')
-            ->where('end_date', '<', Carbon::now())
-            ->orWhere(function($query) {
-                $query
-                    ->where('completed_at', '>', 'end_date');
+            ->where(function($query) use($taskGroupId){
+                $query->where('end_date', '<', Carbon::now())
+                    ->where('task_group_id', $taskGroupId)
+                    ->whereNull('completed_at');
+            })
+            ->orWhere(function($query) use($taskGroupId){
+                $query->where('end_date', '<', DB::raw('completed_at'))
+                    ->where('task_group_id', $taskGroupId)
+                    ->whereNotNull('completed_at');
             })
             ->count();
 

@@ -11,10 +11,14 @@ class TaskGroupController extends Controller
 {
     protected $taskGroupRepo;
 
+    protected $taskGroupService;
+
     public function __construct(
-        TaskGroupRepository $taskGroupRepo
+        TaskGroupRepository $taskGroupRepo,
+        TaskGroupService $taskGroupService
     ) {
         $this->taskGroupRepo = $taskGroupRepo;
+        $this->taskGroupService = $taskGroupService;
     }
 
    public function getTaskGroupList($taskGroupId)
@@ -28,7 +32,7 @@ class TaskGroupController extends Controller
     {
         try {
             return $this->success([
-                'infoTaskGroup' => app(TaskGroupService::class)->getInfoTaskGroup($taskGroupId)
+                'infoTaskGroup' => $this->taskGroupService->getInfoTaskGroup($taskGroupId)
             ]);
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), $e->getCode());
