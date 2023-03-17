@@ -88,7 +88,7 @@ class TaskController extends Controller
         }
     }
 
-    public function getMembers($id) 
+    public function getMembers($id)
     {
         return $this->success([
             'listMembers' => $this->userRepo->getMembersTask($id),
@@ -103,6 +103,26 @@ class TaskController extends Controller
             return $this->error($e->getMessage(), $e->getCode());
         }
 
+    }
+
+    public function lockTaskById($id)
+    {
+        try {
+            $this->taskRepo->lockTask($id);
+            return $this->success();
+             } catch (\Exception $e) {
+            return $this->error($e->getMessage(), $e->getCode());
+        }
+    }
+
+    public function unlockTaskById($id)
+    {
+        try {
+            $this->taskRepo->unlockTask($id);
+            return $this->success();
+             } catch (\Exception $e) {
+            return $this->error($e->getMessage(), $e->getCode());
+        }
     }
 
     public function assignMembers(Request $request)
