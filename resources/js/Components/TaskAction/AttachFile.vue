@@ -17,13 +17,17 @@ const listAttachments = ref([])
 
 
 const onClickOutside7 = () => {
-  unref(popoverRef7).popperRef7?.delayHide?.()
+  unref(popoverRef7).popoverRef7?.delayHide?.()
 }
 const hidePopover7 = () => {
     popoverRef7.value.hide()
 }
 
-
+const emit = defineEmits(['file-change']);
+const handleFileChange = ()=>{
+    console.log('dcm')
+    emit('file-change',true);
+}
 </script>
 
 <template>
@@ -42,7 +46,7 @@ const hidePopover7 = () => {
                 <el-icon class="close" @click="hidePopover7"><CloseBold /></el-icon>
         </div>
         <div  class="btn-container">
-            <FileUpload @data-update="getFiles(task.id,list)" :params="{task_id : task.id}"><template v-slot:content><el-button :icon="Folder" text class="btn-container1">Máy tính </el-button></template></FileUpload>
+            <FileUpload @data-updated="handleFileChange" :params="{task_id : task.id}"><template v-slot:content><el-button :icon="Folder" text class="btn-container1">Máy tính </el-button></template></FileUpload>
             <el-button :icon="ChromeFilled" text class="btn-container1">Google</el-button>
             <el-button :icon="Box" text class="btn-container1">Dropbox</el-button>
             <el-button :icon="Cloudy" text class="btn-container1">OneDrive</el-button>
