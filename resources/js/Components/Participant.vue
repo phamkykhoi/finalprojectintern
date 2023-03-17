@@ -19,6 +19,7 @@ const props = defineProps({
     },
     isDisabled: {
         type: Boolean,
+        default: false,
     }
 });
 
