@@ -414,15 +414,17 @@ const rules = {
                         </div>
                         <el-checkbox v-model="taskForm.is_quickly" id="is_quickly" @change="changeQuicklyStatus(task.id)" label="Việc Khẩn cấp" size="large" />
                         <el-checkbox v-model="taskForm.is_important" id="is_important" @change="changeImportantStatus(task.id)" label="Việc Quan trọng" size="large" />
-                        <div>
+                      <div v-if="isTaskLocked">
+                        <JobUnlock :icon="Unlock" :title="title.unlock" :task="task" @is-task-unlocked="handleChangeIsLocked"/>
+                      </div>
+                        <div v-else>
                             <UpdateThePlan :icon="DocumentAdd" :title="title.updateThePlan"/>
                             <AttachFile :icon="DocumentAdd" :title="title.attachFile"/>
                             <Copy :icon="DocumentCopy" :title="title.copy" :task="task" :closeModal="closeModal"/>
                             <Move :icon="Rank" :title="title.move" />
                             <CreateReminder :icon="Bell" :title="title.reminder"/>
                             <Evaluation :icon="Finished" :title="title.evaluation" />
-                            <JobUnlock v-if="isTaskLocked" :icon="Unlock" :title="title.unlock"/>
-                            <JobLock v-else :icon="Lock" :title="title.lock" :task="task" @is-task-locked="handleChangeIsLocked"/>
+                            <JobLock :icon="Lock" :title="title.lock" :task="task" @is-task-locked="handleChangeIsLocked"/>
                             <Save :icon="TakeawayBox" :title="title.save"/>
                             <DeleteTask :icon="Close" :title="title.delete" />
                         </div>
