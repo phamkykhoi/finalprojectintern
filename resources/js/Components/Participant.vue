@@ -150,9 +150,9 @@ onBeforeMount(async () => {
 
 function assignFollower(follower) {
     const members = {
-        user_id: follower.id,
-        task_id: props.taskId,
-        role_task: !follower.role_follower ? 5 : null, //5 -> Người theo dõi
+    user_id: follower.id,
+    task_id: props.taskId,
+    role_task: follower.role_follower ? 5 : null, //5 -> Người theo dõi
     }
 
     request.put(`/assign-follower/${props.taskId} `, members).then((res)=>{
@@ -170,7 +170,6 @@ function assignFollower(follower) {
             type: 'error',
             })
         })
-    // console.log(follower.role_task)
 }
 
 const total = ref(0)
@@ -188,7 +187,7 @@ function assignPerformer(performer)
     const members = {
         user_id: performer.id,
         task_id: props.taskId,
-        role_task: !performer.role_performer ? 7 : null, // 
+        role_task: performer.role_performer ? 7 : null, // 
     }
     request.put(`/assign-performer/${props.taskId} `, members).then((res)=>{
         ElMessage({
@@ -269,7 +268,7 @@ function assignPerformer(performer)
                                 </el-col>
                                 <el-col :span="3">
                                     <el-checkbox style="margin-right: 16px;" 
-                                    v-model="performer.role_performer" size="large" @click="assignPerformer(performer)"/>
+                                    v-model="performer.role_performer" size="large" @change="assignPerformer(performer)"/>
                                 </el-col>
                             </el-row>
                         </el-col>
@@ -404,7 +403,7 @@ function assignPerformer(performer)
                                 </el-col>
 
                                 <el-col :span="3">
-                                    <el-checkbox style="margin-right: 16px;" v-model="follower.role_follower" size="large" @click="assignFollower(follower)"/>
+                                    <el-checkbox style="margin-right: 16px;" v-model="follower.role_follower" size="large" @change="assignFollower(follower)"/>
                                 </el-col>
                             </el-row>
                         </el-col>
