@@ -18,14 +18,14 @@ const hidePopover4 = () => {
 };
 const loading = ref(false)
 
-const followers = ref([]);
+const performers = ref([]);
 
-function getFollowers(taskId)
+function getPerformers(taskId)
 {
     loading.value=true
-    request.get(`/api/list-followers/${taskId}`)
+    request.get(`/api/list-performers/${taskId}`)
         .then((res) => {
-            followers.value = res.data.result.listFollowers
+            performers.value = res.data.result.listPerformers
             loading.value=false
         })
         .catch(err => {
@@ -38,11 +38,10 @@ function getFollowers(taskId)
         })
 }
 
-function showListFollowers() 
+function showListPerformers() 
 {
-    getFollowers(props.taskId);
+    getPerformers(props.taskId);
 }
-
 </script>
 
 <template>
@@ -52,7 +51,7 @@ function showListFollowers()
             class="people-icon-avatar"
             ref="buttonListFollowers"
             v-click-outside="onClickOutside4"
-            @click="showListFollowers()"
+            @click="showListPerformers()"
         >
             <Avatar />
         </el-icon>
@@ -63,21 +62,22 @@ function showListFollowers()
             :virtual-ref="buttonListFollowers"
             trigger="click"
             virtual-triggering
+            class="list-performers"
         >
-        <div style="overflow-y:auto; height: auto; max-height: 300px;">
-            <div v-loading="loading">
-                <div v-if="followers && followers.filter(p => p.role_follower).length > 0">
-                    <div v-for="(follower, index) in followers" :key="index">
-                        <div class="info-user info-user-close" v-if="follower.role_follower">
-                        <img :src="follower.avatar" class="user-avt" />
-                        <div>
-                            <h6 class="info-user-item">{{ follower.email }}</h6>
-                            <h6 class="info-user-item">{{ follower.name }}</h6>
-                        </div>
-                        </div>
+        <div v-loading="loading" style="overflow-y:auto; height: auto; max-height: 300px;">
+            <div v-if="performers && performers.filter(p => p.role_performer).length > 0">
+                <div v-for="(performer, index) in performers" :key="index">
+                    <div class="info-user info-user-close" v-if="performer.role_performer">
+                    <img :src="performer.avatar" class="user-avt" />
+                    <div>
+                        <h6 class="info-user-item">{{ performer.email }}</h6>
+                        <h6 class="info-user-item">{{ performer.name }}</h6>
+                    </div>
                     </div>
                 </div>
-                <div v-else>Không có người theo dõi </div>
+            </div>
+            <div v-else>
+                Không có người thực hiện
             </div>
         </div>
         </el-popover>
@@ -181,4 +181,5 @@ function showListFollowers()
 .sub-title{
     line-height: 14px;
 }
+
 </style>
