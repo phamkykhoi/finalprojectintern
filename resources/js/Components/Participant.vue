@@ -178,6 +178,7 @@ function assignFollower(follower) {
             message: 'Delete follower successfully',
             type: 'success',
         })
+        countFollowers(followers)
         getPerformers()
         }).catch(err => {
             ElMessage({
