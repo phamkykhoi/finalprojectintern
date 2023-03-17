@@ -196,8 +196,7 @@ const files = ['']
 const checkFileChange = ref(true);
 
 const handleFileChange = ()=>{
-    console.log(fileManagerOfTask)
-    // checkFileChange.value = !checkFileChange.value
+    checkFileChange.value = !checkFileChange.value
 }
 const handleCheckAllChange = (val: boolean) => {
     checkedFiles.value = val ? files : []
@@ -365,7 +364,7 @@ const rules = {
                             <SubTask :isDisabled="isTaskLocked" :taskId="task.id" :task_group_id="taskGroup.id"/>
                         </el-row>
 
-                        <FileManagerOfTask :key="checkFileChange" :ref = "fileManagerOfTask" :isDisabled="isTaskLocked" :taskId="task.id"></FileManagerOfTask>
+                        <FileManagerOfTask :key="checkFileChange" :isDisabled="isTaskLocked" :taskId="task.id"></FileManagerOfTask>
                         <TaskCommentSection :isDisabled="isTaskLocked" :taskId="task.id"></TaskCommentSection>
                         <TaskActivity :taskId="task.id"></TaskActivity>
                     </el-col>

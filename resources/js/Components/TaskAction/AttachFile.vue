@@ -25,7 +25,6 @@ const hidePopover7 = () => {
 
 const emit = defineEmits(['file-change']);
 const handleFileChange = ()=>{
-    console.log('dcm')
     emit('file-change',true);
 }
 </script>
