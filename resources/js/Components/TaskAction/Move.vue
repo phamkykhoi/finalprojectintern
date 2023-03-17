@@ -2,12 +2,13 @@
 
 const props = defineProps({
     icon: String,
-    title: String
+    title: String,
+    isDisabled: Boolean,
 });
 </script>
 
 <template>
-    <el-button class="btn-container" :icon="icon">
+    <el-button :disabled="isDisabled" class="btn-container" :icon="icon">
         {{ props.title }}
     </el-button>
 </template>

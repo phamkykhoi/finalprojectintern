@@ -2,12 +2,13 @@
 import { ref, unref } from 'vue'
 const props = defineProps({
     icon: String,
-    title: String
+    title: String,
+    isDisabled: Boolean,
 });
 </script>
 
 <template>
-    <el-button :icon="icon" class="btn-container">
+    <el-button :disabled="isDisabled" :icon="icon" class="btn-container">
         {{ props.title }}
     </el-button>
 </template>
