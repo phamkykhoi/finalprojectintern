@@ -3,12 +3,13 @@ import { ref} from 'vue'
 const dialogVisible = ref(false)
 const props = defineProps({
     icon: String,
-    title: String
+    title: String,
+    isDisabled: Boolean,
 });
 </script>
 
 <template>
-    <el-button  class="btn-container"  @click="dialogVisible = true" :icon="icon">
+    <el-button :disabled="isDisabled" class="btn-container"  @click="dialogVisible = true" :icon="icon">
         {{ props.title }}
     </el-button>
     <el-dialog

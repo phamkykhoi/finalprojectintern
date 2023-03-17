@@ -8,6 +8,7 @@ const props = defineProps({
     title: String,
     task: Object,
     closeModal: Function,
+    isDisabled: Boolean,
 });
 
 const loading = ref(false)
@@ -28,7 +29,7 @@ const handleCopyTask = ()=>{
 </script>
 
 <template>
-    <el-button class="btn-container" :icon="icon" @click="handleCopyTask" :loading="loading">
+    <el-button :disabled="isDisabled" class="btn-container" :icon="icon" @click="handleCopyTask" :loading="loading">
         {{ props.title }}
     </el-button>
 </template>
