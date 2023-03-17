@@ -7,10 +7,9 @@ const props = defineProps({
     icon: String,
     title: String,
     task: Object,
-    closeModal: Function,
 });
 
-const confirmButton = ref()
+const lockButton = ref()
 const lockPopover = ref()
 const loading = ref(false)
 const emit = defineEmits(['is-task-locked']);
@@ -43,13 +42,13 @@ const handleLockTask = () =>{
 </script>
 
 <template>
-    <el-button :icon="icon" class="btn-container" ref="confirmButton" v-click-outside="clickOutsideLockPopover" :loading="loading">
+    <el-button :icon="icon" class="btn-container" ref="lockButton" v-click-outside="clickOutsideLockPopover" :loading="loading">
         {{ props.title }}
     </el-button>
     <el-popover
         :width="350"
         ref="lockPopover"
-        :virtual-ref="confirmButton"
+        :virtual-ref="lockButton"
         trigger="click"
         virtual-triggering
     >

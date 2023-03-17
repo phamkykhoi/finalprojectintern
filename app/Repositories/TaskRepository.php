@@ -34,4 +34,9 @@ class TaskRepository extends BaseRepository
     {
         $this->model->find($id)->update(['is_locked'=>true]);
     }
+
+    public function unlockTask($id)
+    {
+        $this->model->find($id)->update(['is_locked'=>false]);
+    }
 }
