@@ -21,8 +21,9 @@ class Task extends Model
         'status',
         'completed_at',
         'parent_id',
+        'is_locked',
     ];
-    
+
     protected $appends = ['is_done'];
 
     public function getIsDoneAttribute()

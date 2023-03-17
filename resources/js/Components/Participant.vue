@@ -152,7 +152,7 @@ function assignFollower(follower) {
     const members = {
         user_id: follower.id,
         task_id: props.taskId,
-        role_task: follower.role_follower ?? 5, //5 -> Người theo dõi
+        role_task: !follower.role_follower ? 5 : null, //5 -> Người theo dõi
     }
 
     request.put(`/assign-follower/${props.taskId} `, members).then((res)=>{
@@ -267,19 +267,6 @@ function assignPerformer(performer)
                                     <p class="info-user-item">{{ performer.email }}</p>
                                     <p class="info-user-item">{{ performer.name }}</p>
                                 </el-col>
-                                <!-- <el-col style="position: relative;" :span="10">
-                                    <el-select v-model="performer.role_performer" placeholder="Select">
-                                        <el-option label="Select Role"/>
-                                        <el-option
-                                        v-for="role in roles"
-                                        @click="assginPerformer(performer, role)"
-                                        :key="role.id"
-                                        :label="role.role"
-                                        :value="role.id"
-                                        :disabled="role.disabled"
-                                        />
-                                    </el-select>
-                                </el-col> -->
                                 <el-col :span="3">
                                     <el-checkbox style="margin-right: 16px;" 
                                     v-model="performer.role_performer" size="large" @click="assignPerformer(performer)"/>
@@ -412,12 +399,11 @@ function assignPerformer(performer)
                         <el-col :span="21">
                             <el-row>
                                 <el-col :span="18">
+                                    {{ follower.role_follower }}
                                     <p class="info-user-item">{{ follower.email }}</p>
                                     <p class="info-user-item">{{ follower.name }}</p>
                                 </el-col>
-                                <!-- <el-col style="position: relative;" :span="3" v-if="follower.role_task == 5">
-                                    <el-icon color="green" class="icon-circle-check " size="25"><CircleCheck/></el-icon>
-                                </el-col> -->
+
                                 <el-col :span="3">
                                     <el-checkbox style="margin-right: 16px;" v-model="follower.role_follower" size="large" @click="assignFollower(follower)"/>
                                 </el-col>

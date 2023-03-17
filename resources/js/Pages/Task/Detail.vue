@@ -13,6 +13,7 @@ import DeleteTask from '@/Components/TaskAction/Delete.vue';
 import Save from '@/Components/TaskAction/Save.vue';
 import Evaluation from '@/Components/TaskAction/Evaluation.vue';
 import JobLock from '@/Components/TaskAction/JobLock.vue';
+import JobUnlock from '@/Components/TaskAction/JobUnlock.vue';
 import CreateReminder from '@/Components/TaskAction/CreateReminder.vue';
 import UpdateThePlan from '@/Components/TaskAction/UpdateThePlan.vue';
 import type { FormInstance } from 'element-plus';
@@ -30,7 +31,7 @@ StarFilled, Calendar, MoreFilled,
 DocumentCopy, Rank, Bell, Share,
 Pointer, Finished, Lock, TakeawayBox,
 Close, DocumentAdd, Link, ChromeFilled,
-Box, Cloudy, Folder, ArrowUpBold
+Box, Cloudy, Folder, ArrowUpBold, Unlock
 }
 from '@element-plus/icons-vue';
 import { reactive, ref, defineEmits, inject, unref, onBeforeMount } from 'vue';
@@ -85,6 +86,7 @@ const title = reactive({
     reminder: 'Tạo nhắc việc',
     evaluation: 'Đánh giá hoàn thành',
     lock: 'Khoá việc',
+    unlock:'Mở khóa việc',
     save: 'Lưu trữ việc',
     delete: 'Xóa việc',
 });
@@ -96,6 +98,11 @@ const closeModal = () => {
     confirmingTaskDeletion.value = false;
     emit('closeModal', false);
 };
+
+const isTaskLocked = ref(props.task.is_locked);
+const handleChangeIsLocked = () => {
+    isTaskLocked.value = !isTaskLocked.value;
+}
 
 const saveTask = (formEl: FormInstance | undefined) => {
     if (!formEl) return
@@ -407,14 +414,17 @@ const rules = {
                         </div>
                         <el-checkbox v-model="taskForm.is_quickly" id="is_quickly" @change="changeQuicklyStatus(task.id)" label="Việc Khẩn cấp" size="large" />
                         <el-checkbox v-model="taskForm.is_important" id="is_important" @change="changeImportantStatus(task.id)" label="Việc Quan trọng" size="large" />
-                        <div>
+                      <div v-if="isTaskLocked">
+                        <JobUnlock :icon="Unlock" :title="title.unlock" :task="task" @is-task-unlocked="handleChangeIsLocked"/>
+                      </div>
+                        <div v-else>
                             <UpdateThePlan :icon="DocumentAdd" :title="title.updateThePlan"/>
                             <AttachFile :icon="DocumentAdd" :title="title.attachFile"/>
                             <Copy :icon="DocumentCopy" :title="title.copy" :task="task" :closeModal="closeModal"/>
                             <Move :icon="Rank" :title="title.move" />
                             <CreateReminder :icon="Bell" :title="title.reminder"/>
                             <Evaluation :icon="Finished" :title="title.evaluation" />
-                            <JobLock :icon="Lock" :title="title.lock"/>
+                            <JobLock :icon="Lock" :title="title.lock" :task="task" @is-task-locked="handleChangeIsLocked"/>
                             <Save :icon="TakeawayBox" :title="title.save"/>
                             <DeleteTask :icon="Close" :title="title.delete" />
                         </div>

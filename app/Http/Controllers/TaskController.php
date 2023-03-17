@@ -113,6 +113,27 @@ class TaskController extends Controller
 
     }
 
+    public function lockTaskById($id)
+    {
+        try {
+            $this->taskRepo->lockTask($id);
+            return $this->success();
+             } catch (\Exception $e) {
+
+            return $this->error($e->getMessage(), $e->getCode());
+        }
+    }
+
+    public function unlockTaskById($id)
+    {
+        try {
+            $this->taskRepo->unlockTask($id);
+            return $this->success();
+             } catch (\Exception $e) {
+            return $this->error($e->getMessage(), $e->getCode());
+        }
+    }
+
     public function assignFollower(Request $request)
     {
         $input = $request->only('user_id', 'task_id', 'role_task');

@@ -28,6 +28,8 @@ Route::middleware(['auth', 'verified'])->group(function() {
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
     Route::resource('activity', ActivityController::class);
     Route::resource('task', TaskController::class);
+    Route::post('lock-task-by-id/{id}',[TaskController::class,'lockTaskById']);
+    Route::post('unlock-task-by-id/{id}',[TaskController::class,'unlockTaskById']);
     Route::get('api/activity/{id}', [TaskController::class, 'show']);
     Route::get('api/list-followers/{id}', [TaskController::class, 'getFollowers']);
     Route::get('api/list-performers/{id}', [TaskController::class, 'getPerformers']);
