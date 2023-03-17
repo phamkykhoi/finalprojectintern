@@ -7,7 +7,7 @@ const props = defineProps({
     icon: String,
     title: String,
     task: Object,
-    getFiles: Function,
+    isDisabled: Boolean,
 });
 
 const buttonRef7 = ref()
@@ -27,7 +27,7 @@ const hidePopover7 = () => {
 </script>
 
 <template>
-    <el-button :icon="icon" class="btn-container" ref="buttonRef7" v-click-outside="onClickOutside7">
+    <el-button :disabled="isDisabled" :icon="icon" class="btn-container" ref="buttonRef7" v-click-outside="onClickOutside7">
         {{ props.title }}
     </el-button>
     <el-popover
