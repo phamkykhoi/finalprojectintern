@@ -373,7 +373,7 @@ function closeTaskGroupName(index){
                         width="300px"
                     >
                         <hr>
-                        <TaskGroupInfo :task_group_id="taskGroup.id"/>
+                        <TaskGroupInfo :task_group_id="taskGroup.id" :task_group_created_by="taskGroup.created_by"/>
                     </el-popover>
                     <el-popover
                         :ref="ref => popoverRef1[index] = ref"

@@ -4,7 +4,8 @@ import { ClickOutside as vClickOutside } from 'element-plus';
 import request from '../../utils/request';
 
 const props = defineProps({
-    task_group_id: Number
+    task_group_id: Number,
+    task_group_created_by: String
 })
 
 const infoTaskGroup = ref([]);
@@ -21,7 +22,7 @@ getInfoTaskGroup()
     <hr>
     <el-row>
         <el-col :span="18">Người tạo</el-col>
-        <el-col :span="6">User01</el-col>
+        <el-col :span="6">{{ task_group_created_by }}</el-col>
     </el-row>
     <el-row>
         <el-col :span="18">Tổng số việc</el-col>
