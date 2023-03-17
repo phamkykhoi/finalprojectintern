@@ -17,6 +17,9 @@ const props = defineProps({
     taskId: {
         type: Number,
     },
+    isDisabled: {
+        type: Boolean,
+    }
 });
 
 const isPopoverVisible = ref(false);
@@ -39,8 +42,10 @@ const checkAllSearchFollowers = ref(false);
 const checkAllowParticipants = ref(false);
 
 function showParticipants() {
+    if(!props.isDisabled){
     isPopoverVisible.value = !isPopoverVisible.value;
     popoverSearchParticipants.value.show();
+    }
 }
 
 const onClickOutside = () => {
@@ -119,7 +124,7 @@ function assginMember(user)
     const members = {
         user_id: user.id,
         task_id: props.taskId,
-        role_task: 2, // 
+        role_task: 2, //
     }
     request.post(`/assign-members/${props.taskId} `, members).then((res)=>{
         ElMessage({
@@ -167,6 +172,7 @@ function countFollowers(users)
             @click="showParticipants"
             ref="buttonSearchParticipants"
             v-click-outside="onClickOutside"
+            :disabled="isDisabled"
         >
             <CirclePlusFilled />
         </el-icon>
@@ -301,6 +307,7 @@ function countFollowers(users)
             :virtual-ref="buttonSearchFollowers"
             trigger="click"
             virtual-triggering
+            :disabled="isDisabled"
         >
             <div class="form-add-user flex">
                 <span>Chọn người theo dõi</span>
