@@ -41,7 +41,7 @@ Route::middleware(['auth', 'verified'])->group(function() {
     Route::resource('subtask', SubTaskController::class);
     Route::get('api/subtask/{id}', [SubTaskController::class, 'getSubTask']);
     Route::get('user/list', [UserController::class, 'indexJson']);
-    Route::get('api/list-followers-in-task', [UserController::class, 'listFollowersInTask']); 
+    Route::get('api/list-followers-in-task/{id}', [UserController::class, 'listFollowersInTask']); 
     Route::get('api/list-performers-in-task', [UserController::class, 'listPerformersInTask']);
     Route::resource('user', UserController::class);
     Route::resource('department', DepartmentController::class);

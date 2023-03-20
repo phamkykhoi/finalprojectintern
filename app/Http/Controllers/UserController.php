@@ -84,10 +84,10 @@ class UserController extends Controller
         ]);
     }
     
-    public function listFollowersInTask()
+    public function listFollowersInTask($id)
     {
         return $this->success([
-            'listFollowers' => $this->userRepo->getAll(null, 5),
+            'listFollowers' => $this->userRepo->getAll(null, 5, $id),
         ]);
     }
     

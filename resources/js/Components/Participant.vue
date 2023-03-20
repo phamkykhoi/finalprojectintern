@@ -13,7 +13,7 @@ StarFilled,
 } from "@element-plus/icons-vue";
 import request from '../utils/request';
 import { ElMessage } from 'element-plus';
-import { ref, unref, onBeforeMount} from "vue";
+import { ref, unref, onBeforeMount, computed} from "vue";
 
 const props = defineProps({
     taskId: {
@@ -107,13 +107,15 @@ const loading = ref(false)
 const participants = ref([]);
 const followers = ref([]);
 const performers = ref([]);
-
+const originalFollowers = ref([])
 function getFollowers()
 {
     loading.value=true
-    request.get(`/api/list-followers-in-task`).then((res) => {
+    request.get(`/api/list-followers-in-task/${props.taskId}`).then((res) => {
             followers.value = res.data.result.listFollowers
+            originalFollowers.value = res.data.result.listFollowers
             loading.value=false
+            checkedFollowers(followers)
             countFollowers(followers)
         })
         .catch(err => {
@@ -132,6 +134,8 @@ function getPerformers()
     request.get(`/api/list-performers-in-task`).then((res) => {
             performers.value = res.data.result.listPerformers
             loading.value=false
+            checkedPerformers(performers)
+            countPerformers(performers)
         })
         .catch(err => {
             ElMessage({
@@ -178,8 +182,8 @@ function assignFollower(follower) {
             message: 'Delete follower successfully',
             type: 'success',
         })
-        countFollowers(followers)
         getPerformers()
+        countFollowers(followers)
         }).catch(err => {
             ElMessage({
                 showClose: true,
@@ -190,14 +194,28 @@ function assignFollower(follower) {
     }
 }
 
-const total = ref(0)
+const totalFollowers = ref(0)
 function countFollowers(followers)
 {
     let follower = followers.value.filter(function (follow)
         {
-            return follow.role_follower
+            if(follow.task_id == props.taskId) {
+                return follow.role_follower
+            }
         });
-        total.value = follower.length
+        totalFollowers.value = follower.length
+}
+
+const totalPerformers = ref(0)
+function countPerformers(performers)
+{
+    let performer = performers.value.filter(function (per)
+        {
+            if(per.task_id == props.taskId) {
+                return per.role_performer
+            }
+        });
+        totalPerformers.value = performer.length
 }
 
 function assignPerformer(performer)
@@ -215,6 +233,7 @@ function assignPerformer(performer)
             type: 'success',
         })
         getPerformers()
+        countPerformers(performers)
         }).catch(err => {
             ElMessage({
                 showClose: true,
@@ -231,6 +250,7 @@ function assignPerformer(performer)
             type: 'success',
         })
         getPerformers()
+        countPerformers(performers)
         }).catch(err => {
             ElMessage({
                 showClose: true,
@@ -241,10 +261,34 @@ function assignPerformer(performer)
     }
     
 }
+const isChecked = ref([])
+
+function checkedPerformers(performers)
+{
+    performers.value.filter(function (per) {
+        if(per.task_id === props.taskId && per.role_task === 7) {
+           return per.role_performer = true
+        }
+        else {
+            return per.role_performer = false
+        }
+    });
+}
+
+function checkedFollowers(followers) {
+    followers.value.filter(function (follow) {
+        if(follow.task_id === props.taskId && follow.role_task === 5) {
+           return follow.role_follower = true
+        }
+        else {
+            return follow.role_follower = false
+        }
+    });
+}
 
 </script>
 <template>
-    <div>Người thực hiện:</div>
+    <div>Người thực hiện ({{ totalPerformers }}):</div>
     <div class="people-handle" style="display: flex">
         <Performers :taskId="props.taskId" />
         <div class="people-icon">
@@ -303,8 +347,8 @@ function assignPerformer(performer)
                                     <p class="info-user-item">{{ performer.name }}</p>
                                 </el-col>
                                 <el-col :span="3">
-                                    <el-checkbox style="margin-right: 16px;" 
-                                    v-model="performer.role_performer" size="large" @change="assignPerformer(performer)"/>
+                                    <el-checkbox style="margin-right: 16px;"  v-model="performer.role_performer" 
+                                        size="large" @change="assignPerformer(performer)"/>
                                 </el-col>
                             </el-row>
                         </el-col>
@@ -376,7 +420,7 @@ function assignPerformer(performer)
         </el-popover>
     </div>
 
-    <div>Người theo dõi ({{ total }}):</div>
+    <div>Người theo dõi ({{ totalFollowers }}):</div>
     <div class="people-handle" style="display: flex">
         <FollowerList :taskId="props.taskId" />
         <el-icon
