@@ -59,3 +59,8 @@ export default {
     },
 };
 </script>
+<style>
+.el-upload{
+    width: 100%;
+}
+</style>
