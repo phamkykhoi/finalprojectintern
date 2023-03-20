@@ -5,6 +5,7 @@ import FileUpload from '@/Components/FileUpload.vue';
 import {ArrowDown} from '@element-plus/icons-vue';
 import { ElMessage, ElMessageBox } from "element-plus";
 import request from '../utils/request';
+import axios from '../utils/axioService';
 import TimeAgo from 'javascript-time-ago'
 import vi from 'javascript-time-ago/locale/vi'
 
@@ -31,7 +32,8 @@ const showInputEdit = ref(false);
 const files = ref([]);
 
 async function getFiles() {
-    await request.post(`/get-attachments-by-task/${props.taskId}`).then((res) => {
+    await request.post(`/get-attachments-by-task/${props.taskId}`, {responseType: 'blob'}).then((res) => {
+        console.log(res)
         files.value = res.data.result.attachment_list;
     })
 }
@@ -132,13 +134,21 @@ const handleGetLink = (url)=>{
 }
 
 const handleDownloadFile=(file)=>{
-      const link = document.createElement('a');
-      link.href = 'http://laravelmedufa.com/storage/attachments/' + file.file_name;
-      console.log(file.file_path)
-      link.download =file.title.concat('.'+file.extention);
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+    if (isImageFormat(file.extension)) {
+        const link = document.createElement('a');
+        link.href = '../storage/attachments/' + file.file_name;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        return
+    }
+
+    const link = document.createElement('a');
+    link.href = '../storage/attachments/' + file.file_name;
+    link.download = file.title;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
 }
 
 const handleDownloadAllFiles = ()=>{
@@ -153,7 +163,7 @@ const handleDownloadAllFiles = ()=>{
 }
 
 function isImageFormat(fileExtention) {
-  return (/(gif|jpe?g|png|bmp)$/i).test(fileExtention);
+  return (/(gif|jpe?g|png|bmp|webp)$/i).test(fileExtention);
 }
 
 </script>
