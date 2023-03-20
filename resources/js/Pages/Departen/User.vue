@@ -129,7 +129,7 @@ async function removeMember(userId)
         }
     )
     .then(() => {
-        axios.delete(`department/${props.department.id}/remove/member/${userId}`).then(res => {
+        axios.delete(`/department/${props.department.id}/remove/member/${userId}`).then(res => {
             if (res.data.status) {
                 ElMessage({
                     showClose: true,
