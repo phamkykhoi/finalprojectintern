@@ -12,7 +12,7 @@ class UserRepository extends BaseRepository
         $this->model = $model;
     }
 
-    public function getMembersInTask(array $withRelation = null, $role_task = null, $task_id = null)
+    public function getListMembersInTask(array $withRelation = null, $role_task = null, $task_id = null)
     {
         $query = $this->model
         ->leftJoin('user_tasks', function($join) use ($task_id) {
@@ -35,7 +35,7 @@ class UserRepository extends BaseRepository
             });
         }
 
-        return $query->where('users.id', '!=', 1)->get();
+        return $query->where('users.id', '!=', 1)->orderBy('users.id', 'asc')->get();
     }
 
     public function getByDepartmentId($departmentId)
