@@ -1,5 +1,5 @@
 
-<script setup>
+<script lang="ts" setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Link, useForm } from '@inertiajs/inertia-vue3';
 
@@ -26,30 +26,20 @@ const deleteUser = (userId) => {
     <AuthenticatedLayout>
         <div class="py-12">
             <div class="toolbar text-right">
-                <Link :href="route('user.create')">Thêm mới thành viên</Link>
+                <el-link type="primary" :href="route('user.create')" target="_blank">Thêm mới thành viên</el-link>
             </div>
 
-            <table class="table-auto border-2 w-full" border="1">
-                <thead>
-                    <tr>
-                        <th>Tên thành viên</th>
-                        <th>Email</th>
-                        <th>Ngày tạo</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr class="border-2" :key="index" v-for="(user, index) in users">
-                        <td class="border-2">{{ user.name }}</td>
-                        <td class="border-2">{{ user.email }}</td>
-                        <td class="border-2">{{ user.created_at }}</td>
-                        <td class="border-2">
-                            <Link :href="route('user.edit', {user: user.id})">Sửa</Link>
-                        </td>
-                        <td class="border-2"><a href="#" @click="deleteUser(user.id)">Xoá</a></td>
-                    </tr>
-                </tbody>
-            </table>
+            <el-table :data="users" style="width: 100%" class="ml-20">
+                <el-table-column prop="name" label="Tên" width="550" />
+                <el-table-column prop="email" label="Email" width="550" />
+                <el-table-column prop="created_at" label="Ngày tạo" width="550" />
+                <el-table-column fixed="right" label="Actions" width="200">
+                <template #default="scope">
+                    <el-link type="primary" :href="route('user.edit', {user: scope.row.id})" target="_blank">Sửa</el-link>
+                    <el-button @click="deleteUser(scope.row.id)" link type="primary" size="small">Xóa</el-button>
+                    </template>
+                </el-table-column>
+            </el-table>
         </div>
     </AuthenticatedLayout>
 </template>
