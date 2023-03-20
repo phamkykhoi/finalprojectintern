@@ -131,7 +131,7 @@ function getFollowers()
 function getPerformers()
 {
     loading.value=true
-    request.get(`/api/list-performers-in-task`).then((res) => {
+    request.get(`/api/list-performers-in-task/${props.taskId}`).then((res) => {
             performers.value = res.data.result.listPerformers
             loading.value=false
             checkedPerformers(performers)
@@ -166,6 +166,7 @@ function assignFollower(follower) {
                 type: 'success',
             })
             getFollowers()
+            getPerformers()
             countFollowers(followers)
         }).catch(err => {
             ElMessage({
@@ -182,6 +183,7 @@ function assignFollower(follower) {
             message: 'Delete follower successfully',
             type: 'success',
         })
+        getFollowers()
         getPerformers()
         countFollowers(followers)
         }).catch(err => {
@@ -232,6 +234,7 @@ function assignPerformer(performer)
             message: 'Assign performer successfully',
             type: 'success',
         })
+        getFollowers()
         getPerformers()
         countPerformers(performers)
         }).catch(err => {
@@ -249,6 +252,7 @@ function assignPerformer(performer)
             message: 'Delete performer successfully',
             type: 'success',
         })
+        getFollowers()
         getPerformers()
         countPerformers(performers)
         }).catch(err => {
@@ -266,7 +270,7 @@ const isChecked = ref([])
 function checkedPerformers(performers)
 {
     performers.value.filter(function (per) {
-        if(per.task_id === props.taskId && per.role_task === 7) {
+        if(per.task_id === props.taskId) {
            return per.role_performer = true
         }
         else {
@@ -277,7 +281,7 @@ function checkedPerformers(performers)
 
 function checkedFollowers(followers) {
     followers.value.filter(function (follow) {
-        if(follow.task_id === props.taskId && follow.role_task === 5) {
+        if(follow.task_id === props.taskId) {
            return follow.role_follower = true
         }
         else {

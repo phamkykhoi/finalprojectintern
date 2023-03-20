@@ -87,14 +87,14 @@ class UserController extends Controller
     public function listFollowersInTask($id)
     {
         return $this->success([
-            'listFollowers' => $this->userRepo->getAll(null, 5, $id),
+            'listFollowers' => $this->userRepo->getMembersInTask(null, 5, $id),
         ]);
     }
     
-    public function listPerformersInTask()
+    public function listPerformersInTask($id)
     {
         return $this->success([
-            'listPerformers' => $this->userRepo->getAll(null, 7),
+            'listPerformers' => $this->userRepo->getMembersInTask(null, 7, $id),
         ]);
     }
 }
