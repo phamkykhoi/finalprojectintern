@@ -98,10 +98,12 @@ const closeModal = () => {
     confirmingTaskDeletion.value = false;
     emit('closeModal', false);
 };
-
 const isTaskLocked = ref(props.task.is_locked);
+
 const handleChangeIsLocked = () => {
     isTaskLocked.value = !isTaskLocked.value;
+    CloseTaskName();
+    CloseInputDes();
 }
 
 const saveTask = (formEl: FormInstance | undefined) => {
@@ -154,7 +156,9 @@ function CloseHistory(){
 const showInputDescription = ref(false)
 
 function ShowInputDes(){
+    if(!isTaskLocked.value){
     showInputDescription.value = true
+    }
 }
 
 function CloseInputDes(){
@@ -165,7 +169,9 @@ function CloseInputDes(){
 const showTask = ref(false)
 
 function ShowTaskName(){
+    if(!isTaskLocked.value){
     showTask.value = true
+    }
 }
 
 function CloseTaskName(){
@@ -351,20 +357,21 @@ const rules = {
                             </span>
                         </div>
                         <el-row class="mb-2" style="display: block; margin-top: 16px;">
-                            <SubTask :taskId="task.id" :task_group_id="taskGroup.id"/>
+                            <SubTask :isDisabled="isTaskLocked" :taskId="task.id" :task_group_id="taskGroup.id"/>
                         </el-row>
 
-                        <FileManagerOfTask :taskId="task.id"></FileManagerOfTask>
-                        <TaskCommentSection :taskId="task.id"></TaskCommentSection>
+                        <FileManagerOfTask :isDisabled="isTaskLocked" :taskId="task.id"></FileManagerOfTask>
+                        <TaskCommentSection :isDisabled="isTaskLocked" :taskId="task.id"></TaskCommentSection>
                         <TaskActivity :taskId="task.id"></TaskActivity>
                     </el-col>
                     <el-col :span="5" class="ml-2">
-                        <el-checkbox v-model="taskForm.status" true-label="3" :false-label="task.status===3 ? null : task.status" label="Hoàn thành việc" size="large" @change="handleChangeStatus(task.id)"/>
+                        <el-checkbox :disabled="isTaskLocked" v-model="taskForm.status" true-label="3" :false-label="task.status===3 ? null : task.status" label="Hoàn thành việc" size="large" @change="handleChangeStatus(task.id)"/>
 
                         <el-form-item style="display: block;">
                             <div style="display: inline-block;">
                                 <el-form-item prop="start_date" class="form_item-date" label="Ngày thực hiện">
                                     <el-date-picker
+                                        :disabled="isTaskLocked"
                                         v-model="taskForm.start_date"
                                         type="date"
                                         placeholder="Ngày bắt đầu"
@@ -380,6 +387,7 @@ const rules = {
                                 </el-form-item>
                                 <el-form-item prop="end_date" class="form_item-date" label="Ngày kết thúc">
                                     <el-date-picker
+                                        :disabled="isTaskLocked"
                                         v-model="taskForm.end_date"
                                         type="date"
                                         placeholder="Ngày kết thúc"
@@ -396,7 +404,7 @@ const rules = {
                             </div>
 
                         </el-form-item>
-                        <Participant :taskId="task.id"></Participant>
+                        <Participant :isDisabled="isTaskLocked" :taskId="task.id"></Participant>
                         <div style="width: 100%;">
                             <p>Đánh giá</p>
                             <div class="flex rate">
@@ -405,6 +413,7 @@ const rules = {
                                 size="small"
                                 v-model="value"
                                 :show-score="true"
+                                :disabled="isTaskLocked"
                                 />
                                 <span style="display: flex; align-items: center;">
                                     <el-icon style="margin-right: 4px;"><Pointer /></el-icon>
@@ -412,21 +421,19 @@ const rules = {
                                 </span>
                             </div>
                         </div>
-                        <el-checkbox v-model="taskForm.is_quickly" id="is_quickly" @change="changeQuicklyStatus(task.id)" label="Việc Khẩn cấp" size="large" />
-                        <el-checkbox v-model="taskForm.is_important" id="is_important" @change="changeImportantStatus(task.id)" label="Việc Quan trọng" size="large" />
-                      <div v-if="isTaskLocked">
-                        <JobUnlock :icon="Unlock" :title="title.unlock" :task="task" @is-task-unlocked="handleChangeIsLocked"/>
-                      </div>
-                        <div v-else>
-                            <UpdateThePlan :icon="DocumentAdd" :title="title.updateThePlan"/>
-                            <AttachFile :icon="DocumentAdd" :title="title.attachFile"/>
-                            <Copy :icon="DocumentCopy" :title="title.copy" :task="task" :closeModal="closeModal"/>
-                            <Move :icon="Rank" :title="title.move" />
-                            <CreateReminder :icon="Bell" :title="title.reminder"/>
-                            <Evaluation :icon="Finished" :title="title.evaluation" />
-                            <JobLock :icon="Lock" :title="title.lock" :task="task" @is-task-locked="handleChangeIsLocked"/>
-                            <Save :icon="TakeawayBox" :title="title.save"/>
-                            <DeleteTask :icon="Close" :title="title.delete" />
+                        <el-checkbox :disabled="isTaskLocked" v-model="taskForm.is_quickly" id="is_quickly" @change="changeQuicklyStatus(task.id)" label="Việc Khẩn cấp" size="large" />
+                        <el-checkbox :disabled="isTaskLocked" v-model="taskForm.is_important" id="is_important" @change="changeImportantStatus(task.id)" label="Việc Quan trọng" size="large" />
+                        <div>
+                            <UpdateThePlan :isDisabled="isTaskLocked" :icon="DocumentAdd" :title="title.updateThePlan"/>
+                            <AttachFile :isDisabled="isTaskLocked" :icon="DocumentAdd" :title="title.attachFile"/>
+                            <Copy :isDisabled="isTaskLocked" :icon="DocumentCopy" :title="title.copy" :task="task" :closeModal="closeModal"/>
+                            <Move :isDisabled="isTaskLocked" :icon="Rank" :title="title.move" />
+                            <CreateReminder :isDisabled="isTaskLocked" :icon="Bell" :title="title.reminder"/>
+                            <Evaluation :isDisabled="isTaskLocked" :icon="Finished" :title="title.evaluation" />
+                            <JobUnlock v-if="isTaskLocked" :icon="Unlock" :title="title.unlock" :task="task" @is-task-unlocked="handleChangeIsLocked"/>
+                            <JobLock v-else :icon="Lock" :title="title.lock" :task="task" @is-task-locked="handleChangeIsLocked"/>
+                            <Save :isDisabled="isTaskLocked" :icon="TakeawayBox" :title="title.save"/>
+                            <DeleteTask :isDisabled="isTaskLocked" :icon="Close" :title="title.delete" />
                         </div>
                     </el-col>
                 </el-row>

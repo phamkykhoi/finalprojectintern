@@ -12,6 +12,10 @@ const props = defineProps({
     taskId: {
         type: Number,
     },
+    isDisabled:{
+        type: Boolean,
+        default: false,
+    }
 });
 
 TimeAgo.addDefaultLocale(vi)
@@ -157,9 +161,9 @@ function isImageFormat(fileExtention) {
     <div>
         <el-row class="my-4">
             <el-form-item label="Tệp đính kèm:"></el-form-item>
-            <FileUpload @data-updated="getFiles" :params="{task_id : taskId}"></FileUpload>
+            <FileUpload @data-updated="getFiles" :params="{task_id : taskId}" :isDisabled="isDisabled"></FileUpload>
             <el-dropdown>
-                <el-button class="ml-2 mr-2">
+                <el-button class="ml-2 mr-2" :disabled="isDisabled">
                     Sắp xếp theo
                     <el-icon class="el-icon--right">
                         <ArrowDown />

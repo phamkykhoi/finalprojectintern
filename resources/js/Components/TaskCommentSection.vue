@@ -11,6 +11,10 @@ const props = defineProps({
     taskId: {
         type: Number,
     },
+    isDisabled: {
+        type: Boolean,
+        default: false,
+    }
 });
 
 TimeAgo.addDefaultLocale(vi)
@@ -35,7 +39,7 @@ async function getComments(nextPage) {
 
     await request.post(`/get-discussion-by-task-id/${props.taskId}`, { page: nextPage }).then((res) => {
         listComments.value = res.data.result.discussions.data;
-        meta.value = res.data.result.meta 
+        meta.value = res.data.result.meta
         loading.value = false
     })
 }
@@ -83,7 +87,7 @@ function handleDeleteCmt(commentId) {
                 message: "Delete canceled",
             });
         });
-   
+
 }
 
 const handleSendComment = () => {
@@ -113,7 +117,7 @@ const handleCurrentChange = (page: number) => {
             <h2>Comment</h2>
             <div v-if="listComments.length>0" class="comment-quantity">{{ meta.total }}</div>
         </div>
-        
+
         <div class="flex comment mr-2">
             <el-form ref="ruleFormRef" :model="form" class="demo-ruleForm w-[100%]">
                 <el-form-item class="w-[100%]">
@@ -131,10 +135,11 @@ const handleCurrentChange = (page: number) => {
                         placeholder="Nhấn Shift + Enter để gửi"
                         clearable
                         class="inline-block"
+                        :disabled="isDisabled"
                         />
                     </div>
-                    
-                    <el-button class="mt-2 ml-auto" type="success" @click="handleSendComment"
+
+                    <el-button class="mt-2 ml-auto" type="success" @click="handleSendComment" :disabled="isDisabled"
                     >Gửi bình luận</el-button
                     >
                 </el-form-item>
@@ -164,16 +169,15 @@ const handleCurrentChange = (page: number) => {
                         </div>
                         <div class="flex w-[100%] mt-1">
                             <div class="w-[70%]">
-                                <el-link class="mr-2" href="#">Thích</el-link>
-                                <el-link class="mr-2" href="#">Trả lời</el-link>
-                                <el-link class="mr-2" @click="handleShowEditCmt(index)"
-                                    >Sửa</el-link
-                                >
+                                <el-link class="mr-2" href="#" :disabled="isDisabled">Thích</el-link>
+                                <el-link class="mr-2" href="#" :disabled="isDisabled">Trả lời</el-link>
+                                <el-link
+                                    class="mr-2" @click="handleShowEditCmt(index)"
+                                    :disabled="isDisabled">Sửa</el-link>
                                 <el-link
                                     class="mr-2"
                                     @click="handleDeleteCmt(comment.id)"
-                                    >Xóa</el-link
-                                >
+                                    :disabled="isDisabled">Xóa</el-link>
                                 <el-link class="mr-2" href="#">{{
                                     timeAgo.format((new Date(comment.created_at)))
                                 }}</el-link>
@@ -196,20 +200,20 @@ const handleCurrentChange = (page: number) => {
             </div>
         </template>
     </div>
-    
+
         <div style="text-align: center;">
             <div class="example-pagination-block">
                 <el-pagination
                 v-model:current-page="meta.currentPage"
                 v-model:page-size="meta.perPage"
-                layout="prev, pager, next" 
-                :total="meta.total" 
+                layout="prev, pager, next"
+                :total="meta.total"
                 @current-change="handleCurrentChange"
                 v-if="listComments.length"
                 />
             </div>
         </div>
-        
+
 </template>
 <style>
 .comment-img {

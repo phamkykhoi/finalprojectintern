@@ -3,7 +3,8 @@ import { ref, unref } from 'vue'
 import { ClickOutside as vClickOutside } from 'element-plus'
 const props = defineProps({
     icon: String,
-    title: String
+    title: String,
+    isDisabled: Boolean,
 });
 
 const buttonRef9 = ref()
@@ -17,7 +18,7 @@ const hidePopover9 = () => {
 </script>
 
 <template>
-    <el-button :icon="icon" ref="buttonRef9" v-click-outside="onClickOutside9" class="btn-container">
+    <el-button :disabled="isDisabled" :icon="icon" ref="buttonRef9" v-click-outside="onClickOutside9" class="btn-container">
         {{ props.title }}
     </el-button>
     <el-popover

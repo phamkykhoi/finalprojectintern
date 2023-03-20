@@ -9,6 +9,7 @@ import type { FormInstance } from 'element-plus';
 const props = defineProps({
     taskId: Number,
     task_group_id: Number,
+    isDisabled: Boolean,
 })
 
 const ruleFormRef = ref<FormInstance>()
@@ -136,7 +137,7 @@ function completedSubTask(index, subTask) {
     const itemSubTask = {
         status: !subTask.is_done ? 3 : 1, // 1 là todo, 3 là done
     }
-
+    if(!props.isDisabled){
     request.put(`/completed-task/${subTask.id}`, itemSubTask).then((res)=>{
         getSubTasks(props.taskId)
     }).catch(err => {
@@ -146,6 +147,7 @@ function completedSubTask(index, subTask) {
             type: 'error',
             })
     })
+}
 }
 
 const hidePopoverSubTask = (index) => {
@@ -197,7 +199,7 @@ function clonedItems(index){
                 <el-form-item :class="lineThrough" style="margin-bottom: 0; margin-left: 6px; " label="Danh sách việc con"></el-form-item>
                 <span>({{ totalDoneSubTask + '/' + subTasks.length}})</span>
             </div>
-            <el-button @click="createFormAddTask">Tạo việc con</el-button>
+            <el-button @click="createFormAddTask" :disabled="isDisabled">Tạo việc con</el-button>
     </el-row>
     <div class="task-progress">
         <el-progress :percentage="(totalDoneSubTask/subTasks.length*100) ? (totalDoneSubTask/subTasks.length*100).toFixed(0) : 0" color="#00FF00"/>
@@ -221,7 +223,7 @@ function clonedItems(index){
 <div v-for="(item, index) in subTasks" :key="index">
     <div class="flex" style="margin: 16px 0">
         <div>
-            <el-checkbox style="margin-right: 16px;" v-model="item.is_done" @click="completedSubTask(index, item)" size="large"/>
+            <el-checkbox style="margin-right: 16px;" v-model="item.is_done" @click="completedSubTask(index, item)" size="large" :disabled="isDisabled"/>
         </div>
 
         <el-row class="task-option" v-if="!checked[index]" :span="24">
@@ -240,7 +242,8 @@ function clonedItems(index){
                     :width="300"
                     trigger="click"
                     virtual-triggering
-                    placement="right-start">
+                    placement="right-start"
+                    :disabled="isDisabled">
                     <div style="display: flex; align-items: center; justify-content: space-between;">
                         <p>Chức năng</p>
                         <el-icon class="close" @click="hidePopoverSubTask(index)"><CloseBold /></el-icon>
