@@ -91,7 +91,6 @@ const title = reactive({
     delete: 'Xóa việc',
 });
 const emit = defineEmits(['closeModal', 'unClose'])
-const fileManagerOfTask = ref();
 confirmingTaskDeletion.value = props.isShowModal;
 
 const closeModal = () => {
