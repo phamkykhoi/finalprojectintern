@@ -38,28 +38,13 @@ const deleteDepartment = (departmentId) => {
             <div class="toolbar text-right">
                 <Link :href="route('department.create')">Thêm mới Phòng ban</Link>
             </div>
-
-            <table class="table-auto border-2 w-full" border="1">
-                <thead>
-                    <tr>
-                        <th>Tên Phòng ban</th>
-                        <th>Mô tả</th>
-                        <th>Type</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr class="border-2" :key="index" v-for="(department, index) in departments">
-                        <td class="border-2">{{ department.name }}</td>
-                        <td class="border-2">{{ department.description }}</td>
-                        <td class="border-2">{{ department.type }}</td>
-                        <td class="border-2">
-                            <Link :href="route('department.edit', {department: department.id})">Sửa</Link>
-                        </td>
-                        <td class="border-2"><a href="#" @click="deleteDepartment(department.id)">Xoá</a></td>
-                    </tr>
-                </tbody>
-            </table>
+            <div class="ml-14">
+            <el-table  :data="departments" stripe style="width: 100%">
+            <el-table-column prop="id" label="ID" width="100" />
+            <el-table-column prop="name" label="Name" width="300" />
+            <el-table-column prop="description" label="Desciption" />
+            </el-table>
+            </div>
         </div>
     </AuthenticatedLayout>
 </template>
