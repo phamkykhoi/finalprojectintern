@@ -265,7 +265,6 @@ function assignPerformer(performer)
     }
     
 }
-const isChecked = ref([])
 
 function checkedPerformers(performers)
 {
