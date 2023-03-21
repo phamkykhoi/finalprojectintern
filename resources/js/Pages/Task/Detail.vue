@@ -104,6 +104,14 @@ const handleChangeIsLocked = () => {
     CloseTaskName();
     CloseInputDes();
 }
+const fileList =ref([]);
+async function getFiles() {
+    await request.post(`/get-attachments-by-task/${props.task.id}`).then((res) => {
+        fileList.value = res.data.result.attachment_list;
+    })
+}
+
+getFiles()
 
 const saveTask = (formEl: FormInstance | undefined) => {
     if (!formEl) return
@@ -195,7 +203,7 @@ const files = ['']
 const checkFileChange = ref(true);
 
 const handleFileChange = ()=>{
-    checkFileChange.value = !checkFileChange.value
+    getFiles();
 }
 const handleCheckAllChange = (val: boolean) => {
     checkedFiles.value = val ? files : []
@@ -363,7 +371,7 @@ const rules = {
                             <SubTask :isDisabled="isTaskLocked" :taskId="task.id" :task_group_id="taskGroup.id"/>
                         </el-row>
 
-                        <FileManagerOfTask :key="checkFileChange" :isDisabled="isTaskLocked" :taskId="task.id"></FileManagerOfTask>
+                        <FileManagerOfTask :isDisabled="isTaskLocked" :taskId="task.id" :files="fileList" :getFiles="getFiles"></FileManagerOfTask>
                         <TaskCommentSection :isDisabled="isTaskLocked" :taskId="task.id"></TaskCommentSection>
                         <TaskActivity :taskId="task.id"></TaskActivity>
                     </el-col>
