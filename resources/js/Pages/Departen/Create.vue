@@ -16,7 +16,7 @@ const props = defineProps({
     department: Object,
     pageTitle: String,
 });
-
+console.log(props.department)
 const getDepartment = inject('getDepartment');
 
 const form = useForm({
@@ -25,23 +25,31 @@ const form = useForm({
     type: props.department ? props.department.type : null,
 });
 
-const saveDepartment = (formEl: FormInstance | undefined) => {
-    if (!formEl) return
-    formEl.validate((valid) => {
-        if (valid) {
-            request.put(`/department/${props.department.id}`, form).then(res => {
-                if (res.data.status) {
-                    ElMessage({
-                        showClose: true,
-                        message: 'Sửa department thành công',
-                        type: 'success',
-                    })
-                    closeModal()
-                }
-            })
-        }
-    })
+const saveDepartment = () => {
+    if (!props.department) {
+        form.post(route('department.store'), {
+            preserveScroll: true,
+            onSuccess: () => { },
+            onError: () => { },
+            onFinish: () => { },
+        })
+        return;
+    }
+    form.put(route('department.update', {department: props.department.id}));
 }
+// const saveUser = () => {
+//     if (!props.user) {
+//         form.post(route('user.store'), {
+//             preserveScroll: true,
+//             onSuccess: () => { },
+//             onError: () => { },
+//             onFinish: () => { },
+//         })
+//         return;
+//     }
+
+//     form.patch(route('user.update', {user: props.user.id}))
+// }
 const closeModal = () => {
     window.history.go(-1);
 };
@@ -85,7 +93,7 @@ const closeModal = () => {
                             <el-button type="primary" @click="closeModal">
                                 Đóng
                             </el-button>
-                            <el-button type="primary" @click="saveDepartment(ruleFormRef)">
+                            <el-button type="primary" @click="saveDepartment">
                                 Lưu lại
                             </el-button>
                         </div>
