@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { CloseBold } from "@element-plus/icons-vue";
-import { ref } from "vue";
+import { ref, watch} from "vue";
 import FileUpload from '@/Components/FileUpload.vue';
 import {ArrowDown} from '@element-plus/icons-vue';
 import { ElMessage, ElMessageBox } from "element-plus";
@@ -16,6 +16,12 @@ const props = defineProps({
     isDisabled:{
         type: Boolean,
         default: false,
+    },
+    files:{
+        type : Array,
+    },
+    getFiles:{
+        type: Function,
     }
 });
 
@@ -29,11 +35,14 @@ const checkedFiles = ref([]);
 
 const showInputEdit = ref(false);
 
-const files = ref([]);
+const files = ref(props.files);
+
+watch(() => props.files, (newVal) => {
+	files.value = newVal
+})
 
 async function getFiles() {
     await request.post(`/get-attachments-by-task/${props.taskId}`, {responseType: 'blob'}).then((res) => {
-        console.log(res)
         files.value = res.data.result.attachment_list;
     })
 }
@@ -81,7 +90,7 @@ const handleRemoveFile = (attachmentId) =>{
   )
     .then(async () => {
         await request.delete(`/delete-attachment`, {checkedFiles: attachmentId }).then((res) => {
-            getFiles()
+            props.getFiles()
         })
         ElMessage({
             type: "success",
@@ -107,7 +116,7 @@ const handleRemoveCheckedFile = (taskId) =>{
   )
     .then(() => {
         request.delete(`/delete-attachment`, {checkedFiles: checkedFiles.value }).then((res) => {
-            getFiles()
+            props.getFiles()
         })
         ElMessage({
             type: "success",

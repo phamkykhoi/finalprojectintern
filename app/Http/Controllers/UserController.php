@@ -46,7 +46,7 @@ class UserController extends Controller
         $inputs['password'] = bcrypt($inputs['password']);
 
         $this->userRepo->save($inputs);
-        return redirect()->route('user.index');
+        return redirect()->route('user.index')->with('message', 'Create User Successfully!');
     }
 
     public function edit($id)
@@ -68,13 +68,13 @@ class UserController extends Controller
         }
 
         $this->userRepo->save($inputs, ['id' => $id]);
-        return redirect()->route('user.index');
+        return redirect()->route('user.index')->with('message', 'Edit User Successfully!');
     }
     
     public function destroy($id)
     {
         $this->userRepo->deleteById($id);
-        return redirect()->route('user.index');
+        return redirect()->route('user.index')->with('message', 'Delete Successfully!');
     }
 
     public function indexJson()
