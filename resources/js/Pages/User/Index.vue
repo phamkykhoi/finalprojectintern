@@ -1,7 +1,7 @@
 
 <script lang="ts" setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Link, useForm, usePage} from '@inertiajs/inertia-vue3';
+import { Link, usePage} from '@inertiajs/inertia-vue3';
 import { Edit, Delete, Plus } from '@element-plus/icons-vue';
 import { Inertia } from "@inertiajs/inertia";
 
@@ -10,8 +10,6 @@ const props = defineProps({
     users: Array,
     meta: Object,
 });
-
-const form = useForm({ })
 
 function destroy(userId) {
     if (confirm("Bạn có thực sự muốn xoá")) {
@@ -88,6 +86,7 @@ function changePage(page)
 
 .container {
     background: #e9e9e9;
+    max-width: 100%;
 }
 
 .table-user {

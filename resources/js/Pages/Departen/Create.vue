@@ -16,7 +16,7 @@ const props = defineProps({
     department: Object,
     pageTitle: String,
 });
-console.log(props.department)
+
 const getDepartment = inject('getDepartment');
 
 const form = useForm({
@@ -37,19 +37,7 @@ const saveDepartment = () => {
     }
     form.put(route('department.update', {department: props.department.id}));
 }
-// const saveUser = () => {
-//     if (!props.user) {
-//         form.post(route('user.store'), {
-//             preserveScroll: true,
-//             onSuccess: () => { },
-//             onError: () => { },
-//             onFinish: () => { },
-//         })
-//         return;
-//     }
 
-//     form.patch(route('user.update', {user: props.user.id}))
-// }
 const closeModal = () => {
     window.history.go(-1);
 };
