@@ -91,7 +91,6 @@ const title = reactive({
     delete: 'Xóa việc',
 });
 const emit = defineEmits(['closeModal', 'unClose'])
-
 confirmingTaskDeletion.value = props.isShowModal;
 
 const closeModal = () => {
@@ -105,6 +104,14 @@ const handleChangeIsLocked = () => {
     CloseTaskName();
     CloseInputDes();
 }
+const fileList =ref([]);
+async function getFiles() {
+    await request.post(`/get-attachments-by-task/${props.task.id}`).then((res) => {
+        fileList.value = res.data.result.attachment_list;
+    })
+}
+
+getFiles()
 
 const saveTask = (formEl: FormInstance | undefined) => {
     if (!formEl) return
@@ -193,7 +200,11 @@ const checkAll = ref(false)
 const isIndeterminate = ref(true)
 const checkedFiles = ref([])
 const files = ['']
+const checkFileChange = ref(true);
 
+const handleFileChange = ()=>{
+    getFiles();
+}
 const handleCheckAllChange = (val: boolean) => {
     checkedFiles.value = val ? files : []
     isIndeterminate.value = false
@@ -360,7 +371,7 @@ const rules = {
                             <SubTask :isDisabled="isTaskLocked" :taskId="task.id" :task_group_id="taskGroup.id"/>
                         </el-row>
 
-                        <FileManagerOfTask :isDisabled="isTaskLocked" :taskId="task.id"></FileManagerOfTask>
+                        <FileManagerOfTask :isDisabled="isTaskLocked" :taskId="task.id" :files="fileList" :getFiles="getFiles"></FileManagerOfTask>
                         <TaskCommentSection :isDisabled="isTaskLocked" :taskId="task.id"></TaskCommentSection>
                         <TaskActivity :taskId="task.id"></TaskActivity>
                     </el-col>
@@ -425,7 +436,7 @@ const rules = {
                         <el-checkbox :disabled="isTaskLocked" v-model="taskForm.is_important" id="is_important" @change="changeImportantStatus(task.id)" label="Việc Quan trọng" size="large" />
                         <div>
                             <UpdateThePlan :isDisabled="isTaskLocked" :icon="DocumentAdd" :title="title.updateThePlan"/>
-                            <AttachFile :isDisabled="isTaskLocked" :icon="DocumentAdd" :title="title.attachFile"/>
+                            <AttachFile @file-change="handleFileChange" :isDisabled="isTaskLocked" :icon="DocumentAdd" :title="title.attachFile" :task="task"/>
                             <Copy :isDisabled="isTaskLocked" :icon="DocumentCopy" :title="title.copy" :task="task" :closeModal="closeModal"/>
                             <Move :isDisabled="isTaskLocked" :icon="Rank" :title="title.move" />
                             <CreateReminder :isDisabled="isTaskLocked" :icon="Bell" :title="title.reminder"/>
