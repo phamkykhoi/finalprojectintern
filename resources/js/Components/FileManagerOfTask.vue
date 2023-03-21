@@ -106,7 +106,6 @@ const handleRemoveCheckedFile = (taskId) =>{
     }
   )
     .then(() => {
-        console.log()
         request.delete(`/delete-attachment`, {checkedFiles: checkedFiles.value }).then((res) => {
             getFiles()
         })
