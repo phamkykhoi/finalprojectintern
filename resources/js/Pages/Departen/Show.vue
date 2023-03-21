@@ -34,14 +34,14 @@ const deleteDepartment = (departmentId) => {
 
 <template>
     <AuthenticatedLayout>
-        <div class="py-12">
-            <div class="toolbar text-right">
-                <el-button type="primary" :href="route('department.create')" class="mr-20">Thêm mới Phòng ban</el-button>
+        <div class="py-12" style="width: 95%;">
+            <div class="toolbar text-right mb-5">
+                <el-button type="primary" :href="route('department.create')" class="mr-">Thêm mới Phòng ban</el-button>
             </div>
             <div class="ml-20">
-            <el-table  :data="departments" stripe border style="width: 80%">
-            <el-table-column prop="id" label="ID" width="100" />
-            <el-table-column prop="name" label="Name" width="300" />
+            <el-table  :data="departments" stripe border  >
+            <el-table-column prop="id" label="ID" width="50" align="center" />
+            <el-table-column prop="name" label="Name" width="400" />
             <el-table-column prop="description" label="Desciption" />
             </el-table>
             </div>
