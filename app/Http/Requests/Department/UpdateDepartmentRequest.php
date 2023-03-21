@@ -26,6 +26,7 @@ class UpdateDepartmentRequest extends FormRequest
         return [
             'name' => 'required|max:255|unique:departments,name,'.$this->route('department'),
             'description' => 'required|max:255',
+            'type' => 'nullable|max:2',
         ];
     }
 }
