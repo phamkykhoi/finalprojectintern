@@ -58,7 +58,7 @@ function showListFollowers()
         </el-icon>
 
         <el-popover
-            :width="300"
+            :width="400"
             ref="popoverListFollowers"
             :virtual-ref="buttonListFollowers"
             trigger="click"

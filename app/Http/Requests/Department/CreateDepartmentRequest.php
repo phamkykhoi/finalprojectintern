@@ -26,7 +26,7 @@ class CreateDepartmentRequest extends FormRequest
         return [
             'name' => 'required|unique:departments|max:255',
             'description' => 'required|max:255',
-            'type' => 'required|max:2',
+            'type' => 'nullable|max:2',
         ];
     }
 }
