@@ -52,16 +52,16 @@ const closeFormDepartmentUser = (value) => {
 </script>
 
 <template>
-    <div>
+    <div style="z-index: 999999;">
         <aside class="flex-shrink-0 hidden w-64 bg-white border-r dark:border-primary-darker dark:bg-darker md:block">
             <div class="flex flex-col h-full flex-hull">
                 <div class="h-16 border-b border-gray-100 hidden space-x-8 sm:flex">
                     <h3
-                        class='text-lg font-bold pl-2 inline-flex items-center w-full border-indigo-400 font-medium leading-5 text-gray-900 transition duration-150 ease-in-out' style="position:fixed; margin-top:21px;">
+                        class='text-lg font-bold pl-2 inline-flex items-center w-full border-indigo-400 font-medium leading-5 text-gray-900 transition duration-150 ease-in-out' style="position:fixed; margin-top:-13px; height: 76px;">
                         &nbsp; Công việc của Tôi</h3>
                 </div>
 
-                <nav aria-label="Main" class="flex-1 px-2 py-4 space-y-2 overflow-y-hidden hover:overflow-y-auto" style="background-color:floralwhite;">
+                <nav aria-label="Main" class="flex-1 px-2 py-4 space-y-2 overflow-y-hidden hover:overflow-y-auto" style="background-color:rgb(160, 160, 160);">
                     <div :key="index" v-for="(department, index) in departments">
                         <a href="#"
                             class="font-bold flex items-center transition-colors rounded-md dark:text-light hover:bg-primary-100 dark:hover:bg-primary"
@@ -75,7 +75,7 @@ const closeFormDepartmentUser = (value) => {
                                     <template #trigger>
                                         <span class="inline-flex rounded-md">
                                             <button type="button"
-                                                class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150">
+                                                class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150; style=background:rgb(160, 160, 160);">
                                                 <SettingIcon />
                                             </button>
                                         </span>
