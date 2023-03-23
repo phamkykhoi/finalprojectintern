@@ -23,11 +23,13 @@ class AttachmentController extends Controller
 
     public function upload(Request $request)
     {
+        $param = json_decode($request->params);
         $file = $request->file('file');
         $fileName = $file->hashName();
         Storage::disk('local')->putFile('public/attachments', $file);
 
         $attachment = $this->attachmentRepo->save([
+            'attachable_id' => $param->task_id,
             'file_path' => Storage::path($fileName),
             'file_name' => $fileName,
             'extension' => $file->extension(),

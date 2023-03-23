@@ -1,53 +1,63 @@
 <script lang="ts" setup>
-import { ref, defineEmits, unref, reactive } from 'vue';
+import { ref, defineEmits, unref, reactive, onBeforeMount, computed, provide } from 'vue';
 import { ClickOutside as vClickOutside } from 'element-plus'
 import { Clock, Avatar } from '@element-plus/icons-vue';
+import TimeAgo from 'javascript-time-ago';
+import vi from 'javascript-time-ago/locale/vi';
+import { ElMessage } from "element-plus";
+import request from "../../utils/request";
 
 const props = defineProps({
     taskId: Number
 })
-const activities = ref([
-    { 
-        id: 1,
-        content: 'Thành viên đã thêm hoạt động'
-    },
-    {   
-        id: 2,
-        content: 'Thành viên đã xóa hoạt động'
-    },
-    {   
-        id: 3,
-        content: 'Thành viên đã sửa hoạt động'
-    },
-    { 
-        id: 4,
-        content: 'Thành viên đã đánh giá'
-    },
-    {   
-        id: 5,
-        content: 'Thành viên đã bỏ đánh dấu'
-    },
-    {   
-        id: 6,
-        content: 'Thành viên đã tắt tính năng'
-    }
-])
 
-const limitItem = ref(3);
+const logs = ref();
+
+const meta = ref();
+
+const loading = ref(false);
+
 
 const showHistory = ref(false)
 
+TimeAgo.addDefaultLocale(vi)
+
+const timeAgo = new TimeAgo('vi')
+
 function ShowHistory(){
     showHistory.value = true
+    getLogs()
 }
 
 function CloseHistory(){
-    limitItem.value = 3;
     showHistory.value = false
 }
 
-function showMore(){
-    limitItem.value = limitItem.value + 2
+function getLogs(nextPage)
+{
+    loading.value=true
+    request.get(`/activity-log/${props.taskId}`,{ page: nextPage })
+        .then((res) => {
+            logs.value = res.data.result.listLogs.data
+            meta.value = res.data.result.meta
+            loading.value=false
+        })
+        .catch(err => {
+            ElMessage({
+                showClose: true,
+                message: err.response.data.message,
+                type: 'error',
+            })
+            loading.value=false;
+        })
+}
+
+onBeforeMount(async () => {
+    getLogs();
+});
+
+const changePage = (page: number) => {
+    getLogs(page)
 }
 </script>
 
@@ -67,20 +77,27 @@ function showMore(){
         </el-row>
     </el-row>
     <el-form-item label="Thành viên đã xem việc này:" style="display: block; margin-left: 31px; width: 100%;">
-        <el-icon v-if="!showHistory" :size="25"><Avatar /></el-icon>
-        <div v-if="showHistory" style="width: 100%;">
-            <template v-for="(activity, index) in activities" :key="index" >
-                <div v-if="index < limitItem" class="flex" style="padding: 4px 0; align-items: center;">
-                    <el-icon :size="25" style="margin-right: 12px;"><Avatar /></el-icon>
+        <el-icon v-if="!showHistory" :size="25">
+            <img class="comment-img" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcShN0nuLT7HIpIANuDi6wbMKpeuCgZsl2PtAA&usqp=CAU" />
+        </el-icon>
+        <div v-if="showHistory" style="width: 100%;" v-loading="loading"> 
+            <template v-for="(log, index) in logs" :key="index" >
+                <div class="flex" style="padding: 4px 0; align-items: center;">
+                    <img class="comment-img" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcShN0nuLT7HIpIANuDi6wbMKpeuCgZsl2PtAA&usqp=CAU" />
                     <div style="display: flex; flex-direction: column; justify-content: space-between; line-height: 140%;">
-                        <p> {{ activity.content }} </p>
-                        <p>03/03 16:00</p>
+                        <p> {{ log.description }} </p>
+                        <p>{{ timeAgo.format((new Date(log.created_at))) }}</p>
                     </div>
                 </div>
             </template>
-            <div style="text-align: center;">
-                <el-link v-if="limitItem < activities.length" @click="showMore">Xem thêm</el-link>
-            </div>
+            <el-pagination
+                @current-change="changePage"
+                v-model:current-page="meta.currentPage"
+                v-model:page-size="meta.perPage"
+                layout="prev, pager, next"
+                :total="meta.total"
+                v-if="logs.length"
+            />
         </div>
     </el-form-item>
 </template>

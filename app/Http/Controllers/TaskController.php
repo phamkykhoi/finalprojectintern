@@ -9,6 +9,7 @@ use App\Http\Requests\Task\CreateTaskRequest;
 use App\Http\Requests\Task\UpdateTaskRequest;
 use App\Http\Requests\Task\CompletedTaskRequest;
 use App\Models\Task;
+use App\Repositories\ActivityLogRepository;
 use App\Repositories\UserRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -24,16 +25,20 @@ class TaskController extends Controller
 
     protected $userRepo;
 
+    protected $activityLogRepo;
+
     public function __construct(
         TaskRepository $taskRepo,
         TaskGroupRepository $taskGroupRepo,
         UserTaskRepository $userTaskRepo,
         UserRepository $userRepo,
+        ActivityLogRepository $activityLogRepo,
     ) {
         $this->taskRepo = $taskRepo;
         $this->taskGroupRepo = $taskGroupRepo;
         $this->userTaskRepo = $userTaskRepo;
         $this->userRepo = $userRepo;
+        $this->activityLogRepo = $activityLogRepo;
     }
 
     public function store(CreateTaskRequest $request)
@@ -158,6 +163,19 @@ class TaskController extends Controller
     {
         return $this->success([
             $this->userTaskRepo->deleteById($id),
+        ]);
+    }
+
+    public function getLogs($id)
+    {
+        $activitylogs = $this->activityLogRepo->getLogs($id, 8);
+        return $this->success([
+            'listLogs' => $activitylogs,
+            'meta' => [
+                'total' => $activitylogs->total(),
+                'perPage' => $activitylogs->perPage(),
+                'currentPage' => $activitylogs->currentPage(),
+            ]
         ]);
     }
 }
