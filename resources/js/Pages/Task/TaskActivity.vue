@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { ref, defineEmits, unref, reactive, onBeforeMount } from 'vue';
+import { ref, defineEmits, unref, reactive, onBeforeMount, computed, provide } from 'vue';
 import { ClickOutside as vClickOutside } from 'element-plus'
 import { Clock, Avatar } from '@element-plus/icons-vue';
 import TimeAgo from 'javascript-time-ago';
@@ -25,6 +25,7 @@ const timeAgo = new TimeAgo('vi')
 
 function ShowHistory(){
     showHistory.value = true
+    getLogs()
 }
 
 function CloseHistory(){
@@ -57,6 +58,8 @@ function getLogs()
 onBeforeMount(async () => {
     getLogs();
 });
+
+provide('logsProvider', { getLogs })
 </script>
 
 <template>

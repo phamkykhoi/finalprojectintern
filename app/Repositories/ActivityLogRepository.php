@@ -13,6 +13,6 @@ class ActivityLogRepository extends BaseRepository
 
     public function getLogs(int $id = null)
     {
-        return $this->model->select('*')->whereJsonContains('properties->task_id', $id)->get();
+        return $this->model->select('*')->whereJsonContains('properties->task_id', $id)->orderBy('id', 'desc')->get();
     }
 }
