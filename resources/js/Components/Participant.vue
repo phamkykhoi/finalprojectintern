@@ -13,7 +13,7 @@ StarFilled,
 } from "@element-plus/icons-vue";
 import request from '../utils/request';
 import { ElMessage } from 'element-plus';
-import { ref, unref, onBeforeMount} from "vue";
+import { ref, unref, onBeforeMount, computed} from "vue";
 
 const props = defineProps({
     taskId: {
@@ -113,13 +113,15 @@ const loading = ref(false)
 const participants = ref([]);
 const followers = ref([]);
 const performers = ref([]);
-
+const originalFollowers = ref([])
 function getFollowers()
 {
     loading.value=true
-    request.get(`/api/list-followers-in-task`).then((res) => {
+    request.get(`/api/list-followers-in-task/${props.taskId}`).then((res) => {
             followers.value = res.data.result.listFollowers
+            originalFollowers.value = res.data.result.listFollowers
             loading.value=false
+            checkedFollowers(followers)
             countFollowers(followers)
         })
         .catch(err => {
@@ -135,9 +137,11 @@ function getFollowers()
 function getPerformers()
 {
     loading.value=true
-    request.get(`/api/list-performers-in-task`).then((res) => {
+    request.get(`/api/list-performers-in-task/${props.taskId}`).then((res) => {
             performers.value = res.data.result.listPerformers
             loading.value=false
+            checkedPerformers(performers)
+            countPerformers(performers)
         })
         .catch(err => {
             ElMessage({
@@ -158,34 +162,68 @@ function assignFollower(follower) {
     const members = {
     user_id: follower.id,
     task_id: props.taskId,
-    role_task: follower.role_follower ? 5 : null, //5 -> Người theo dõi
+    role_task: 5 //5 -> Người theo dõi
     }
-
-    request.put(`/assign-follower/${props.taskId} `, members).then((res)=>{
+    if(follower.role_follower) {
+        request.put(`/assign-follower/${props.taskId} `, members).then((res)=>{
+            ElMessage({
+                showClose: true,
+                message: 'Assign followers successfully',
+                type: 'success',
+            })
+            getFollowers()
+            getPerformers()
+            countFollowers(followers)
+        }).catch(err => {
+            ElMessage({
+                showClose: true,
+                message: err.response.data.message,
+                type: 'error',
+            })
+        })
+    }
+    else {
+        request.delete(`/delete-member-in-task/${follower.user_task_id}`).then((res)=>{
         ElMessage({
             showClose: true,
-            message: 'Assign followers successfully',
+            message: 'Delete follower successfully',
             type: 'success',
         })
         getFollowers()
+        getPerformers()
         countFollowers(followers)
-    }).catch(err => {
-        ElMessage({
-            showClose: true,
-            message: err.response.data.message,
-            type: 'error',
+        }).catch(err => {
+            ElMessage({
+                showClose: true,
+                message: err.response.data.message,
+                type: 'error',
             })
         })
+    }
 }
 
-const total = ref(0)
+const totalFollowers = ref(0)
 function countFollowers(followers)
 {
     let follower = followers.value.filter(function (follow)
         {
-            return follow.role_follower
+            if(follow.task_id == props.taskId) {
+                return follow.role_follower
+            }
         });
-        total.value = follower.length
+        totalFollowers.value = follower.length
+}
+
+const totalPerformers = ref(0)
+function countPerformers(performers)
+{
+    let performer = performers.value.filter(function (per)
+        {
+            if(per.task_id == props.taskId) {
+                return per.role_performer
+            }
+        });
+        totalPerformers.value = performer.length
 }
 
 function assignPerformer(performer)
@@ -193,28 +231,73 @@ function assignPerformer(performer)
     const members = {
         user_id: performer.id,
         task_id: props.taskId,
-        role_task: performer.role_performer ? 7 : null, // 
+        role_task: 7, // 7-người thực hiện
     }
-    request.put(`/assign-performer/${props.taskId} `, members).then((res)=>{
+    if(performer.role_performer) {
+        request.put(`/assign-performer/${props.taskId} `, members).then((res)=>{
         ElMessage({
             showClose: true,
             message: 'Assign performer successfully',
             type: 'success',
         })
         getFollowers()
-        countFollowers(followers)
-    }).catch(err => {
-        ElMessage({
-            showClose: true,
-            message: err.response.data.message,
-            type: 'error',
+        getPerformers()
+        countPerformers(performers)
+        }).catch(err => {
+            ElMessage({
+                showClose: true,
+                message: err.response.data.message,
+                type: 'error',
             })
         })
+    } 
+    else {
+        request.delete(`/delete-member-in-task/${performer.user_task_id}`).then((res)=>{
+        ElMessage({
+            showClose: true,
+            message: 'Delete performer successfully',
+            type: 'success',
+        })
+        getFollowers()
+        getPerformers()
+        countPerformers(performers)
+        }).catch(err => {
+            ElMessage({
+                showClose: true,
+                message: err.response.data.message,
+                type: 'error',
+            })
+        })
+    }
+    
+}
+
+function checkedPerformers(performers)
+{
+    performers.value.filter(function (per) {
+        if(per.task_id === props.taskId) {
+           return per.role_performer = true
+        }
+        else {
+            return per.role_performer = false
+        }
+    });
+}
+
+function checkedFollowers(followers) {
+    followers.value.filter(function (follow) {
+        if(follow.task_id === props.taskId) {
+           return follow.role_follower = true
+        }
+        else {
+            return follow.role_follower = false
+        }
+    });
 }
 
 </script>
 <template>
-    <div>Người thực hiện:</div>
+    <div>Người thực hiện ({{ totalPerformers }}):</div>
     <div class="people-handle" style="display: flex">
         <Performers :taskId="props.taskId" />
         <div class="people-icon">
@@ -274,8 +357,8 @@ function assignPerformer(performer)
                                     <p class="info-user-item">{{ performer.name }}</p>
                                 </el-col>
                                 <el-col :span="3">
-                                    <el-checkbox style="margin-right: 16px;" 
-                                    v-model="performer.role_performer" size="large" @change="assignPerformer(performer)"/>
+                                    <el-checkbox style="margin-right: 16px;"  v-model="performer.role_performer" 
+                                        size="large" @change="assignPerformer(performer)"/>
                                 </el-col>
                             </el-row>
                         </el-col>
@@ -347,7 +430,7 @@ function assignPerformer(performer)
         </el-popover>
     </div>
 
-    <div>Người theo dõi ({{ total }}):</div>
+    <div>Người theo dõi ({{ totalFollowers }}):</div>
     <div class="people-handle" style="display: flex">
         <FollowerList :taskId="props.taskId" />
         <el-icon

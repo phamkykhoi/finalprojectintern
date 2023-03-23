@@ -2,7 +2,7 @@
 
 import DepartenUserForm from '@/Pages/Departen/User.vue';
 import EditDepartmentForm from '@/Pages/Departen/Edit.vue';
-import SettingIcon from '@/Components/Icons/SettingIcon.vue';
+import { Setting, CirclePlus, Avatar} from '@element-plus/icons-vue';
 import Dropdown from '@/Components/Dropdown.vue';
 import { Link } from '@inertiajs/inertia-vue3';
 import ActivityForm from '@/Pages/Activity/Form.vue';
@@ -81,14 +81,26 @@ const closeFormDepartmentUser = (value) => {
                                         </span>
                                     </template>
                                     <template #content>
-                                        <a @click="createActivityForm(department)"
-                                            class="block w-full px-4 py-2 text-left text-sm leading-5 text-gray-700 hover:bg-gray-100 transition duration-150 ease-in-out"><i
-                                                class="bi bi-plus-lg"></i>Tạo hoạt động</a>
+                                        <div class="flex" style="align-items: center;">
+                                            <a @click="createActivityForm(department)"
+                                            class="block w-full px-4 py-2 text-left text-sm leading-5 text-gray-700 hover:bg-gray-100 transition duration-150 ease-in-out">
+                                                <el-icon class="icon-action"><CirclePlus /></el-icon>
+                                                <i class="bi bi-plus-lg"></i>Tạo hoạt 
+                                            </a>
+                                        </div>
                                         <div class="flex" style="align-items: center;">
                                             <a @click="createDepartmentUserForm(department)"
-                                            class="block w-full px-4 py-2 text-left text-sm leading-5 text-gray-700 hover:bg-gray-100 transition duration-150 ease-in-out"><i
-                                                class="bi bi-plus-lg"></i>Quản lý thành viên</a>
-                                                <SettingIcon @click="editDepartmentForm(department)" style="margin-right: 8px;"/>
+                                            class="block w-full px-4 py-2 text-left text-sm leading-5 text-gray-700 hover:bg-gray-100 transition duration-150 ease-in-out">
+                                                <el-icon class="icon-action"><Avatar /></el-icon>
+                                                <i class="bi bi-plus-lg"></i>Quản lý thành viên
+                                            </a>
+                                        </div>
+                                        <div class="flex" style="align-items: center;">
+                                            <a @click="editDepartmentForm(department)"
+                                            class="block w-full px-4 py-2 text-left text-sm leading-5 text-gray-700 hover:bg-gray-100 transition duration-150 ease-in-out">
+                                                <el-icon class="icon-action"><Setting /></el-icon>
+                                                <i class="bi bi-plus-lg"></i>Cài đặt
+                                            </a>
                                         </div>
                                     </template>
                                 </Dropdown>
@@ -129,5 +141,11 @@ const closeFormDepartmentUser = (value) => {
         padding-left: 54px;
         position: fixed;
         width:261px;
+    }
+
+    .icon-action {
+        font-size: 1.2rem;
+        vertical-align: middle;
+        margin-right: 0.3rem;
     }
 </style>

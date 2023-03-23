@@ -71,7 +71,7 @@ class DepartmentController extends Controller
     public function store(CreateDepartmentRequest $request)
     {
         $this->departmentRepo->save($request->all());
-        return redirect()->route('department.index');
+        return redirect()->route('department.index')->with('message', 'Create Department Successfully!');
     }
 
     /**
@@ -108,13 +108,9 @@ class DepartmentController extends Controller
      */
     public function update($id, UpdateDepartmentRequest $request)
     {
-        try {
-            $inputs = $request->all();
-            $this->departmentRepo->save($inputs, ['id' => $id]);
-            return $this->success();
-        } catch (\Exception $e) {
-            return $this->error($e->getMessage(), $e->getCode());
-        }
+        $inputs = $request->all();
+        $this->departmentRepo->save($inputs, ['id' => $id]);
+        return redirect()->route('department.index')->with('message', 'Edit Department Successfully!');
     }
 
     /**
@@ -126,7 +122,7 @@ class DepartmentController extends Controller
     public function destroy($id)
     {
         $this->departmentRepo->deleteById($id);
-        return redirect()->route('department.index');
+        return redirect()->route('department.index')->with('message', 'Delete Department Successfully!');
     }
 
     public function assignMember(AssignMemberRequest $request)
@@ -182,7 +178,6 @@ class DepartmentController extends Controller
     public function indexJson()
     {
         $user = auth()->user();
-
         return $this->success([
             'departments' => $this->departmentRepo->getDepartments(['activities'], $user->isRoot() ? null : $user->id),
         ]);

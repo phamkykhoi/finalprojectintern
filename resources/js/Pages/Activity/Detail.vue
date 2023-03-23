@@ -337,7 +337,7 @@ function closeTaskGroupName(index){
                                         <TaskGroupAction @open-dialog-add-task="openDialogAddTask(taskGroup)"
                                         @refreshTaskGroups="clickEditNameTaskGroup(index, taskGroup.name)"
                                         />
-                                        <TaskForm v-if="showFormTask" :task="state.task" :isShowModal="showFormTask" v-on:closeModal="closeFormTask" />
+                                        <TaskForm v-if="showFormTask" :getGroupsTask="getGroupsTask" :activityId="activityId" :task="state.task" :isShowModal="showFormTask" v-on:closeModal="closeFormTask" />
                                         <el-button @click="hidePopoverAction(index)" style="display: none;"/>
                                     </div>
                                 </el-col>
