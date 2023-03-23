@@ -168,8 +168,14 @@ class TaskController extends Controller
 
     public function getLogs($id)
     {
+        $activitylogs = $this->activityLogRepo->getLogs($id, 8);
         return $this->success([
-            'listLogs' => $this->activityLogRepo->getLogs($id),
+            'listLogs' => $activitylogs,
+            'meta' => [
+                'total' => $activitylogs->total(),
+                'perPage' => $activitylogs->perPage(),
+                'currentPage' => $activitylogs->currentPage(),
+            ]
         ]);
     }
 }

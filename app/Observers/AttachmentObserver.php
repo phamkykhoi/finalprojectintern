@@ -6,31 +6,32 @@ use App\Models\Attachment;
 
 class AttachmentObserver
 {
+    public static $currentUser = null;
+
+    public function __construct()
+    {
+        self::$currentUser = auth()->user();
+    }
+
     public function created(Attachment $attachment)
     {
-        $user = auth()->user(); 
-        activity()->by($user)
+        activity()->by(self::$currentUser)
             ->on($attachment)
             ->withProperties(['task_id' => $attachment->attachable_id])
-            ->log($user->name.' đính kèm file '.$attachment->title );
+            ->log(self::$currentUser->name.' đính kèm file '.$attachment->title );
     }
 
     public function updated(Attachment $attachment)
     {
-        $user = auth()->user(); 
-        activity()->by($user)
-            ->on($attachment)
-            ->withProperties(['task_id' => $attachment->attachable_id])
-            ->log($user->name.' đã cập nhật file '.$attachment->title );
+       //
     }
 
     public function deleted(Attachment $attachment)
     {
-        $user = auth()->user(); 
-        activity()->by($user)
+        activity()->by(self::$currentUser)
             ->on($attachment)
-            ->withProperties(['task_id' => $attachment->attachable_id])
-            ->log($user->name.' đã xóa file '.$attachment->title );
+            ->withProperties(['task_id' =>  intval($attachment->attachable_id)])
+            ->log(self::$currentUser->name.' đã xóa file '.$attachment->title );
     }
 
     public function restored(Attachment $attachment)

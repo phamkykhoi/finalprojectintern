@@ -6,31 +6,35 @@ use App\Models\Discussion;
 
 class DiscussionObserver
 {
+    public static $currentUser = null;
+
+    public function __construct()
+    {
+        self::$currentUser = auth()->user();
+    }
+
     public function created(Discussion $discussion)
     {
-        $user = auth()->user(); 
-        activity()->by($user)
+        activity()->by(self::$currentUser)
             ->on($discussion)
             ->withProperties(['task_id' => $discussion->task_id])
-            ->log($user->name.' đã bình luận');
+            ->log(self::$currentUser->name.' đã bình luận');
     }
 
     public function updated(Discussion $discussion)
     {
-        $user = auth()->user(); 
-        activity()->by($user)
+        activity()->by(self::$currentUser)
             ->on($discussion)
             ->withProperties(['task_id' => $discussion->task_id])
-            ->log($user->name.' đã sửa bình luận '.$discussion->getOriginal('description').' thành '.$discussion->description);
+            ->log(self::$currentUser->name.' đã sửa bình luận '.$discussion->getOriginal('description').' thành '.$discussion->description);
     }
 
     public function deleted(Discussion $discussion)
     {
-        $user = auth()->user(); 
-        activity()->by($user)
+        activity()->by(self::$currentUser)
             ->on($discussion)
             ->withProperties(['task_id' => $discussion->task_id])
-            ->log($user->name.' đã xóa bình luận '.$discussion->description);
+            ->log(self::$currentUser->name.' đã xóa bình luận '.$discussion->description);
     }
 
     public function restored(Discussion $discussion)

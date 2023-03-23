@@ -13,9 +13,10 @@ const props = defineProps({
 
 const logs = ref();
 
+const meta = ref();
+
 const loading = ref(false);
 
-const limitItem = ref(5);
 
 const showHistory = ref(false)
 
@@ -29,20 +30,16 @@ function ShowHistory(){
 }
 
 function CloseHistory(){
-    limitItem.value = 3;
     showHistory.value = false
 }
 
-function showMore(){
-    limitItem.value = limitItem.value + 2
-}
-
-function getLogs()
+function getLogs(nextPage)
 {
     loading.value=true
-    request.get(`/activity-log/${props.taskId}`)
+    request.get(`/activity-log/${props.taskId}`,{ page: nextPage })
         .then((res) => {
-            logs.value = res.data.result.listLogs
+            logs.value = res.data.result.listLogs.data
+            meta.value = res.data.result.meta
             loading.value=false
         })
         .catch(err => {
@@ -59,7 +56,9 @@ onBeforeMount(async () => {
     getLogs();
 });
 
-provide('logsProvider', { getLogs })
+const changePage = (page: number) => {
+    getLogs(page)
+}
 </script>
 
 <template>
@@ -83,7 +82,7 @@ provide('logsProvider', { getLogs })
         </el-icon>
         <div v-if="showHistory" style="width: 100%;" v-loading="loading"> 
             <template v-for="(log, index) in logs" :key="index" >
-                <div v-if="index < limitItem" class="flex" style="padding: 4px 0; align-items: center;">
+                <div class="flex" style="padding: 4px 0; align-items: center;">
                     <img class="comment-img" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcShN0nuLT7HIpIANuDi6wbMKpeuCgZsl2PtAA&usqp=CAU" />
                     <div style="display: flex; flex-direction: column; justify-content: space-between; line-height: 140%;">
                         <p> {{ log.description }} </p>
@@ -91,9 +90,14 @@ provide('logsProvider', { getLogs })
                     </div>
                 </div>
             </template>
-            <div style="text-align: center;">
-                <el-link v-if="limitItem < logs.length" @click="showMore">Xem thêm</el-link>
-            </div>
+            <el-pagination
+                @current-change="changePage"
+                v-model:current-page="meta.currentPage"
+                v-model:page-size="meta.perPage"
+                layout="prev, pager, next"
+                :total="meta.total"
+                v-if="logs.length"
+            />
         </div>
     </el-form-item>
 </template>

@@ -11,8 +11,11 @@ class ActivityLogRepository extends BaseRepository
         $this->model = $model;
     }
 
-    public function getLogs(int $id = null)
+    public function getLogs(int $id = null, $limit)
     {
-        return $this->model->select('*')->whereJsonContains('properties->task_id', $id)->orderBy('id', 'desc')->get();
+        return $this->model->select('*')
+            ->whereJsonContains('properties->task_id', $id)
+            ->orderBy('id', 'desc')
+            ->paginate($limit);
     }
 }

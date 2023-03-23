@@ -6,17 +6,23 @@ use App\Models\Task;
 
 class TaskObserver
 {
+    public static $currentUser = null;
+
+    public function __construct()
+    {
+        self::$currentUser = auth()->user();
+    }
+
     public function created(Task $task)
     {
-        $user = auth()->user(); 
-        $logMessage = $user->name;
+        $logMessage = self::$currentUser->name;
         if ($task->parent_id === null) {
             $logMessage .= ' đã tạo việc '.$task->name;
         } else {
             $logMessage .= ' đã tạo việc con '.$task->name;
         }
         
-        activity()->by($user)
+        activity()->by(self::$currentUser)
         ->on($task)
         ->withProperties(['task_id' => $task->parent_id])
         ->log($logMessage);
@@ -24,8 +30,7 @@ class TaskObserver
 
     public function updated(Task $task)
     {
-        $user = auth()->user(); 
-        $logMessage = $user->name;
+        $logMessage = self::$currentUser->name;
         $taskId = $task->parent_id ?? $task->id;
 
         $logMessage .= ($task->parent_id === null)
@@ -38,7 +43,7 @@ class TaskObserver
         . ($task->isDirty('description') ? ' cập nhật mô tả việc con '.$task->getOriginal('description').' thành '.$task->description : '')
         : '';
 
-        activity()->by($user)
+        activity()->by(self::$currentUser)
         ->on($task)
         ->withProperties(['task_id' => $taskId])
         ->log($logMessage);
@@ -46,8 +51,7 @@ class TaskObserver
 
     public function deleted(Task $task)
     {
-        $user = auth()->user(); 
-        $logMessage = $user->name;
+        $logMessage = self::$currentUser->name;
         $taskId = $task->parent_id ?? $task->id;
         if ($task->parent_id === null) {
             $logMessage .= ' đã xóa công việc '.$task->name;
@@ -55,7 +59,7 @@ class TaskObserver
             $logMessage .= ' đã xóa việc con '.$task->name;
         }
         
-        activity()->by($user)
+        activity()->by(self::$currentUser)
         ->on($task)
         ->withProperties(['task_id' => $taskId])
         ->log($logMessage);
