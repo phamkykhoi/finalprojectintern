@@ -84,7 +84,6 @@ class AttachmentController extends Controller
 
     public function updateAttachmentInfor(Request $request)
     {
-        dd($request);
         try {
             $this->attachmentRepo->updateAttachment( $request->get('task'), $request->get('listAttachments'));
             return $this->success();
