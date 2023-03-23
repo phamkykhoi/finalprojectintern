@@ -43,13 +43,16 @@ class TaskController extends Controller
             DB::transaction(function () use ($request, &$task) {
                 $inputs = $request->all();
                 $task = $this->taskRepo->save($inputs);
+                if($inputs['user_id']&&$inputs['role_id'])
+                {
                 $userTask = [
                     'user_id' => $inputs['user_id'],
                     'task_id' => $task['id'],
                     'role_task' => $inputs['role_id'],
                 ];
+                $this->userTaskRepo->save($userTask);   
+                }
                 $task['class'] = Task::class;
-                $this->userTaskRepo->save($userTask);
             });
             return $this->success(['task' => $task]);
 
@@ -88,20 +91,20 @@ class TaskController extends Controller
         }
     }
 
-    public function getFollowers($id) 
+    public function getFollowers($id)
     {
         return $this->success([
             'listFollowers' => $this->userRepo->getMembersTask($id),
         ]);
     }
 
-    public function getPerformers($id) 
+    public function getPerformers($id)
     {
         return $this->success([
             'listPerformers' => $this->userRepo->getMembersTask($id),
         ]);
     }
-    
+
     public function cloneTaskById($id)
     {
         try {
