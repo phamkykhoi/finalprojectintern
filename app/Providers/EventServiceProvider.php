@@ -8,6 +8,8 @@ use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Auth\Listeners\AssignAttachmentToTask;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Event;
+use App\Models\Task;
+use App\Observers\TaskObserver;
 
 class EventServiceProvider extends ServiceProvider
 {
@@ -33,6 +35,8 @@ class EventServiceProvider extends ServiceProvider
             UploadFileSuccess::class,
             [AssignAttachmentToTask::class, 'handle']
         );
+
+        Task::observe(TaskObserver::class);
     }
 
     /**
