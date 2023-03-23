@@ -92,7 +92,15 @@ const checkEndDate = (rule: any, value: any, callback: any) => {
 
 const checkRoleID = (rule: any, value: any, callback: any) => {
     if(taskForm.user_id && !value){
-        callback(new Error("You must choose role for the user"))
+        callback(new Error("You must select role for the user"))
+        return;
+    }
+    callback();
+};
+
+const checkUserID = (rule: any, value: any, callback: any) => {
+    if(taskForm.role_id && !value){
+        callback(new Error("You must select the user before choosing the role"))
         return;
     }
     callback();
@@ -101,6 +109,7 @@ const checkRoleID = (rule: any, value: any, callback: any) => {
 const rules = {
     name: [{ required: true, message: "name is required" }],
     role_id: [{ validator: checkRoleID, trigger: "blur" }],
+    user_id: [{ validator: checkUserID, trigger: "blur"}],
     start_date: [{ validator: checkStartDate, trigger: "blur" }],
     end_date: [{ validator: checkEndDate, trigger: "blur" }],
 };
@@ -214,8 +223,7 @@ onBeforeMount(async () => {
                                 </el-form-item>
                             </el-col>
                             <el-col :span="12">
-                                <transition>
-                                <el-form-item v-if="taskForm.user_id" prop="role_id">
+                                <el-form-item prop="role_id">
                                     <span style="font-size: 14px"
                                         >Quyền hạn</span
                                     >
@@ -231,7 +239,6 @@ onBeforeMount(async () => {
                                         />
                                     </el-select>
                                 </el-form-item>
-                            </transition>
                             </el-col>
                         </el-row>
 
@@ -319,13 +326,5 @@ onBeforeMount(async () => {
 }
 ::v-deep .el-form-item__content {
     margin-left: 0px !important;
-}
-.v-enter-active,
-.v-leave-active {
-  transition: opacity 0.5s;
-}
-.v-enter-from,
-.v-leave-to {
-  opacity: 0;
 }
 </style>
