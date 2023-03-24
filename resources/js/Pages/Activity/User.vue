@@ -242,9 +242,9 @@ const state = reactive({
                                     </span>
                                     <template #dropdown>
                                         <el-dropdown-menu>
-                                            <el-dropdown-item  @click="assignRole(member.id, 3)" v-if="member.role != 3">Chuyển thành thành viên</el-dropdown-item>
-                                            <el-dropdown-item  @click="assignRole(member.id, 2)" v-if="member.role != 2">Chuyển thành giám sát hoạt động</el-dropdown-item>
-                                            <el-dropdown-item  @click="assignRole(member.id, 1)" v-if="member.role != 1">Chuyển thành chủ hoạt động</el-dropdown-item>
+                                            <el-dropdown-item  @click="assignRole(member.id, 3)" v-if="member.role_activity != 3">Chuyển thành thành viên</el-dropdown-item>
+                                            <el-dropdown-item  @click="assignRole(member.id, 2)" v-if="member.role_activity != 2">Chuyển thành giám sát hoạt động</el-dropdown-item>
+                                            <el-dropdown-item  @click="assignRole(member.id, 1)" v-if="member.role_activity != 1">Chuyển thành chủ hoạt động</el-dropdown-item>
                                             <el-dropdown-item  @click="removeMember(member.id)">Xóa thành viên</el-dropdown-item>
                                         </el-dropdown-menu>
                                     </template>
