@@ -2,6 +2,7 @@
 
 import DepartenUserForm from '@/Pages/Departen/User.vue';
 import EditDepartmentForm from '@/Pages/Departen/Edit.vue';
+import EditActivityForm from '@/Pages/Activity/Edit.vue';
 import { Setting, CirclePlus, Avatar, More, Tools, Star, ChatSquare, Edit} from '@element-plus/icons-vue';
 import Dropdown from '@/Components/Dropdown.vue';
 import { Link } from '@inertiajs/inertia-vue3';
@@ -15,7 +16,8 @@ defineProps({
 
 const showFormActivity = ref(false);
 const state = reactive({
-    department: null
+    department: null,
+    activity: null,
 })
 
 const createActivityForm = (currentDepartment) => {
@@ -27,6 +29,18 @@ const closeFormActivity = (value) => {
     showFormActivity.value = value;
 }
 const showFormDepartment = ref(false);
+
+
+const showFormEditActivity = ref(false);
+
+const editActivityForm = (currentActivity) => {
+    showFormEditActivity.value = true;
+    state.activity = currentActivity
+}
+
+const closeFormEditActivity = (value) => {
+    showFormEditActivity.value = value;
+}
 
 const showFormEditDepartment = ref(false);
 
@@ -130,9 +144,9 @@ const closeFormDepartmentUser = (value) => {
                                             </a>
                                         </div>
                                         <div class="flex" style="align-items: center;">
-                                            <a @click="editDepartmentForm(department)"
-                                            class="block w-full px-4 py-2 text-left text-sm leading-5 text-gray-700 hover:bg-gray-100 transition duration-150 ease-in-out cursor-pointer">
-                                                <el-icon class="icon-action "><Edit/></el-icon>
+                                            <a @click="editActivityForm(activity)"
+                                            class="block w-full px-4 py-2 text-left text-sm leading-5 text-gray-700 hover:bg-gray-100 transition duration-150 ease-in-out">
+                                                <el-icon class="icon-action cursor-pointer"><Edit /></el-icon>
                                                 <i class="bi bi-plus-lg"></i>Chỉnh sửa
                                             </a>
                                         </div>
@@ -154,6 +168,8 @@ const closeFormDepartmentUser = (value) => {
             :isShowModal="showFormDepartmentUser" v-on:closeModal="closeFormDepartmentUser" />
         <EditDepartmentForm v-if="showFormEditDepartment" :department="state.department"
         :isShowModal="showFormEditDepartment" v-on:closeModal="closeFormEditDepartment" />
+        <EditActivityForm v-if="showFormEditActivity" :activity="state.activity"
+        :isShowModal="showFormEditActivity" v-on:closeModal="closeFormEditActivity" />
     </div>
 </template>
 
