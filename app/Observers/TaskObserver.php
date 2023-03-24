@@ -27,7 +27,7 @@ class TaskObserver
         ->withProperties(['task_id' => $task->parent_id])
         ->log($logMessage);
     }
-    
+
     public function updated(Task $task)
     {
         $logMessage = self::$currentUser->name;
@@ -36,7 +36,6 @@ class TaskObserver
         $logMessage .= $this->processTaskName($task);
         $logMessage .= $this->processTaskDescription($task);
         $logMessage .= $this->processTaskStatus($task);
-        $logMessage .= $this->processTaskUrgent($task);
         $logMessage .= $this->processTaskUrgent($task);
         $logMessage .= $this->processTaskImportant($task);
         $logMessage .= $this->processTaskLocked($task);
@@ -121,27 +120,21 @@ class TaskObserver
     private function processTaskUrgent($task)
     {
         $logMessage = '';
-
-        $logMessage .= ($task->isDirty('is_quickly')) ? ($task->is_quickly === true ? ' đã chọn việc cần hoàn thành gấp' : ' bỏ chọn việc cần hoàn thành gấp') : '';
-       
-       
-                
-       
-
+        $logMessage .= ($task->isDirty('is_quickly')) ? ($task->is_quickly ? ' đã chọn việc cần hoàn thành gấp' : ' bỏ chọn việc cần hoàn thành gấp') : '';
         return $logMessage;
     }
 
     private function processTaskImportant($task)
     {
         $logMessage = '';
-        $logMessage .= ($task->isDirty('is_important')) ? ($task->is_important === true ? ' đã chọn việc quan trọng ' : ' bỏ chọn việc quan trọng ') : '';
+        $logMessage .= ($task->isDirty('is_important')) ? ($task->is_important ? ' đã chọn việc quan trọng ' : ' bỏ chọn việc quan trọng ') : '';
         return $logMessage;
     }
 
     private function processTaskLocked($task)
     {
         $logMessage = '';
-        $logMessage .= ($task->isDirty('is_locked')) ? ($task->is_locked === true ? ' khóa công việc ' : ' mở khóa công việc  ') : '';
+        $logMessage .= ($task->isDirty('is_locked')) ? ($task->is_locked ? ' khóa công việc ' : ' mở khóa công việc  ') : '';
         return $logMessage;
     }
 
