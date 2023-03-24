@@ -42,6 +42,6 @@ class ValidateUniqueLeaderOfActivity implements Rule
      */
     public function message()
     {
-        return 'Activity này đã có chủ, không thể thêm!';
+        return 'Đã có chủ Activity, không thể thêm!!';
     }
 }
