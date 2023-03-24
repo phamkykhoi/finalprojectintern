@@ -28,7 +28,7 @@ class UserRepository extends BaseRepository
         if ($withRelation) {
             $query->with($withRelation);
         }
-        
+
         if ($role_task) {
             $query->where(function($query) use ($role_task) {
                 $query->where('role_task', $role_task)->orWhereNull('role_task');
@@ -50,6 +50,20 @@ class UserRepository extends BaseRepository
             ->where('user_departments.department_id', $departmentId)
             ->get();
     }
+
+    public function getByActivityId($activityId)
+    {
+        return $this->model->join('user_activities', 'user_activities.user_id', 'users.id')
+            ->select([
+                'users.id',
+                'users.name',
+                'users.email',
+                'user_activities.role_activity'
+            ])
+            ->where('user_activities.activity_id', $activityId)
+            ->get();
+    }
+
 
     public function getMembersTask($id = null) {
         return $this->model->with('attachment')->join('user_tasks', 'user_tasks.user_id', 'users.id')

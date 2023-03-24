@@ -1,6 +1,7 @@
 <script setup>
 
 import DepartenUserForm from '@/Pages/Departen/User.vue';
+import ActivityUserForm from '@/Pages/Activity/User.vue';
 import EditDepartmentForm from '@/Pages/Departen/Edit.vue';
 import EditActivityForm from '@/Pages/Activity/Edit.vue';
 import { Setting, CirclePlus, Avatar, More, Tools, Star, ChatSquare, Edit} from '@element-plus/icons-vue';
@@ -61,6 +62,16 @@ const createDepartmentUserForm = (currentDepartment) => {
 }
 const closeFormDepartmentUser = (value) => {
     showFormDepartmentUser.value = value;
+}
+
+const showFormActivityUser = ref(false);
+
+const createActivityUserForm = (currentActivity) => {
+    showFormActivityUser.value = true;
+    state.activity = currentActivity
+}
+const closeFormActivityUser = (value) => {
+    showFormActivityUser.value = value;
 }
 
 </script>
@@ -132,12 +143,12 @@ const closeFormDepartmentUser = (value) => {
                             <Dropdown class="activity-setting duration-100">
                                     <template #trigger>
                                         <span class="inline-flex rounded-md">
-                                            <el-icon class="float-right mt-3.5 cursor-pointer" ><Tools /></el-icon>
+                                            <el-icon class="float-right mt-3.5 cursor-pointer "><Tools /></el-icon>
                                         </span>
                                     </template>
                                     <template #content>
                                         <div class="flex" style="align-items: center;">
-                                            <a @click="createDepartmentUserForm(department)"
+                                            <a @click="createActivityUserForm(activity)"
                                             class="block w-full px-4 py-2 text-left text-sm leading-5 text-gray-700 hover:bg-gray-100 transition duration-150 ease-in-out cursor-pointer">
                                                 <el-icon class="icon-action"><Avatar /></el-icon>
                                                 <i class="bi bi-plus-lg"></i>Quản lý thành viên
@@ -145,8 +156,8 @@ const closeFormDepartmentUser = (value) => {
                                         </div>
                                         <div class="flex" style="align-items: center;">
                                             <a @click="editActivityForm(activity)"
-                                            class="block w-full px-4 py-2 text-left text-sm leading-5 text-gray-700 hover:bg-gray-100 transition duration-150 ease-in-out">
-                                                <el-icon class="icon-action cursor-pointer"><Edit /></el-icon>
+                                            class="block w-full px-4 py-2 text-left text-sm leading-5 text-gray-700 hover:bg-gray-100 transition duration-150 ease-in-out cursor-pointer">
+                                                <el-icon class="icon-action"><Edit /></el-icon>
                                                 <i class="bi bi-plus-lg"></i>Chỉnh sửa
                                             </a>
                                         </div>
@@ -164,6 +175,8 @@ const closeFormDepartmentUser = (value) => {
             :isShowModal="showFormActivity"
             v-on:closeModal="closeFormActivity" />
 
+        <ActivityUserForm v-if="showFormActivityUser" :activity="state.activity"
+            :isShowModal="showFormActivityUser" v-on:closeModal="closeFormActivityUser" />
         <DepartenUserForm v-if="showFormDepartmentUser" :department="state.department"
             :isShowModal="showFormDepartmentUser" v-on:closeModal="closeFormDepartmentUser" />
         <EditDepartmentForm v-if="showFormEditDepartment" :department="state.department"
