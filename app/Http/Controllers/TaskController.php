@@ -84,7 +84,7 @@ class TaskController extends Controller
     public function completedTask($id, CompletedTaskRequest $request)
     {
         $inputs = $request->only('status');
-        $inputs['completed_at'] = now();
+        $inputs['status'] == 3 ? $inputs['completed_at'] = now() : $inputs['completed_at'] = null;
         try {
             $this->taskRepo->save($inputs, ['id' => $id]);
             return $this->success();
