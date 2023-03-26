@@ -83,5 +83,6 @@ import { Link } from '@inertiajs/inertia-vue3';
     .bg-gri-300 {
         position:fixed;
         height:100%;
+        z-index: 999;
     }
 </style>
