@@ -1,8 +1,10 @@
 <script setup>
 
 import DepartenUserForm from '@/Pages/Departen/User.vue';
+import ActivityUserForm from '@/Pages/Activity/User.vue';
 import EditDepartmentForm from '@/Pages/Departen/Edit.vue';
-import { Setting, CirclePlus, Avatar} from '@element-plus/icons-vue';
+import EditActivityForm from '@/Pages/Activity/Edit.vue';
+import { Setting, CirclePlus, Avatar, More, Tools, Star, ChatSquare, Edit} from '@element-plus/icons-vue';
 import Dropdown from '@/Components/Dropdown.vue';
 import { Link } from '@inertiajs/inertia-vue3';
 import ActivityForm from '@/Pages/Activity/Form.vue';
@@ -15,7 +17,8 @@ defineProps({
 
 const showFormActivity = ref(false);
 const state = reactive({
-    department: null
+    department: null,
+    activity: null,
 })
 
 const createActivityForm = (currentDepartment) => {
@@ -27,6 +30,18 @@ const closeFormActivity = (value) => {
     showFormActivity.value = value;
 }
 const showFormDepartment = ref(false);
+
+
+const showFormEditActivity = ref(false);
+
+const editActivityForm = (currentActivity) => {
+    showFormEditActivity.value = true;
+    state.activity = currentActivity
+}
+
+const closeFormEditActivity = (value) => {
+    showFormEditActivity.value = value;
+}
 
 const showFormEditDepartment = ref(false);
 
@@ -47,6 +62,16 @@ const createDepartmentUserForm = (currentDepartment) => {
 }
 const closeFormDepartmentUser = (value) => {
     showFormDepartmentUser.value = value;
+}
+
+const showFormActivityUser = ref(false);
+
+const createActivityUserForm = (currentActivity) => {
+    showFormActivityUser.value = true;
+    state.activity = currentActivity
+}
+const closeFormActivityUser = (value) => {
+    showFormActivityUser.value = value;
 }
 
 </script>
@@ -70,7 +95,7 @@ const closeFormDepartmentUser = (value) => {
                                 <a href="#" data-bs-toggle="dropdown"><i class="bi bi-gear"></i></a>
                             </span>
                             <span class="ml-2">{{ department.name }}</span>
-                            <span class="ml-auto" aria-hidden="true">
+                           <span class="ml-auto" aria-hidden="true">
                                 <Dropdown align="right">
                                     <template #trigger>
                                         <span class="inline-flex rounded-md">
@@ -84,7 +109,7 @@ const closeFormDepartmentUser = (value) => {
                                             <a @click="createActivityForm(department)"
                                             class="block w-full px-4 py-2 text-left text-sm leading-5 text-gray-700 hover:bg-gray-100 transition duration-150 ease-in-out">
                                                 <el-icon class="icon-action"><CirclePlus /></el-icon>
-                                                <i class="bi bi-plus-lg"></i>Tạo hoạt 
+                                                <i class="bi bi-plus-lg"></i>Tạo hoạt động
                                             </a>
                                         </div>
                                         <div class="flex" style="align-items: center;">
@@ -107,16 +132,38 @@ const closeFormDepartmentUser = (value) => {
                         </a>
 
                         <div :key="index" v-for="(activity, index) in department.activities" role="acitivities"
-                            x-show="open" class="space-y-2 px-7" aria-label="acitivities">
+                            x-show="open" class="space-y-2 pl-6 " aria-label="acitivities">
+                            <div class="flex activity-link">
                             <Link :href="route('activity.show', {activity: activity.id})"
                                 v-bind:class="{'bg-gray-200': activityId == activity.id}"
-                                class="block p-1 transition-colors duration-200 rounded-md dark:text-light dark:hover:text-light hover:text-gray-700">
+                                class="block py-2 pl-3 pr-4 my-1 transition-colors duration-200 rounded-md dark:text-light dark:hover:text-light hover:text-gray-700 w-[120%]">
                                 <!-- {{ activity.name }}  -->
-                                <span class="ml-2">{{ activity.name }}</span>
-                                <el-icon class="ml-2"><Tools /></el-icon>
-                                <el-icon class="ml-2"><Star /></el-icon>
-                                <el-icon class="ml-2"><ChatSquare /></el-icon>
+                                    <span class=" truncate w-[90%] block" style="font-size:14px">{{ activity.name }}</span>
                             </Link>
+                            <Dropdown class="activity-setting duration-100">
+                                    <template #trigger>
+                                        <span class="inline-flex rounded-md">
+                                            <el-icon class="float-right mt-3.5 cursor-pointer "><Tools /></el-icon>
+                                        </span>
+                                    </template>
+                                    <template #content>
+                                        <div class="flex" style="align-items: center;">
+                                            <a @click="createActivityUserForm(activity)"
+                                            class="block w-full px-4 py-2 text-left text-sm leading-5 text-gray-700 hover:bg-gray-100 transition duration-150 ease-in-out cursor-pointer">
+                                                <el-icon class="icon-action"><Avatar /></el-icon>
+                                                <i class="bi bi-plus-lg"></i>Quản lý thành viên
+                                            </a>
+                                        </div>
+                                        <div class="flex" style="align-items: center;">
+                                            <a @click="editActivityForm(activity)"
+                                            class="block w-full px-4 py-2 text-left text-sm leading-5 text-gray-700 hover:bg-gray-100 transition duration-150 ease-in-out cursor-pointer">
+                                                <el-icon class="icon-action"><Edit /></el-icon>
+                                                <i class="bi bi-plus-lg"></i>Chỉnh sửa
+                                            </a>
+                                        </div>
+                                    </template>
+                                </Dropdown>
+                        </div>
                         </div>
                     </div>
                 </nav>
@@ -128,10 +175,14 @@ const closeFormDepartmentUser = (value) => {
             :isShowModal="showFormActivity"
             v-on:closeModal="closeFormActivity" />
 
+        <ActivityUserForm v-if="showFormActivityUser" :activity="state.activity"
+            :isShowModal="showFormActivityUser" v-on:closeModal="closeFormActivityUser" />
         <DepartenUserForm v-if="showFormDepartmentUser" :department="state.department"
             :isShowModal="showFormDepartmentUser" v-on:closeModal="closeFormDepartmentUser" />
         <EditDepartmentForm v-if="showFormEditDepartment" :department="state.department"
         :isShowModal="showFormEditDepartment" v-on:closeModal="closeFormEditDepartment" />
+        <EditActivityForm v-if="showFormEditActivity" :activity="state.activity"
+        :isShowModal="showFormEditActivity" v-on:closeModal="closeFormEditActivity" />
     </div>
 </template>
 
@@ -146,5 +197,17 @@ const closeFormDepartmentUser = (value) => {
         font-size: 1.2rem;
         vertical-align: middle;
         margin-right: 0.3rem;
+    }
+    .activity-link:hover .activity-setting {
+        opacity: 1;
+    }
+    .activity-setting{
+        opacity: 0;
+        transition: opacity 0.1s ease-in-out;
+        position: absolute;
+        right: 15px;
+    }
+    .activity-name{
+        width:200px;
     }
 </style>

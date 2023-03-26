@@ -42,7 +42,7 @@ Route::middleware(['auth', 'verified'])->group(function() {
     Route::resource('subtask', SubTaskController::class);
     Route::get('api/subtask/{id}', [SubTaskController::class, 'getSubTask']);
     Route::get('user/list', [UserController::class, 'indexJson']);
-    Route::get('api/list-followers-in-task/{id}', [UserController::class, 'listFollowersInTask']); 
+    Route::get('api/list-followers-in-task/{id}', [UserController::class, 'listFollowersInTask']);
     Route::get('api/list-performers-in-task/{id}', [UserController::class, 'listPerformersInTask']);
     Route::resource('user', UserController::class);
     Route::resource('department', DepartmentController::class);
@@ -51,6 +51,9 @@ Route::middleware(['auth', 'verified'])->group(function() {
     Route::resource('taskgroup', TaskGroupController::class);
     Route::get('department/{departmentId}/members', [DepartmentController::class, 'getMembers'])->name('department.members');
     Route::delete('department/{departmentId}/remove/member/{userId}', [DepartmentController::class, 'removeMember'])->name('department.remove.member');
+    Route::post('activity/assign-member', [ActivityController::class, 'assignMember'])->name('activity.assign.member');
+    Route::get('activity/{activityId}/members', [ActivityController::class, 'getMembers'])->name('activity.members');
+    Route::delete('activity/{activityId}/remove/member/{userId}', [ActivityController::class, 'removeMember'])->name('activity.remove.member');
     Route::get('taskgroup/copy/{id}', [TaskGroupController::class,'copy']);
     Route::get('taskgroup/list/{id}', [TaskGroupController::class,'getTaskGroupList']);
     Route::post('taskgroup/move', [TaskGroupController::class,'move']);
