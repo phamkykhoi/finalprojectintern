@@ -77,7 +77,7 @@ const closeFormActivityUser = (value) => {
 </script>
 
 <template>
-    <div style="z-index: 999999;">
+    <div>
         <aside class="flex-shrink-0 hidden w-64 bg-white border-r dark:border-primary-darker dark:bg-darker md:block">
             <div class="flex flex-col h-full flex-hull">
                 <div class="h-16 border-b border-gray-100 hidden space-x-8 sm:flex">
@@ -86,7 +86,7 @@ const closeFormActivityUser = (value) => {
                         &nbsp; Công việc của Tôi</h3>
                 </div>
 
-                <nav aria-label="Main" class="flex-1 px-2 py-4 space-y-2 overflow-y-hidden hover:overflow-y-auto" style="background-color:rgb(160, 160, 160);">
+                <nav aria-label="Main" class="flex-1 px-2 py-4 space-y-2 overflow-y-hidden hover:overflow-y-auto" style="background-color:rgb(217, 217, 217);">
                     <div :key="index" v-for="(department, index) in departments">
                         <a href="#"
                             class="font-bold flex items-center transition-colors rounded-md dark:text-light hover:bg-primary-100 dark:hover:bg-primary"
@@ -100,8 +100,8 @@ const closeFormActivityUser = (value) => {
                                     <template #trigger>
                                         <span class="inline-flex rounded-md">
                                             <button type="button"
-                                                class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150; style=background:rgb(160, 160, 160);">
-                                                <SettingIcon />
+                                                class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md hover:text-gray-700 focus:outline-none transition ease-in-out duration-150;">
+                                                <el-icon class="icon-action"><Setting /></el-icon>
                                             </button>
                                         </span>
                                     </template>
@@ -136,7 +136,7 @@ const closeFormActivityUser = (value) => {
                             x-show="open" class="space-y-2 pl-6 " aria-label="acitivities">
                             <div class="flex activity-link">
                             <Link :href="route('activity.show', {activity: activity.id})"
-                                v-bind:class="{'bg-gray-200': activityId == activity.id}"
+                                v-bind:class="{'bg-gray-50': activityId == activity.id}"
                                 class="block py-2 pl-3 pr-4 my-1 transition-colors duration-200 rounded-md dark:text-light dark:hover:text-light hover:text-gray-700 w-[120%]">
                                 <!-- {{ activity.name }}  -->
                                     <span class=" truncate w-[90%] block" style="font-size:14px">{{ activity.name }}</span>
