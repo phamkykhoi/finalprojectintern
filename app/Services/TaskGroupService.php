@@ -24,40 +24,32 @@ class TaskGroupService
 
     public function getTaskDoing($taskGroupId)
     {
+        $now = Carbon::now();
         return DB::table('tasks')
-        ->where(function($query) use ($taskGroupId){
-            $query->where('start_date', '<=', Carbon::now())
-            ->whereNotNull('start_date')
-            ->whereNull('end_date')
-            ->whereNull('completed_at')
-            ->whereNull('parent_id')
-            ->where('task_group_id', $taskGroupId);
-        })
-        ->orWhere(function($query) use ($taskGroupId){
-            $query->where('end_date', '>=', Carbon::now())
-            ->whereNotNull('start_date')
-            ->whereNotNull('end_date')
-            ->whereNull('completed_at')
-            ->whereNull('parent_id')
-            ->where('task_group_id', $taskGroupId);
+        ->where(function ($query) use ($now, $taskGroupId) {
+            $query->where('task_group_id', $taskGroupId)
+                ->where(function ($query) use ($now) {
+                    $query->whereNull('start_date')
+                    ->orWhereDate('start_date', '<=', Carbon::now()->toDateString());
+                })
+                ->where(function ($query) use ($now) {
+                    $query->whereNull('end_date')
+                    ->orWhereDate('end_date', '>=', Carbon::now()->toDateString());
+                })
+                ->whereNull('completed_at')
+                ->whereNull('parent_id');
         })
         ->count();
     }
 
     public function getTaskNotSchedule($taskGroupId)
     {
-        return  DB::table('tasks')
-        ->where(function($query) use ($taskGroupId){
-            $query->where('end_date', '<', Carbon::now())
-                ->where('task_group_id', $taskGroupId)
-                ->whereNull('parent_id')
-                ->whereNull('completed_at');
-        })
-        ->orWhere(function($query) use ($taskGroupId){
-            $query->where('end_date', '<', 'completed_at')
-                ->where('task_group_id', $taskGroupId)
-                ->whereNull('parent_id')
-                ->whereNotNull('completed_at');
+        return DB::table('tasks')
+        ->where('task_group_id', $taskGroupId)
+        ->whereNull('parent_id')
+        ->where(function ($query) {
+            $query->whereDate('end_date', '<', Carbon::now()->toDateString())
+            ->orWhereDate('end_date', '<', DB::raw('DATE(completed_at)'));
         })
         ->count();
     }
