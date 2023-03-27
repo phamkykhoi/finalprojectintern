@@ -322,7 +322,7 @@ function closeTaskGroupName(index){
             <template #departen>
                 <DepartenList :departments="departments" :activityId="activityId" />
             </template>
-            <section class="lists-container">
+            <section class="lists-container" style = "margin-top: 62px;">
                  <div :key="index" v-for="(taskGroup, index) in taskGroups">
                     <el-card class="box-card">
                         <template #header>
