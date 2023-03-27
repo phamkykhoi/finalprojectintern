@@ -10,9 +10,8 @@ class TaskGroupService
 {  
      public function getAuthor($taskGroupId)
     {
-        return DB::table('task_groups')->join('users', 'task_groups.created_by', '=', 'users.id')
-        ->where('task_groups.id', $taskGroupId)
-        ->value('users.name');
+        return DB::table('task_groups')->where('task_groups.id', $taskGroupId)
+        ->value('task_groups.created_by');
     }
 
     public function getTotalTask($taskGroupId)
