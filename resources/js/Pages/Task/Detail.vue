@@ -390,7 +390,7 @@ const rules = {
                                         v-model="taskForm.start_date"
                                         type="date"
                                         placeholder="Ngày bắt đầu"
-                                        format="YYYY/MM/DD 00:00:00"
+                                        format="YYYY/MM/DD"
                                         clearable
                                         value-format="YYYY-MM-DD 00:00:00"
                                         style="
@@ -406,7 +406,7 @@ const rules = {
                                         v-model="taskForm.end_date"
                                         type="date"
                                         placeholder="Ngày kết thúc"
-                                        format="YYYY/MM/DD 00:00:00"
+                                        format="YYYY/MM/DD"
                                         clearable
                                         value-format="YYYY-MM-DD 00:00:00"
                                         style="
