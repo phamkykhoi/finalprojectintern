@@ -363,7 +363,7 @@ const rules = {
                             <el-form-item label="Mô tả:" style="display: block; margin-bottom: 0; margin-left: 6px; ">
                             </el-form-item>
                         </div>
-                        <span class="ml-31" v-if="!showInputDescription" @click="ShowInputDes">{{ taskForm.description }}</span>
+                        <span class="ml-31" v-if="!showInputDescription" @click="ShowInputDes" v-html="taskForm.description"></span>
                         <div v-if="showInputDescription" style="margin: 16px 0;">
                             <QuillInput :modelValue="taskForm.description" @input-update="handleDescriptionInputUpdate" placeholder="Nhập mô tả công việc"></QuillInput>
                             <span class="description-btn">
