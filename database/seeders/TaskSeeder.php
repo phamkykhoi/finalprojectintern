@@ -16,15 +16,18 @@ class TaskSeeder extends Seeder
      */
     public function run()
     {
-        foreach (TaskGroup::all() as $taskGroup) {
-            for ($i = 1; $i <= 10; $i++) {
-                Task::create([
-                    'name' => fake()->name,
-                    'description' => fake()->text(200),
-                    'task_group_id' => $taskGroup->id,
-                    'start_date' => now(),
-                ]);
+        Task::withoutEvents(function () {
+            foreach (TaskGroup::all() as $taskGroup) {
+                for ($i = 1; $i <= 10; $i++) {
+                    Task::create([
+                        'name' => fake()->name,
+                        'description' => fake()->text(200),
+                        'task_group_id' => $taskGroup->id,
+                        'start_date' => now(),
+                    ]);
+                }
             }
-        }
+        });
+        Task::observe(\App\Observers\TaskObserver::class);
     }
 }
