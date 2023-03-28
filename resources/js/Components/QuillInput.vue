@@ -49,7 +49,7 @@ export default {
         update: function update() {
             this.$emit(
                 "input-update",
-                this.editor.getText() ? this.editor.root.innerText : ""
+                this.editor.getText() ? this.editor.root.innerHTML : ""
             );
         },
     },
