@@ -208,6 +208,9 @@ const closeFormActivityUser = (value) => {
         position: absolute;
         right: 15px;
     }
+    .activity-link{
+        position: relative;
+    }
     .activity-name{
         width:200px;
     }
