@@ -367,13 +367,13 @@ function closeTaskGroupName(index){
 
                     <el-popover
                         :ref="ref => popoverRef[index] = ref"
-                        title="taskGroup1"
+                        :title="taskGroup.name"
                         virtual-triggering
                         persistent
                         width="300px"
                     >
                         <hr>
-                        <TaskGroupInfo  />
+                        <TaskGroupInfo :task_group_id="taskGroup.id" :task_group_created_by="taskGroup.created_by"/>
                     </el-popover>
                     <el-popover
                         :ref="ref => popoverRef1[index] = ref"
