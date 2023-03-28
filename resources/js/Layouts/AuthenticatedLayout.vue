@@ -23,16 +23,16 @@ const showingNavigationDropdown = ref(false);
                             <!-- Navigation Links -->
                             <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex" style="margin-left:70px; position:fixed; margin-top:15px;">
                                 <!-- :active="route().current('dashboard')" -->
-                                <NavLink :href="route('dashboard')">
+                                <NavLink :href="route('dashboard')" style = "color: white" >
                                     Lịch công tác
                                 </NavLink>
-                                <NavLink :href="route('dashboard')">
+                                <NavLink :href="route('dashboard')" style = "color: white">
                                     Nhiệm vụ
                                 </NavLink>
-                                <NavLink :href="route('dashboard')">
+                                <NavLink :href="route('dashboard')" style = "color: white">
                                     Tập huấn
                                 </NavLink>
-                                <NavLink :href="route('dashboard')">
+                                <NavLink :href="route('dashboard')" style = "color: white">
                                     Quản lý công việc
                                 </NavLink>
                             </div>
@@ -131,3 +131,13 @@ const showingNavigationDropdown = ref(false);
         </div>
     </div>
 </template>
+
+<style>
+    .px-4 {
+            background: #24292f;
+            position: fixed;
+            width: 100%;
+            z-index: 999;
+            margin-left:3px;
+    }
+</style>
