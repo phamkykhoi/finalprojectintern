@@ -17,7 +17,7 @@ defineProps({
             <DepartenList :departments="departments" />
         </template>
         
-        <div class="py-12">
+        <div class="py-16 ml-2">
             <div class="grid grid-cols-3 divide-x">
                 <h3>Dashboard</h3>
             </div>

@@ -14,10 +14,10 @@ const showingNavigationDropdown = ref(false);
     <div class='flex'>
         <Sidebar />
         <slot name="departen" />
-        <div class="min-h-screen bg-gray-100 w-full">
+        <div class="min-h-screen bg-gray-100 w-full" style="position: relative;">
             <nav class="bg-white border-b border-gray-100">
                 <!-- Primary Navigation Menu -->
-                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class=" mx-auto px-4 sm:px-6 lg:px-8 navigation-menu">
                     <div class="flex justify-between h-16">
                         <div class="flex">
                             <!-- Navigation Links -->
@@ -132,12 +132,14 @@ const showingNavigationDropdown = ref(false);
     </div>
 </template>
 
-<style>
-    .px-4 {
-            background: #24292f;
-            position: fixed;
-            width: 100%;
-            z-index: 999;
-            margin-left:3px;
+<style scoped>
+
+    .navigation-menu{
+        background: #24292f;
+        position: fixed;
+        width: 100%;
+        z-index: 999;
+        margin-left:5px;
+        max-width: 86.5%;
     }
 </style>

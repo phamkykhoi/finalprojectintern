@@ -25,6 +25,7 @@ onUnmounted(() => document.removeEventListener('keydown', closeOnEscape));
 const widthClass = computed(() => {
     return {
         48: 'w-48',
+        46: 'w-46',
     }[props.width.toString()];
 });
 
@@ -72,3 +73,8 @@ const open = ref(false);
         </transition>
     </div>
 </template>
+<style scoped>
+.w-46{
+    width: 11rem;
+}
+</style>

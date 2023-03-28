@@ -7,7 +7,7 @@ import { Link } from '@inertiajs/inertia-vue3';
 <template>
     <!-- Component Sidebar -->
     <aside class='bg-gray-200 bg-gri-300' style="width: 55px;">
-            <div class="flex flex-col items-center w-16  overflow-hidden text-gray-700 ">
+            <div class="flex flex-col items-center w-16  overflow-hidden text-gray-700">
                 <div class="flex flex-col items-center">
                     <a class="flex items-center justify-center w-12 h-12 mt-2 rounded hover:bg-gray-300" href="#">
                         <svg class="w-6 h-6 stroke-current" xmlns="http://www.w3.org/2000/svg" fill="none"
