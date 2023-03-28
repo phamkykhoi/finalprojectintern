@@ -322,7 +322,7 @@ function closeTaskGroupName(index){
             <template #departen>
                 <DepartenList :departments="departments" :activityId="activityId" />
             </template>
-            <section class="lists-container">
+            <section class="lists-container" style = "margin-top: 62px;">
                  <div :key="index" v-for="(taskGroup, index) in taskGroups">
                     <el-card class="box-card">
                         <template #header>
@@ -367,13 +367,13 @@ function closeTaskGroupName(index){
 
                     <el-popover
                         :ref="ref => popoverRef[index] = ref"
-                        title="taskGroup1"
+                        :title="taskGroup.name"
                         virtual-triggering
                         persistent
                         width="300px"
                     >
                         <hr>
-                        <TaskGroupInfo  />
+                        <TaskGroupInfo :task_group_id="taskGroup.id" :task_group_created_by="taskGroup.created_by"/>
                     </el-popover>
                     <el-popover
                         :ref="ref => popoverRef1[index] = ref"

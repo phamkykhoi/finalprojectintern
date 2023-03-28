@@ -21,6 +21,11 @@ return new class extends Migration
             $table->tinyInteger('type');
             $table->timestamps();
         });
+
+        Schema::table('task_groups', function (Blueprint $table) {
+            $table->string('updated_by')->nullable();
+            $table->string('created_by')->nullable();
+        });
     }
 
     /**

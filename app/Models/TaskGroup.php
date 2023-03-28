@@ -14,6 +14,8 @@ class TaskGroup extends Model
         'description',
         'type',
         'activity_id',
+        'created_by',
+        'updated_by'
     ];
 
     public function tasks()
