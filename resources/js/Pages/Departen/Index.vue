@@ -79,16 +79,17 @@ const closeFormActivityUser = (value) => {
 <template>
     <div>
         <aside class="flex-shrink-0 hidden w-64 bg-white border-r dark:border-primary-darker dark:bg-darker md:block">
-            <div class="flex flex-col h-full flex-hull">
+            <div class="flex flex-col h-full flex-hull" style="z-index: 2;">
                 <div class="h-16 border-b border-gray-100 hidden space-x-8 sm:flex">
                     <h3
-                        class='text-lg font-bold pl-2 inline-flex items-center w-full border-indigo-400 font-medium leading-5 text-gray-900 transition duration-150 ease-in-out' style="position:fixed; margin-top:-13px; height: 76px;">
+                        class='text-lg font-bold pl-2 inline-flex items-center w-full border-indigo-400 font-medium leading-5 text-gray-900 transition duration-150 ease-in-out' style="position:fixed; margin-top:-13px; height: 76px; background-color: white;">
                         &nbsp; Công việc của Tôi</h3>
                 </div>
 
-                <nav aria-label="Main" class="flex-1 px-2 py-4 space-y-2 overflow-y-hidden hover:overflow-y-auto" style="background-color:rgb(217, 217, 217);">
+                <nav aria-label="Main" class="flex-1 px-2 py-4 space-y-2 overflow-y-hidden overflow-x-hidden hover:overflow-y-auto" style="background-color:rgb(217, 217, 217);">
                     <div :key="index" v-for="(department, index) in departments">
                         <a href="#"
+                            style="width: 190px;"
                             class="font-bold flex items-center transition-colors rounded-md dark:text-light hover:bg-primary-100 dark:hover:bg-primary"
                             role="button" aria-haspopup="true">
                             <span aria-hidden="true">
@@ -133,15 +134,17 @@ const closeFormActivityUser = (value) => {
                         </a>
 
                         <div :key="index" v-for="(activity, index) in department.activities" role="acitivities"
-                            x-show="open" class="space-y-2 pl-6 " aria-label="acitivities">
+                            style="width: 180px;"
+                            x-show="open" class="space-y-2 pl-2" aria-label="acitivities">
                             <div class="flex activity-link">
                             <Link :href="route('activity.show', {activity: activity.id})"
                                 v-bind:class="{'bg-gray-50': activityId == activity.id}"
+                                style="border-bottom: 1px solid #ccc;"
                                 class="block py-2 pl-3 pr-4 my-1 transition-colors duration-200 rounded-md dark:text-light dark:hover:text-light hover:text-gray-700 w-[120%]">
                                 <!-- {{ activity.name }}  -->
                                     <span class=" truncate w-[90%] block" style="font-size:14px">{{ activity.name }}</span>
                             </Link>
-                            <Dropdown class="activity-setting duration-100">
+                            <Dropdown class="activity-setting duration-100" :width="46">
                                     <template #trigger>
                                         <span class="inline-flex rounded-md">
                                             <el-icon class="float-right mt-3.5 cursor-pointer "><Tools /></el-icon>
@@ -163,7 +166,7 @@ const closeFormActivityUser = (value) => {
                                             </a>
                                         </div>
                                     </template>
-                                </Dropdown>
+                            </Dropdown>
                         </div>
                         </div>
                     </div>
@@ -206,7 +209,7 @@ const closeFormActivityUser = (value) => {
         opacity: 0;
         transition: opacity 0.1s ease-in-out;
         position: absolute;
-        right: 15px;
+        right: 10px;
     }
     .activity-link{
         position: relative;
