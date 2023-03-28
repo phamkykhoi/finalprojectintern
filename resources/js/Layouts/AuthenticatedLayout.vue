@@ -138,7 +138,7 @@ const showingNavigationDropdown = ref(false);
         background: #24292f;
         position: fixed;
         width: 100%;
-        z-index: 999;
+        z-index: 100;
         margin-left:5px;
         max-width: 86.5%;
     }
