@@ -136,10 +136,8 @@ const showingNavigationDropdown = ref(false);
 
     .navigation-menu{
         background: #24292f;
-        /* position: fixed; */
         z-index: 10;
         margin-left:5px;
         width: 100%;
-        flex-grow: 0;
     }
 </style>
