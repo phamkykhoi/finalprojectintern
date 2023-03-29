@@ -78,11 +78,11 @@ const closeFormActivityUser = (value) => {
 
 <template>
     <div>
-        <aside class="flex-shrink-0 hidden w-64 bg-white border-r dark:border-primary-darker dark:bg-darker md:block">
+        <aside class="flex hidden w-64 bg-white border-r dark:border-primary-darker dark:bg-darker sm:flex">
             <div class="flex flex-col h-full flex-hull" style="z-index: 2;">
                 <div class="h-16 border-b border-gray-100 hidden space-x-8 sm:flex">
                     <h3
-                        class='text-lg font-bold pl-2 inline-flex items-center w-full border-indigo-400 font-medium leading-5 text-gray-900 transition duration-150 ease-in-out' style="position:fixed; margin-top:-13px; height: 76px; background-color: white;">
+                        class='text-lg font-bold pl-2 inline-flex items-center border-indigo-400 font-medium leading-5 text-gray-900 transition duration-150 ease-in-out' style="position: fixed; margin-top:-13px; height: 76px; background-color: white;">
                         &nbsp; Công việc của Tôi</h3>
                 </div>
 
