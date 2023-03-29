@@ -11,17 +11,17 @@ const showingNavigationDropdown = ref(false);
 </script>
 
 <template>
-    <div class='flex'>
+    <div class='flex' style="position: relative;">
         <Sidebar />
         <slot name="departen" />
-        <div class="min-h-screen bg-gray-100 w-full" style="position: relative;">
-            <nav class="bg-white border-b border-gray-100">
+        <div class="min-h-screen bg-gray-100 w-full">
+            <nav class="bg-white border-b border-gray-100" style="position: fixed; width: -webkit-fill-available; z-index: 10;">
                 <!-- Primary Navigation Menu -->
-                <div class=" mx-auto px-4 sm:px-6 lg:px-8 navigation-menu">
+                <div class="mx-auto px-4 sm:px-6 lg:px-8 navigation-menu">
                     <div class="flex justify-between h-16">
                         <div class="flex">
                             <!-- Navigation Links -->
-                            <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex" style="margin-left:70px; position:fixed; margin-top:15px;">
+                            <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex" style="margin-left:70px;">
                                 <!-- :active="route().current('dashboard')" -->
                                 <NavLink :href="route('dashboard')" style = "color: white" >
                                     Lịch công tác
@@ -125,7 +125,7 @@ const showingNavigationDropdown = ref(false);
             </header>
 
             <!-- Page Content -->
-            <main class="bg-white">
+            <main class="bg-white" style="margin-top: 55px;">
                 <slot />
             </main>
         </div>
@@ -136,10 +136,8 @@ const showingNavigationDropdown = ref(false);
 
     .navigation-menu{
         background: #24292f;
-        position: fixed;
-        width: 100%;
-        z-index: 100;
+        z-index: 10;
         margin-left:5px;
-        max-width: 86.5%;
+        width: 100%;
     }
 </style>
