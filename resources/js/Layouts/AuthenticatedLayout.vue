@@ -11,11 +11,11 @@ const showingNavigationDropdown = ref(false);
 </script>
 
 <template>
-    <div class='flex'>
+    <div class='flex' style="position: relative;">
         <Sidebar />
         <slot name="departen" />
         <div class="min-h-screen bg-gray-100 w-full">
-            <nav class="bg-white border-b border-gray-100">
+            <nav class="bg-white border-b border-gray-100" style="position: fixed; width: -webkit-fill-available; z-index: 10;">
                 <!-- Primary Navigation Menu -->
                 <div class="mx-auto px-4 sm:px-6 lg:px-8 navigation-menu">
                     <div class="flex justify-between h-16">
@@ -125,7 +125,7 @@ const showingNavigationDropdown = ref(false);
             </header>
 
             <!-- Page Content -->
-            <main class="bg-white">
+            <main class="bg-white" style="margin-top: 55px;">
                 <slot />
             </main>
         </div>
