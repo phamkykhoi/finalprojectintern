@@ -11,7 +11,6 @@ const props = defineProps({
     meta: Object,
 });
 
-
 const departments = ref([]);
 
 async function getDepartment() {
@@ -27,7 +26,9 @@ function destroy(departmentId) {
         Inertia.delete(route('department.destroy', {department: departmentId}));
     }
 }
-
+function editDepartment(departmentId){
+    window.location.href = "/department/" + departmentId + "/edit";
+}
 function changePage(page)
 {
     Inertia.visit(route('department.index', {page: page}))
@@ -59,8 +60,8 @@ function changePage(page)
                         <template #default="scope">
                             <el-row :span="24">
                                 <el-col :span="12">
-                                    <el-link type="primary" :href="route('department.edit', {department: scope.row.id})">
-                                        <el-button type="primary" plain :icon="Edit">Sửa</el-button>
+                                    <el-link type="primary">
+                                        <el-button @click="editDepartment(scope.row.id)" type="primary" plain :icon="Edit">Sửa</el-button>
                                     </el-link>
                                 </el-col>
                                 <el-col :span="12">

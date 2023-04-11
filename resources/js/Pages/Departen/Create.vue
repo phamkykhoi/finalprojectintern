@@ -40,7 +40,7 @@ const saveDepartment = () => {
 
 const closeModal = () => {
     window.history.go(-1);
-    getDepartment()
+ 
 };
 </script>
 
