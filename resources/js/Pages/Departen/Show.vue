@@ -8,9 +8,19 @@ import { Inertia } from "@inertiajs/inertia";
 import request from '../../utils/request';
 
 const props = defineProps({
-    departments: Array,
     meta: Object,
 });
+
+
+const departments = ref([]);
+
+async function getDepartment() {
+    await request.get(`/api/department`).then((res) => {
+        departments.value = res.data.result.departmentsPaginate
+    })
+}
+
+getDepartment()
 
 function destroy(departmentId) {
     if (confirm("Bạn có thực sự muốn xoá")) {
@@ -41,7 +51,7 @@ function changePage(page)
                 </el-link>
             </div>
             <div >
-                <el-table :data="props.departments" style="width: 93%" border class="ml-20 table-user">
+                <el-table :data="departments" style="width: 93%" border class="ml-20 table-user">
                     <el-table-column prop="id" label="ID" width="50" />
                     <el-table-column prop="name" label="Name" width="440"/>
                     <el-table-column prop="description" label="Desciption" width="650" />
@@ -49,7 +59,7 @@ function changePage(page)
                         <template #default="scope">
                             <el-row :span="24">
                                 <el-col :span="12">
-                                    <el-link type="primary" :href="route('department.edit', {department: scope.row.id})" target="_blank">
+                                    <el-link type="primary" :href="route('department.edit', {department: scope.row.id})">
                                         <el-button type="primary" plain :icon="Edit">Sửa</el-button>
                                     </el-link>
                                 </el-col>

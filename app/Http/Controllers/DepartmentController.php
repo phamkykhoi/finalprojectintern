@@ -183,8 +183,16 @@ class DepartmentController extends Controller
     public function indexJson()
     {
         $user = auth()->user();
+        $departmentPaginate = $this->departmentRepo->paginate();
+
         return $this->success([
             'departments' => $this->departmentRepo->getDepartments(['activities'], $user->isRoot() ? null : $user->id),
+            'departmentsPaginate' =>$departmentPaginate->items(),
+            'meta' => [
+                'total' => $departmentPaginate->total(),
+                'perPage' => $departmentPaginate->perPage(),
+                'currentPage' => $departmentPaginate->currentPage(),
+            ]
         ]);
     }
 }

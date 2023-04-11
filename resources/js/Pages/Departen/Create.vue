@@ -33,14 +33,14 @@ const saveDepartment = () => {
                 message: 'Sửa department thành công',
                 type: 'success',
             })
-            closeModal();
-            window.location.href ="/";
+            closeModal()
         }
     })
 }
 
 const closeModal = () => {
     window.history.go(-1);
+    getDepartment()
 };
 </script>
 
