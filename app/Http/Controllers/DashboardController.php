@@ -20,7 +20,7 @@ class DashboardController extends Controller
         $user = auth()->user();
         
         return Inertia::render('Dashboard', [
-            'departments' => $this->departmentRepo->getDepartments(['activities'], $user->isRoot() ? null : $user->id)
+            // 'departments' => $this->departmentRepo->getDepartments(['activities'], $user->isRoot() ? null : $user->id)
         ]);
     }
 }

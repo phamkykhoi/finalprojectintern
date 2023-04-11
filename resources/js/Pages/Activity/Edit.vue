@@ -39,6 +39,9 @@ const form = useForm({
 });
 
 const getDepartment = inject('getDepartment');
+const getDepartmentDashBoard = inject('getDepartmentDashBoard');
+
+
 const saveActivity = (formEl: FormInstance | undefined) => {
     if (!formEl) return
     formEl.validate((valid) => {
@@ -51,7 +54,8 @@ const saveActivity = (formEl: FormInstance | undefined) => {
                         type: 'success',
                     })
                     closeModal();
-                    getDepartment();
+                    if (getDepartment) return getDepartment()
+                    return getDepartmentDashBoard()
                 }
             })
         }

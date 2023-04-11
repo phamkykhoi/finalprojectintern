@@ -26,16 +26,17 @@ const form = useForm({
 });
 
 const saveDepartment = () => {
-    if (!props.department) {
-        form.post(route('department.store'), {
-            preserveScroll: true,
-            onSuccess: () => { },
-            onError: () => { },
-            onFinish: () => { },
-        })
-        return;
-    }
-    form.put(route('department.update', {department: props.department.id}));
+    request.put(`/department/${props.department.id}`, form).then(res => {
+        if (res.data.status) {
+            ElMessage({
+                showClose: true,
+                message: 'Sửa department thành công',
+                type: 'success',
+            })
+            closeModal();
+            window.location.href ="/";
+        }
+    })
 }
 
 const closeModal = () => {
@@ -51,7 +52,7 @@ const closeModal = () => {
                     <h3>{{ pageTitle }}</h3>
                 </header>
                 <form class="mt-6 space-y-6">
-                    <el-form ref="ruleFormRef" :model="form" class="demo-ruleForm" :rules="rules">
+                    <el-form ref="ruleFormRef" :model="form" class="demo-ruleForm">
                         <div>
                             <InputLabel for="name" value="Tên Phòng ban" />
                             <TextInput id="name" type="text" class="mt-1 block w-full" v-model="form.name"

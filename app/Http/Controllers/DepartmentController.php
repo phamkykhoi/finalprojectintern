@@ -108,9 +108,14 @@ class DepartmentController extends Controller
      */
     public function update($id, UpdateDepartmentRequest $request)
     {
-        $inputs = $request->all();
-        $this->departmentRepo->save($inputs, ['id' => $id]);
-        return redirect()->route('department.index')->with('message', 'Edit Department Successfully!');
+        try {
+            $inputs = $request->all();
+            $this->departmentRepo->save($inputs, ['id' => $id]);
+            return $this->success();
+
+        } catch (\Exception $e) {
+            return $this->error($e->getMessage(), $e->getCode());
+        }
     }
 
     /**
