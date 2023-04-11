@@ -95,7 +95,7 @@ const closeModal = () => {
                         <el-button type="primary" @click="closeModal">
                             Đóng
                         </el-button>
-                        <el-button type="primary" @click="saveDepartment(ruleFormRef)">
+                        <el-button style="margin-left: 12px;" type="primary" @click="saveDepartment(ruleFormRef)">
                             Lưu lại
                         </el-button>
                     </div>
