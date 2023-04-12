@@ -15,11 +15,7 @@ return new class extends Migration
     {
         Schema::table('attachments', function (Blueprint $table) {
             $table->string('deleted_by')->nullable()->change();
-            $table->dropColumn('deleted_at');
-        });
-
-        Schema::table('attachments', function (Blueprint $table) {
-            $table->timestamp('deleted_at')->nullable();
+            $table->timestamp('deleted_at')->nullable()->change();
         });
     }
 
