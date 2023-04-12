@@ -41,6 +41,7 @@ const emit = defineEmits(['closeModal', 'unClose'])
 confirmingUserDeletion.value = props.isShowModal;
 
 const getDepartment = inject('getDepartment');
+const getDepartmentDashBoard = inject('getDepartmentDashBoard');
 
 const saveDepartment = (formEl: FormInstance | undefined) => {
     if (!formEl) return
@@ -54,7 +55,8 @@ const saveDepartment = (formEl: FormInstance | undefined) => {
                         type: 'success',
                     })
                     closeModal();
-                    getDepartment();
+                    if (getDepartment) return getDepartment()
+                    return getDepartmentDashBoard()
                 }
             })
         }
@@ -93,7 +95,7 @@ const closeModal = () => {
                         <el-button type="primary" @click="closeModal">
                             Đóng
                         </el-button>
-                        <el-button type="primary" @click="saveDepartment(ruleFormRef)">
+                        <el-button style="margin-left: 12px;" type="primary" @click="saveDepartment(ruleFormRef)">
                             Lưu lại
                         </el-button>
                     </div>
