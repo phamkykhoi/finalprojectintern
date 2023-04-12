@@ -14,7 +14,7 @@ return new class extends Migration
     public function up()
     {
         Schema::table('attachments', function (Blueprint $table) {
-            $table->string('deleted_by')->nullable()->change();
+            $table->timestamp('deleted_at')->nullable()->change();
         });
     }
 
