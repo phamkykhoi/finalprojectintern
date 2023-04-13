@@ -201,7 +201,7 @@ onBeforeMount(async () => {
                             />
                         </el-form-item>
                         <el-form-item label="Tệp đính kèm">
-                            <FileUpload @data="handleLoadData" :show-file-list = "true"></FileUpload>
+                            <FileUpload :params="{task_id : ''}" @data="handleLoadData" :show-file-list = "true"></FileUpload>
                         </el-form-item>
                         <el-row>
                             <el-col :span="12">
